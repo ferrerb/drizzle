@@ -1,0 +1,26 @@
+# Gradle files
+.gradle
+build/
+/*/build/
+/build
+
+# Proguard
+proguard/
+
+# Generated files
+bin/
+gen/
+
+# Local configuration files
+/local.properties
+
+# Android Studio files
+/.idea/workspace.xml
+/.idea/libraries
+*.iml
+
+# OSX files
+.DS_Store
+
+# Java class files
+*.class
