@@ -24,3 +24,6 @@ gen/
 
 # Java class files
 *.class
+
+# API keys
+*/src/main/res/values/api_keys.xml
