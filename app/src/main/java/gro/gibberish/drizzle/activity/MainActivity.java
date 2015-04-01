@@ -1,5 +1,7 @@
-package gro.gibberish.drizzle;
+package gro.gibberish.drizzle.activity;
 
+import android.app.FragmentTransaction;
+import android.net.Uri;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
@@ -11,17 +13,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.os.Build;
 
+import gro.gibberish.drizzle.R;
+import gro.gibberish.drizzle.ui.LocationListFragment;
 
-public class MainActivity extends ActionBarActivity {
+
+public class MainActivity extends ActionBarActivity implements
+        LocationListFragment.OnFragmentInteractionListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new PlaceholderFragment())
-                    .commit();
+            LocationListFragment f = LocationListFragment.newInstance(null, null);
+            FragmentTransaction ft = getFragmentManager().beginTransaction();
+            ft.replace(R.id.location_list, f).commit();
         }
     }
 
@@ -48,19 +54,8 @@ public class MainActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    /**
-     * A placeholder fragment containing a simple view.
-     */
-    public static class PlaceholderFragment extends Fragment {
-
-        public PlaceholderFragment() {
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-            return rootView;
-        }
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+        //asdf
     }
 }
