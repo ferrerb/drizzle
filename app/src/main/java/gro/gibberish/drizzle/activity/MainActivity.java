@@ -1,18 +1,14 @@
 package gro.gibberish.drizzle.activity;
 
 import android.app.FragmentTransaction;
+import android.content.SharedPreferences;
 import android.net.Uri;
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.ActionBar;
-import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.os.Build;
 
 import gro.gibberish.drizzle.R;
 import gro.gibberish.drizzle.ui.LocationListFragment;
@@ -20,6 +16,9 @@ import gro.gibberish.drizzle.ui.LocationListFragment;
 
 public class MainActivity extends ActionBarActivity implements
         LocationListFragment.OnFragmentInteractionListener {
+
+    private int lastRefresh;
+    private final String LAST_REFRESH = "LAST_REFRESH";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +33,17 @@ public class MainActivity extends ActionBarActivity implements
             LocationListFragment f = LocationListFragment.newInstance(null, null);
             FragmentTransaction ft = getFragmentManager().beginTransaction();
             ft.replace(R.id.location_list, f).commit();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+        lastRefresh = sp.getInt(LAST_REFRESH, 0);
+        // 900000 == 15 minutes in ms
+        if (System.currentTimeMillis() - lastRefresh > 900000) {
+            // refresh weather data automatically, set lastrefresh to now
         }
     }
 
@@ -58,6 +68,14 @@ public class MainActivity extends ActionBarActivity implements
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+        sp.edit().putInt(LAST_REFRESH, lastRefresh);
+
     }
 
     @Override
