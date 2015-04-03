@@ -9,9 +9,17 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import gro.gibberish.drizzle.R;
+import gro.gibberish.drizzle.http.WeatherDownloadInterface;
+import gro.gibberish.drizzle.models.LocationModel;
 import gro.gibberish.drizzle.ui.LocationListFragment;
+import retrofit.RestAdapter;
+import rx.Observable;
+import rx.Scheduler;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 
 public class MainActivity extends ActionBarActivity implements
@@ -19,6 +27,7 @@ public class MainActivity extends ActionBarActivity implements
 
     private int lastRefresh;
     private final String LAST_REFRESH = "LAST_REFRESH";
+    private static final String SERVICE_ENDPOINT ="http://api.openweathermap.org/data/2.5/";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +54,15 @@ public class MainActivity extends ActionBarActivity implements
         if (System.currentTimeMillis() - lastRefresh > 900000) {
             // refresh weather data automatically, set lastrefresh to now
         }
+        TextView city = (TextView) findViewById(R.id.city_name);
+        RestAdapter rest = new RestAdapter.Builder()
+                .setEndpoint(SERVICE_ENDPOINT)
+                .build();
+        WeatherDownloadInterface mService = rest.create(WeatherDownloadInterface.class);
+
+        mService.getLocationDetailWeather("30319")
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(LocationModel -> city.setText(LocationModel.getName()));
     }
 
 
