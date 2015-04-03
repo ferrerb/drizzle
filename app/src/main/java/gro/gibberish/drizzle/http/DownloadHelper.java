@@ -28,13 +28,9 @@ public class DownloadHelper {
 
     interface WeatherDownloadInterface {
         @GET("weather")
-        Observable<String> getLocationDetailWeather(@Query("zip") String zip);
+        Observable<LocationModel> getLocationDetailWeather(@Query("zip") String zip);
 
         @GET("group")
-        Observable<String> getAllLocationsWeather(@Query("zip") String zip);
-    }
-
-    public Observable<LocationModel> getLocationDetailWeather(String s) {
-        return null;
+        Observable<List<LocationModel>> getAllLocationsWeather(@Query("zip") String zip);
     }
 }
