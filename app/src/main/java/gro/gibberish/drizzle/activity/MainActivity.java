@@ -27,6 +27,7 @@ public class MainActivity extends ActionBarActivity implements
 
     private int lastRefresh;
     private final String LAST_REFRESH = "LAST_REFRESH";
+    private final String API_KEY = getResources().getString(R.string.api_key);
     private static final String SERVICE_ENDPOINT ="http://api.openweathermap.org/data/2.5/";
 
     @Override
@@ -60,7 +61,7 @@ public class MainActivity extends ActionBarActivity implements
                 .build();
         WeatherDownloadInterface mService = rest.create(WeatherDownloadInterface.class);
 
-        mService.getLocationDetailWeather("30319")
+        mService.getLocationDetailWeather("30319,us", API_KEY)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(LocationModel -> city.setText(LocationModel.getName()));
     }
