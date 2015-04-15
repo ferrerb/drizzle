@@ -1,25 +1,21 @@
 package gro.gibberish.drizzle.activity;
 
-import android.app.FragmentTransaction;
-import android.content.SharedPreferences;
-import android.net.Uri;
-import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.widget.TextView;
+    import android.app.FragmentTransaction;
+    import android.content.SharedPreferences;
+    import android.net.Uri;
+    import android.os.Bundle;
+    import android.preference.PreferenceManager;
+    import android.support.v7.app.ActionBarActivity;
+    import android.support.v7.widget.Toolbar;
+    import android.util.Log;
+    import android.view.Menu;
+    import android.view.MenuItem;
+    import android.widget.TextView;
 
-import gro.gibberish.drizzle.R;
-import gro.gibberish.drizzle.http.WeatherDownloadInterface;
-import gro.gibberish.drizzle.models.LocationModel;
-import gro.gibberish.drizzle.ui.LocationListFragment;
-import retrofit.RestAdapter;
-import rx.Observable;
-import rx.Scheduler;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
+    import gro.gibberish.drizzle.R;
+    import gro.gibberish.drizzle.http.WeatherApi;
+    import gro.gibberish.drizzle.ui.LocationListFragment;
+    import rx.android.schedulers.AndroidSchedulers;
 
 
 public class MainActivity extends ActionBarActivity implements
@@ -27,13 +23,15 @@ public class MainActivity extends ActionBarActivity implements
 
     private int lastRefresh;
     private final String LAST_REFRESH = "LAST_REFRESH";
-    private final String API_KEY = getResources().getString(R.string.api_key);
-    private static final String SERVICE_ENDPOINT ="http://api.openweathermap.org/data/2.5/";
+    private String API_KEY;
+    private static final String SERVICE_ENDPOINT ="http://api.openweathermap.org/data/2.5";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.main);
+
+        API_KEY = getApplicationContext().getResources().getString(R.string.api_key);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         if (toolbar != null) {
@@ -56,14 +54,13 @@ public class MainActivity extends ActionBarActivity implements
             // refresh weather data automatically, set lastrefresh to now
         }
         TextView city = (TextView) findViewById(R.id.city_name);
-        RestAdapter rest = new RestAdapter.Builder()
-                .setEndpoint(SERVICE_ENDPOINT)
-                .build();
-        WeatherDownloadInterface mService = rest.create(WeatherDownloadInterface.class);
 
-        mService.getLocationDetailWeather("30319,us", API_KEY)
+        WeatherApi.getWeatherService().getLocationDetailWeather("30319,us", API_KEY)
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(LocationModel -> city.setText(LocationModel.getName()));
+                .subscribe(
+                        locationList -> Log.d("city =", locationList.get(0).getName()),
+                        error -> Log.d("error", error.getMessage()),
+                        () -> Log.d("complete", "yay"));
     }
 
 
