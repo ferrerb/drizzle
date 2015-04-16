@@ -17,9 +17,18 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/city_current_temp"
-        android:textSize="40sp"
+        android:textSize="34sp"
         android:layout_toEndOf="@id/city_name"
         android:layout_alignParentEnd="true"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/city_current_humidity"
+        android:textSize="28sp"
+        android:layout_toEndOf="@id/city_name"
+        android:layout_below="@id/city_current_temp"
         android:paddingStart="12dp"
         android:paddingEnd="12dp"/>
 

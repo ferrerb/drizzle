@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,7 +17,7 @@ import gro.gibberish.drizzle.models.LocationModel;
 import rx.android.schedulers.AndroidSchedulers;
 
 /**
- * A simple {@link Fragment} subclass.
+ * Displays current and predicted weather for a specific location
  * Activities that contain this fragment must implement the
  * {@link LocationDetailFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
@@ -35,8 +36,7 @@ public class LocationDetailFragment extends Fragment {
     private OnFragmentInteractionListener mListener;
 
     /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
+     * Returns a new instance of this fragment with the specified parameters
      *
      * @param key The API key for openweathermap
      * @param loc The desired location's zip code.
@@ -88,9 +88,11 @@ public class LocationDetailFragment extends Fragment {
     private void insertLocationData(LocationModel m) {
         TextView cityName = (TextView) getActivity().findViewById(R.id.city_name);
         TextView cityTemp = (TextView) getActivity().findViewById(R.id.city_current_temp);
+        TextView cityHumid = (TextView) getActivity().findViewById(R.id.city_current_humidity);
 
         cityName.setText(m.getName());
         cityTemp.setText(Double.toString(m.getMain().getTemp()) + getString(R.string.degrees_fahrenheit));
+        cityHumid.setText(Double.toString(m.getMain().getHumidity()) + getString(R.string.percent));
 
     }
     // TODO: Rename method, update argument and hook method into UI event

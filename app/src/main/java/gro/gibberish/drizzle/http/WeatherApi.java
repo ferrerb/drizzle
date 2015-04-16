@@ -2,6 +2,7 @@ package gro.gibberish.drizzle.http;
 
 import java.util.List;
 
+import gro.gibberish.drizzle.models.LocationForecastModel;
 import gro.gibberish.drizzle.models.LocationModel;
 import retrofit.RestAdapter;
 import retrofit.http.GET;
@@ -20,6 +21,13 @@ public class WeatherApi {
         @GET("/weather")
         Observable<LocationModel> getLocationDetailWeather(
                 @Query("zip") String zip,
+                @Query("units") String units,
+                @Query("APPID") String api);
+
+        @GET("/forecast/daily")
+        Observable<LocationForecastModel> getLocationDailyForecast(
+                @Query("zip") String zip,
+                @Query("cnt") String count,
                 @Query("units") String units,
                 @Query("APPID") String api);
 

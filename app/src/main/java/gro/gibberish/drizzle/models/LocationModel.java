@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A model for a returned JSON object for a specific location
+ * A model for a returned JSON object for a specific location from OpenWeatherMap
  */
 public class LocationModel {
     private String name;
@@ -59,8 +59,6 @@ public class LocationModel {
     public static class Main {
         private double temp;
         private double humidity;
-        private double temp_min;
-        private double temp_max;
 
         public double getTemp() {
             return temp;
@@ -78,21 +76,6 @@ public class LocationModel {
             this.humidity = humidity;
         }
 
-        public double getTemp_min() {
-            return temp_min;
-        }
-
-        public void setTemp_min(double temp_min) {
-            this.temp_min = temp_min;
-        }
-
-        public double getTemp_max() {
-            return temp_max;
-        }
-
-        public void setTemp_max(double temp_max) {
-            this.temp_max = temp_max;
-        }
     }
 }
 
