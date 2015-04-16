@@ -10,15 +10,10 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-        <TextView
-            android:id="@+id/city_name"
+        <FrameLayout
+            android:id="@+id/location_detail"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_above="@+id/location_list"/>
-            <FrameLayout
-                android:id="@+id/location_list"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" >
+            android:layout_height="match_parent" >
 
         </FrameLayout>
     </RelativeLayout>

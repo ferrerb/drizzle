@@ -14,12 +14,13 @@ package gro.gibberish.drizzle.activity;
 
     import gro.gibberish.drizzle.R;
     import gro.gibberish.drizzle.http.WeatherApi;
+    import gro.gibberish.drizzle.ui.LocationDetailFragment;
     import gro.gibberish.drizzle.ui.LocationListFragment;
     import rx.android.schedulers.AndroidSchedulers;
 
 
 public class MainActivity extends ActionBarActivity implements
-        LocationListFragment.OnFragmentInteractionListener {
+        LocationDetailFragment.OnFragmentInteractionListener {
 
     private int lastRefresh;
     private static final int FIFTEEN_MINUTES_MS = 900000;
@@ -39,9 +40,9 @@ public class MainActivity extends ActionBarActivity implements
             setSupportActionBar(toolbar);
         }
         if (savedInstanceState == null) {
-            LocationListFragment f = LocationListFragment.newInstance(null, null);
+            LocationDetailFragment f = LocationDetailFragment.newInstance(API_KEY, "30319,us");
             FragmentTransaction ft = getFragmentManager().beginTransaction();
-            ft.replace(R.id.location_list, f).commit();
+            ft.replace(R.id.location_detail, f).commit();
         }
     }
 
@@ -54,14 +55,6 @@ public class MainActivity extends ActionBarActivity implements
         if (System.currentTimeMillis() - lastRefresh > FIFTEEN_MINUTES_MS) {
             // refresh weather data automatically, set lastrefresh to now
         }
-        TextView city = (TextView) findViewById(R.id.city_name);
-
-        WeatherApi.getWeatherService().getLocationDetailWeather("30319,us", API_KEY)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        locationList -> Log.d("city =", locationList.getName()),
-                        error -> Log.d("error", error.getMessage()),
-                        () -> Log.d("complete", "yay"));
     }
 
 
@@ -74,9 +67,6 @@ public class MainActivity extends ActionBarActivity implements
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement

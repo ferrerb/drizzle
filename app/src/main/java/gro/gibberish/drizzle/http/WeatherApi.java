@@ -18,8 +18,10 @@ public class WeatherApi {
         // The zip query string must have ",us" appended to indicate a US city
         // It would be better to use the city id, but that would involve searching a massive txt file
         @GET("/weather")
-        Observable<LocationModel> getLocationDetailWeather(@Query("zip") String zip,
-                                                           @Query("APPID") String api);
+        Observable<LocationModel> getLocationDetailWeather(
+                @Query("zip") String zip,
+                @Query("units") String units,
+                @Query("APPID") String api);
 
         @GET("/group")
         Observable<List<LocationModel>> getAllLocationsWeather(@Query("zip") String zip);

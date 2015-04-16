@@ -1,10 +1,27 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_height="match_parent"
-    tools:context="gro.gibberish.drizzle.ui.LocationDetailFragment">
+    android:layout_width="match_parent"
+    android:id="@+id/location_detail">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView android:layout_width="match_parent" android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/city_name"
+        android:textSize="56sp"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/city_current_temp"
+        android:textSize="40sp"
+        android:layout_toEndOf="@id/city_name"
+        android:layout_alignParentEnd="true"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"/>
 
-</FrameLayout>
+</RelativeLayout>
+

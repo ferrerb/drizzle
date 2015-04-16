@@ -4,11 +4,16 @@ import android.app.Activity;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import gro.gibberish.drizzle.R;
+import gro.gibberish.drizzle.http.WeatherApi;
+import gro.gibberish.drizzle.models.LocationModel;
+import rx.android.schedulers.AndroidSchedulers;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -19,14 +24,13 @@ import gro.gibberish.drizzle.R;
  * create an instance of this fragment.
  */
 public class LocationDetailFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private static final String API_KEY = "API_KEY";
+    private static final String LOCATION = "LOCATION";
 
     // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private String mApiKey;
+    private String mLocation;
 
     private OnFragmentInteractionListener mListener;
 
@@ -34,16 +38,16 @@ public class LocationDetailFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
+     * @param key The API key for openweathermap
+     * @param loc The desired location's zip code.
      * @return A new instance of fragment LocationDetailFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static LocationDetailFragment newInstance(String param1, String param2) {
+    public static LocationDetailFragment newInstance(String key, String loc) {
         LocationDetailFragment fragment = new LocationDetailFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putString(API_KEY, key);
+        args.putString(LOCATION, loc);
         fragment.setArguments(args);
         return fragment;
     }
@@ -56,8 +60,8 @@ public class LocationDetailFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            mApiKey = getArguments().getString(API_KEY);
+            mLocation = getArguments().getString(LOCATION);
         }
     }
 
@@ -65,9 +69,30 @@ public class LocationDetailFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_location_detail, container, false);
+        View result = inflater.inflate(R.layout.fragment_location_detail, container, false);
+
+        refreshWeather();
+
+        return result;
     }
 
+    private void refreshWeather() {
+        WeatherApi.getWeatherService().getLocationDetailWeather(mLocation, "imperial", mApiKey)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        locationModel -> insertLocationData(locationModel),
+                        error -> Log.d("error", error.getMessage()),
+                        () -> {});
+    }
+
+    private void insertLocationData(LocationModel m) {
+        TextView cityName = (TextView) getActivity().findViewById(R.id.city_name);
+        TextView cityTemp = (TextView) getActivity().findViewById(R.id.city_current_temp);
+
+        cityName.setText(m.getName());
+        cityTemp.setText(Double.toString(m.getMain().getTemp()) + getString(R.string.degrees_fahrenheit));
+
+    }
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
@@ -92,16 +117,6 @@ public class LocationDetailFragment extends Fragment {
         mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         public void onFragmentInteraction(Uri uri);
