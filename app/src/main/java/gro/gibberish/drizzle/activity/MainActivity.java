@@ -22,7 +22,8 @@ public class MainActivity extends ActionBarActivity implements
         LocationListFragment.OnFragmentInteractionListener {
 
     private int lastRefresh;
-    private final String LAST_REFRESH = "LAST_REFRESH";
+    private static final int FIFTEEN_MINUTES_MS = 900000;
+    private static final String SP_LAST_REFRESH = "SP_LAST_REFRESH";
     private String API_KEY;
     private static final String SERVICE_ENDPOINT ="http://api.openweathermap.org/data/2.5";
 
@@ -48,9 +49,9 @@ public class MainActivity extends ActionBarActivity implements
     protected void onResume() {
         super.onResume();
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
-        lastRefresh = sp.getInt(LAST_REFRESH, 0);
+        lastRefresh = sp.getInt(SP_LAST_REFRESH, 0);
         // 900000 == 15 minutes in ms
-        if (System.currentTimeMillis() - lastRefresh > 900000) {
+        if (System.currentTimeMillis() - lastRefresh > FIFTEEN_MINUTES_MS) {
             // refresh weather data automatically, set lastrefresh to now
         }
         TextView city = (TextView) findViewById(R.id.city_name);
@@ -58,7 +59,7 @@ public class MainActivity extends ActionBarActivity implements
         WeatherApi.getWeatherService().getLocationDetailWeather("30319,us", API_KEY)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        locationList -> Log.d("city =", locationList.get(0).getName()),
+                        locationList -> Log.d("city =", locationList.getName()),
                         error -> Log.d("error", error.getMessage()),
                         () -> Log.d("complete", "yay"));
     }
@@ -90,7 +91,7 @@ public class MainActivity extends ActionBarActivity implements
     public void onPause() {
         super.onPause();
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
-        sp.edit().putInt(LAST_REFRESH, lastRefresh);
+        sp.edit().putInt(SP_LAST_REFRESH, lastRefresh);
 
     }
 

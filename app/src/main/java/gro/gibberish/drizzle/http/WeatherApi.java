@@ -9,15 +9,16 @@ import retrofit.http.Query;
 import rx.Observable;
 
 /**
- * Static instance for accessing the OpenWeather API
+ * Holds a static instance of the rest adapter for accessing the OpenWeather API
  */
 public class WeatherApi {
     private static final String SERVICE_ENDPOINT ="http://api.openweathermap.org/data/2.5";
 
     public interface WeatherService {
         // The zip query string must have ",us" appended to indicate a US city
+        // It would be better to use the city id, but that would involve searching a massive txt file
         @GET("/weather")
-        Observable<List<LocationModel>> getLocationDetailWeather(@Query("zip") String zip,
+        Observable<LocationModel> getLocationDetailWeather(@Query("zip") String zip,
                                                            @Query("APPID") String api);
 
         @GET("/group")

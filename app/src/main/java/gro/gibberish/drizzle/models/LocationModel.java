@@ -1,11 +1,14 @@
 package gro.gibberish.drizzle.models;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * A model for a returned JSON object for a specific location
  */
 public class LocationModel {
     private String name;
-    private Weather weather;
+    private List<Weather> weather = new ArrayList<Weather>();
     private Main main;
 
     public String getName() {
@@ -16,11 +19,11 @@ public class LocationModel {
         this.name = name;
     }
 
-    public Weather getWeather() {
+    public List<Weather> getWeather() {
         return weather;
     }
 
-    public void setWeather(Weather weather) {
+    public void setWeather(List<Weather> weather) {
         this.weather = weather;
     }
 
