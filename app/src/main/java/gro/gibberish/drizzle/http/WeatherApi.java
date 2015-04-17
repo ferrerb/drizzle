@@ -1,13 +1,17 @@
 package gro.gibberish.drizzle.http;
 
+import android.util.Log;
+
 import java.util.List;
 
+import gro.gibberish.drizzle.R;
 import gro.gibberish.drizzle.models.LocationForecastModel;
 import gro.gibberish.drizzle.models.LocationModel;
 import retrofit.RestAdapter;
 import retrofit.http.GET;
 import retrofit.http.Query;
 import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
 
 /**
  * Holds a static instance of the rest adapter for accessing the OpenWeather API

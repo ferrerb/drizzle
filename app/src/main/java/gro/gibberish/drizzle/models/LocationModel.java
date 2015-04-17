@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * A model for a returned JSON object for a specific location from OpenWeatherMap
  */
-public class LocationModel {
+public class LocationModel implements BaseModel {
     private String name;
     private List<Weather> weather = new ArrayList<Weather>();
     private Main main;
