@@ -31,6 +31,13 @@
         android:layout_below="@id/city_current_temp"
         android:paddingStart="12dp"
         android:paddingEnd="12dp"/>
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/forecast_listview"
+        android:layout_below="@id/city_name"
+        android:clickable="false"/>
+
 
 </RelativeLayout>
 
