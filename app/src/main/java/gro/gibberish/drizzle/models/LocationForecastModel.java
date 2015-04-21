@@ -10,7 +10,11 @@ import java.util.List;
  * A model for a returned JSON object for a specific location from OpenWeatherMap
  * TODO consider separating the classes for list/temp etc their own java file
  */
-public class LocationForecastModel implements BaseModel{
+public class LocationForecastModel implements BaseModel, Serializable{
+    private static final long serialVersionUID = 4;
+
+    private City city;
+
     @SerializedName("list")
     private List<weatherList> weatherList = new ArrayList<weatherList>();
 
@@ -80,5 +84,23 @@ public class LocationForecastModel implements BaseModel{
         public void setMin(int min) {
             this.min = min;
         }
+    }
+
+    public static class City {
+        private String name;
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+    }
+
+    @Override
+    public String toString() {
+        return "City: " + city.name;
     }
 }

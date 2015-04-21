@@ -20,7 +20,8 @@ package gro.gibberish.drizzle.activity;
 
 
 public class MainActivity extends ActionBarActivity implements
-        LocationDetailFragment.OnFragmentInteractionListener {
+        LocationDetailFragment.OnFragmentInteractionListener,
+        LocationListFragment.OnFragmentInteractionListener {
 
     private int lastRefresh;
     private static final int FIFTEEN_MINUTES_MS = 900000;
@@ -88,5 +89,10 @@ public class MainActivity extends ActionBarActivity implements
     @Override
     public void onFragmentInteraction(Uri uri) {
         //asdf
+    }
+
+    @Override
+    public void onLocationChosen(Uri uri) {
+        // Interface from list fragment, launch detail fragment/activity
     }
 }
