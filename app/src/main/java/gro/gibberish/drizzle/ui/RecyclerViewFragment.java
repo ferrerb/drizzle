@@ -26,6 +26,7 @@ public class RecyclerViewFragment extends Fragment {
         if (rv == null) {
             rv = new RecyclerView(getActivity().getBaseContext());
             rv.setHasFixedSize(true);
+            getActivity().setContentView(rv);
         }
 
         return rv;

@@ -35,20 +35,25 @@ public class WeatherListAdapter extends RecyclerView.Adapter<WeatherListAdapter.
 
     @Override
     public int getItemCount() {
+        if (mLocationList == null) {
+            return 0;
+        }
         return mLocationList.size();
+
     }
 
     public static class RowHolder extends RecyclerView.ViewHolder {
         private final TextView locationName;
         private final TextView locationTemp;
-        public RowHolder(View v) {
-            super(v);
-            locationName = (TextView) v.findViewById(R.id.location_list_name);
-            locationTemp = (TextView) v.findViewById(R.id.location_list_current_temp);
+        public RowHolder(View row) {
+            super(row);
+            this.locationName = (TextView) row.findViewById(R.id.location_list_name);
+            this.locationTemp = (TextView) row.findViewById(R.id.location_list_current_temp);
         }
 
         void bindModel(LocationModel data) {
-
+            locationName.setText(data.getName());
+            locationTemp.setText(Double.toString(data.getMain().getTemp()));
         }
         // make get/set for textviews?
     }
