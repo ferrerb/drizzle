@@ -3,6 +3,8 @@ package gro.gibberish.drizzle.ui;
 import android.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 
+import gro.gibberish.drizzle.R;
+
 /**
  * Implements the boilerplate parts of a recyclerview so the actual fragment isn't filled with all
  * this.
@@ -24,11 +26,10 @@ public class RecyclerViewFragment extends Fragment {
 
     public RecyclerView getRecyclerView() {
         if (rv == null) {
-            rv = new RecyclerView(getActivity().getBaseContext());
+            rv = new RecyclerView(getActivity());
             rv.setHasFixedSize(true);
-            getActivity().setContentView(rv);
+            rv.setId(R.id.recycler_list);
         }
-
         return rv;
     }
 }

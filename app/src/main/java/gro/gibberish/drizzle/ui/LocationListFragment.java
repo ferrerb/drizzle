@@ -20,10 +20,11 @@ import gro.gibberish.drizzle.R;
  * Use the {@link LocationListFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class LocationListFragment extends RecyclerViewFragment {
+public class LocationListFragment extends Fragment {
 
     private static final String LOCATIONS = "locations";
     private String mLocations;
+    private RecyclerView rv;
 
     private OnFragmentInteractionListener mListener;
 
@@ -58,10 +59,11 @@ public class LocationListFragment extends RecyclerViewFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        //TODO actually get data. probably from file
         View result = inflater.inflate(R.layout.fragment_location_list, container, false);
-        setLayoutManager(new LinearLayoutManager(getActivity().getBaseContext()));
-        setAdapter(new WeatherListAdapter(null));
+        rv = (RecyclerView) result.findViewById(R.id.recycler_list);
+        rv.setLayoutManager(new LinearLayoutManager(getActivity()));
+        //TODO actually get data. probably from file
+        rv.setAdapter(new WeatherListAdapter(null));
 
         return result;
     }

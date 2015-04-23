@@ -43,7 +43,7 @@ public class MainActivity extends ActionBarActivity implements
         if (savedInstanceState == null) {
             LocationDetailFragment f = LocationDetailFragment.newInstance(API_KEY, "30319,us");
             FragmentTransaction ft = getFragmentManager().beginTransaction();
-            ft.replace(R.id.location_detail, f).commit();
+            ft.replace(R.id.weather_content, f).commit();
         }
     }
 
