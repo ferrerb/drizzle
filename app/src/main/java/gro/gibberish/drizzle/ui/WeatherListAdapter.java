@@ -55,6 +55,5 @@ public class WeatherListAdapter extends RecyclerView.Adapter<WeatherListAdapter.
             locationName.setText(data.getName());
             locationTemp.setText(Double.toString(data.getMain().getTemp()));
         }
-        // make get/set for textviews?
     }
 }

@@ -30,7 +30,7 @@ public class LocationForecastModel implements BaseModel, Serializable{
         private int dt;
         private Temp temp;
         private int humidity;
-        private List<LocationModel.Weather> weather = new ArrayList< LocationModel.Weather >();
+        private List<Weather> weather = new ArrayList< Weather >();
 
         public int getDt() {
             return dt;
@@ -56,11 +56,11 @@ public class LocationForecastModel implements BaseModel, Serializable{
             this.humidity = humidity;
         }
 
-        public java.util.List<LocationModel.Weather> getWeather() {
+        public List<Weather> getWeather() {
             return weather;
         }
 
-        public void setWeather(List<LocationModel.Weather> weather) {
+        public void setWeather(List<Weather> weather) {
             this.weather = weather;
         }
     }
