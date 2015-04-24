@@ -1,6 +1,7 @@
 package gro.gibberish.drizzle.ui;
 
 import android.app.Activity;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
@@ -10,7 +11,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import gro.gibberish.drizzle.R;
+import gro.gibberish.drizzle.models.LocationModel;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -63,7 +68,14 @@ public class LocationListFragment extends Fragment {
         rv = (RecyclerView) result.findViewById(R.id.recycler_list);
         rv.setLayoutManager(new LinearLayoutManager(getActivity()));
         //TODO actually get data. probably from file
-        rv.setAdapter(new WeatherListAdapter(null));
+        LocationModel trial = new LocationModel();
+        LocationModel trial2 = new LocationModel();
+        List<LocationModel> mList = new ArrayList<LocationModel>();
+        trial.setName("Atlanta");
+        trial2.setName("Portland");
+        mList.add(trial);
+        mList.add(trial2);
+        rv.setAdapter(new WeatherListAdapter(mList));
 
         return result;
     }

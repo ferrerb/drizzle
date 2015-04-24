@@ -14,6 +14,8 @@ public class LocationModel implements BaseModel, Serializable {
     private List<Weather> weather = new ArrayList<Weather>();
     private Main main;
 
+    public LocationModel() {}
+
     public int getDt() {
         return dt;
     }
@@ -75,6 +77,8 @@ public class LocationModel implements BaseModel, Serializable {
     public static class Main {
         private double temp;
         private double humidity;
+
+        public Main() {}
 
         public double getTemp() {
             return temp;

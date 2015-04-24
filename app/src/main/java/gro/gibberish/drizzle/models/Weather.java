@@ -7,6 +7,8 @@ public class Weather {
     private String main;
     private String description;
 
+    public Weather() {}
+
     public String getMain() {
         return main;
     }

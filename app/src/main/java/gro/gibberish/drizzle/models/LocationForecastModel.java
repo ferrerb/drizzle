@@ -18,6 +18,8 @@ public class LocationForecastModel implements BaseModel, Serializable{
     @SerializedName("list")
     private List<weatherList> weatherList = new ArrayList<weatherList>();
 
+    public LocationForecastModel () {}
+
     public List<weatherList> getList() {
         return weatherList;
     }

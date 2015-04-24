@@ -41,7 +41,7 @@ public class MainActivity extends ActionBarActivity implements
             setSupportActionBar(toolbar);
         }
         if (savedInstanceState == null) {
-            LocationDetailFragment f = LocationDetailFragment.newInstance(API_KEY, "30319,us");
+            LocationListFragment f = LocationListFragment.newInstance("asdf");
             FragmentTransaction ft = getFragmentManager().beginTransaction();
             ft.replace(R.id.weather_content, f).commit();
         }
