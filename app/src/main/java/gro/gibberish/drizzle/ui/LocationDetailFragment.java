@@ -84,7 +84,7 @@ public class LocationDetailFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        refreshWeather();
+        //refreshWeather();
     }
 
     @Override

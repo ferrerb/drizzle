@@ -18,6 +18,7 @@ public class WeatherListAdapter extends RecyclerView.Adapter<WeatherListAdapter.
     List<LocationModel> mLocationList;
 
     public WeatherListAdapter(List<LocationModel> locationList) {
+        // TODO check for null? throw exception if null?
         mLocationList = locationList;
     }
 
@@ -53,8 +54,7 @@ public class WeatherListAdapter extends RecyclerView.Adapter<WeatherListAdapter.
 
         void bindModel(LocationModel data) {
             locationName.setText(data.getName());
-            locationTemp.setText("2343");
-            //locationTemp.setText(Double.toString(data.getMain().getTemp()));
+            locationTemp.setText(Double.toString(data.getMain().getTemp()));
         }
     }
 }

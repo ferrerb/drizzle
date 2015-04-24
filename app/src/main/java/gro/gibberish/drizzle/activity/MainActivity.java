@@ -12,10 +12,15 @@ package gro.gibberish.drizzle.activity;
     import android.view.MenuItem;
     import android.widget.TextView;
 
+    import java.util.List;
+
     import gro.gibberish.drizzle.R;
     import gro.gibberish.drizzle.http.WeatherApi;
+    import gro.gibberish.drizzle.models.LocationModel;
     import gro.gibberish.drizzle.ui.LocationDetailFragment;
     import gro.gibberish.drizzle.ui.LocationListFragment;
+    import rx.Observable;
+    import rx.android.lifecycle.LifecycleObservable;
     import rx.android.schedulers.AndroidSchedulers;
 
 
@@ -23,11 +28,11 @@ public class MainActivity extends ActionBarActivity implements
         LocationDetailFragment.OnFragmentInteractionListener,
         LocationListFragment.OnFragmentInteractionListener {
 
-    private int lastRefresh;
     private static final int FIFTEEN_MINUTES_MS = 900000;
     private static final String SP_LAST_REFRESH = "SP_LAST_REFRESH";
-    private String API_KEY;
     private static final String SERVICE_ENDPOINT ="http://api.openweathermap.org/data/2.5";
+    private String API_KEY;
+    private int lastRefresh;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +46,7 @@ public class MainActivity extends ActionBarActivity implements
             setSupportActionBar(toolbar);
         }
         if (savedInstanceState == null) {
-            LocationListFragment f = LocationListFragment.newInstance("asdf");
+            LocationListFragment f = LocationListFragment.newInstance("703448,2643743", API_KEY);
             FragmentTransaction ft = getFragmentManager().beginTransaction();
             ft.replace(R.id.weather_content, f).commit();
         }

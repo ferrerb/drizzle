@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +16,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import gro.gibberish.drizzle.R;
+import gro.gibberish.drizzle.http.WeatherApi;
+import gro.gibberish.drizzle.models.BaseModel;
 import gro.gibberish.drizzle.models.LocationModel;
+import rx.Observable;
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -28,8 +34,13 @@ import gro.gibberish.drizzle.models.LocationModel;
 public class LocationListFragment extends Fragment {
 
     private static final String LOCATIONS = "locations";
+    private static final String API_KEY = "api_key";
     private String mLocations;
+    private String mApi;
     private RecyclerView rv;
+    private Subscription mSubscription;
+    private WeatherListAdapter mAdapter;
+
 
     private OnFragmentInteractionListener mListener;
 
@@ -40,10 +51,11 @@ public class LocationListFragment extends Fragment {
      * @return A new instance of fragment LocationListFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static LocationListFragment newInstance(String location) {
+    public static LocationListFragment newInstance(String location, String apikey) {
         LocationListFragment fragment = new LocationListFragment();
         Bundle args = new Bundle();
         args.putString(LOCATIONS, location);
+        args.putString(API_KEY, apikey);
         fragment.setArguments(args);
         return fragment;
     }
@@ -57,6 +69,7 @@ public class LocationListFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mLocations = getArguments().getString(LOCATIONS);
+            mApi = getArguments().getString(API_KEY);
         }
     }
 
@@ -68,16 +81,24 @@ public class LocationListFragment extends Fragment {
         rv = (RecyclerView) result.findViewById(R.id.recycler_list);
         rv.setLayoutManager(new LinearLayoutManager(getActivity()));
         //TODO actually get data. probably from file
-        LocationModel trial = new LocationModel();
-        LocationModel trial2 = new LocationModel();
-        List<LocationModel> mList = new ArrayList<LocationModel>();
-        trial.setName("Atlanta");
-        trial2.setName("Portland");
-        mList.add(trial);
-        mList.add(trial2);
-        rv.setAdapter(new WeatherListAdapter(mList));
-
+        //mAdapter = new WeatherListAdapter(null);
+        //rv.setAdapter(mAdapter);
+        refreshWeather();
         return result;
+    }
+
+    private void refreshWeather() {
+        /* The zip function takes some number of observables and combines output from each one using
+         * a provided function, here just putting the original observables objects into a ArrayList,
+         * and outputs a new observable.  Exposition.
+         */
+        mSubscription = WeatherApi.getWeatherService().getAllLocationsWeather(mLocations, "imperial", mApi)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        weatherData -> rv.swapAdapter(new WeatherListAdapter(weatherData.getLocationList()), false),
+                        // TODO Have an errorfragment or something display
+                        error -> Log.d("error", error.getMessage()),
+                        () -> {});
     }
 
     @Override
@@ -95,6 +116,7 @@ public class LocationListFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+        mSubscription.unsubscribe();
     }
 
     public interface OnFragmentInteractionListener {
