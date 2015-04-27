@@ -1,7 +1,6 @@
 package gro.gibberish.drizzle.ui;
 
 import android.app.Activity;
-import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
@@ -12,14 +11,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.StreamCorruptedException;
 
 import gro.gibberish.drizzle.R;
 import gro.gibberish.drizzle.http.WeatherApi;
-import gro.gibberish.drizzle.models.BaseModel;
-import gro.gibberish.drizzle.models.LocationModel;
-import rx.Observable;
+import gro.gibberish.drizzle.models.MultipleLocationModel;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 
@@ -83,22 +86,61 @@ public class LocationListFragment extends Fragment {
         //TODO actually get data. probably from file
         //mAdapter = new WeatherListAdapter(null);
         //rv.setAdapter(mAdapter);
-        refreshWeather();
+        getWeatherFromApi();
         return result;
     }
 
-    private void refreshWeather() {
+    private void getWeatherFromApi() {
         /* The zip function takes some number of observables and combines output from each one using
          * a provided function, here just putting the original observables objects into a ArrayList,
          * and outputs a new observable.  Exposition.
          */
         mSubscription = WeatherApi.getWeatherService().getAllLocationsWeather(mLocations, "imperial", mApi)
                 .observeOn(AndroidSchedulers.mainThread())
+                .doOnNext(weatherData -> saveWeatherToFile(weatherData))
                 .subscribe(
                         weatherData -> rv.swapAdapter(new WeatherListAdapter(weatherData.getLocationList()), false),
                         // TODO Have an errorfragment or something display
                         error -> Log.d("error", error.getMessage()),
-                        () -> {});
+                        () -> {
+                        });
+    }
+
+    private MultipleLocationModel getWeatherFromFile() {
+        MultipleLocationModel data = null;
+        try {
+            FileInputStream fis = new FileInputStream(new File(getActivity().getCacheDir(), "allCurrentWeather.srl"));
+            ObjectInputStream in = new ObjectInputStream(fis);
+
+            data = (MultipleLocationModel) in.readObject();
+        }
+        catch (FileNotFoundException e) {
+            System.err.println("FileNotFoundException " + e.getMessage());
+        }
+        catch (IOException e) {
+            System.err.println("IOException " + e.getMessage());
+        }
+        catch (ClassNotFoundException e) {
+            System.err.println("ClassNotFoundException " + e.getMessage());
+        }
+
+        return data;
+    }
+
+    private void saveWeatherToFile(MultipleLocationModel data) {
+        try {
+            FileOutputStream fos = new FileOutputStream(new File(getActivity().getCacheDir(),"allCurrentWeather.srl"), false);
+            ObjectOutputStream out = new ObjectOutputStream(fos);
+
+            out.writeObject(data);
+            out.close();
+        }
+        catch (FileNotFoundException e) {
+            System.err.println("FileNotFoundException " + e.getMessage());
+        }
+        catch (IOException e) {
+            System.err.println("IOException " + e.getMessage());
+        }
     }
 
     @Override
