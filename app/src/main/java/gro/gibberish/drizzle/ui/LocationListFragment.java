@@ -38,8 +38,10 @@ public class LocationListFragment extends Fragment {
 
     private static final String LOCATIONS = "locations";
     private static final String API_KEY = "api_key";
+    private static final String NEEDS_REFRESH = "needs_refresh";
     private String mLocations;
     private String mApi;
+    private boolean needsRefresh;
     private RecyclerView rv;
     private Subscription mSubscription;
     private WeatherListAdapter mAdapter;
@@ -50,15 +52,16 @@ public class LocationListFragment extends Fragment {
     /**
      * Creates a new fragment containing a recycler view
      *
-     * @param location List of locations with format "zip + ,us" ie 20202,us,30303,us
+     * @param location List of locations as city ID, comma seperated
      * @return A new instance of fragment LocationListFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static LocationListFragment newInstance(String location, String apikey) {
+    public static LocationListFragment newInstance(String location, String apiKey, Boolean refresh) {
         LocationListFragment fragment = new LocationListFragment();
         Bundle args = new Bundle();
         args.putString(LOCATIONS, location);
-        args.putString(API_KEY, apikey);
+        args.putString(API_KEY, apiKey);
+        args.putBoolean(NEEDS_REFRESH, refresh);
         fragment.setArguments(args);
         return fragment;
     }
@@ -73,6 +76,7 @@ public class LocationListFragment extends Fragment {
         if (getArguments() != null) {
             mLocations = getArguments().getString(LOCATIONS);
             mApi = getArguments().getString(API_KEY);
+            needsRefresh = getArguments().getBoolean(NEEDS_REFRESH);
         }
     }
 
@@ -83,10 +87,13 @@ public class LocationListFragment extends Fragment {
         View result = inflater.inflate(R.layout.fragment_location_list, container, false);
         rv = (RecyclerView) result.findViewById(R.id.recycler_list);
         rv.setLayoutManager(new LinearLayoutManager(getActivity()));
-        //TODO actually get data. probably from file
-        //mAdapter = new WeatherListAdapter(null);
-        //rv.setAdapter(mAdapter);
-        getWeatherFromApi();
+        if (needsRefresh) {
+            getWeatherFromApi();
+        } else {
+            MultipleLocationModel data = getWeatherFromFile();
+            rv.swapAdapter(new WeatherListAdapter(data.getLocationList()), false);
+
+        }
         return result;
     }
 
@@ -95,18 +102,19 @@ public class LocationListFragment extends Fragment {
          * a provided function, here just putting the original observables objects into a ArrayList,
          * and outputs a new observable.  Exposition.
          */
+        Log.d("weather from internet!", "true");
         mSubscription = WeatherApi.getWeatherService().getAllLocationsWeather(mLocations, "imperial", mApi)
-                .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext(weatherData -> saveWeatherToFile(weatherData))
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         weatherData -> rv.swapAdapter(new WeatherListAdapter(weatherData.getLocationList()), false),
                         // TODO Have an errorfragment or something display
                         error -> Log.d("error", error.getMessage()),
-                        () -> {
-                        });
+                        () -> {});
     }
 
     private MultipleLocationModel getWeatherFromFile() {
+        Log.d("weather from files!", "true");
         MultipleLocationModel data = null;
         try {
             FileInputStream fis = new FileInputStream(new File(getActivity().getCacheDir(), "allCurrentWeather.srl"));
@@ -123,7 +131,6 @@ public class LocationListFragment extends Fragment {
         catch (ClassNotFoundException e) {
             System.err.println("ClassNotFoundException " + e.getMessage());
         }
-
         return data;
     }
 

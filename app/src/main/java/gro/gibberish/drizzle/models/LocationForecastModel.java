@@ -11,7 +11,7 @@ import java.util.List;
  * TODO consider separating the classes for list/temp etc their own java file
  */
 public class LocationForecastModel implements BaseModel, Serializable{
-    private static final long serialVersionUID = 4L;
+    private static final long serialVersionUID = 1L;
 
     private City city;
 
@@ -28,7 +28,7 @@ public class LocationForecastModel implements BaseModel, Serializable{
         this.weatherList = weatherList;
     }
 
-    public static class weatherList {
+    public static class weatherList implements Serializable {
         private int dt;
         private Temp temp;
         private int humidity;
@@ -67,7 +67,7 @@ public class LocationForecastModel implements BaseModel, Serializable{
         }
     }
 
-    public static class Temp {
+    public static class Temp implements Serializable {
         private int max;
         private int min;
 
@@ -88,7 +88,7 @@ public class LocationForecastModel implements BaseModel, Serializable{
         }
     }
 
-    public static class City {
+    public static class City implements Serializable{
         private String name;
 
         public String getName() {

@@ -7,46 +7,44 @@ package gro.gibberish.drizzle.activity;
     import android.preference.PreferenceManager;
     import android.support.v7.app.ActionBarActivity;
     import android.support.v7.widget.Toolbar;
-    import android.util.Log;
     import android.view.Menu;
     import android.view.MenuItem;
-    import android.widget.TextView;
-
-    import java.util.List;
 
     import gro.gibberish.drizzle.R;
-    import gro.gibberish.drizzle.http.WeatherApi;
-    import gro.gibberish.drizzle.models.LocationModel;
     import gro.gibberish.drizzle.ui.LocationDetailFragment;
     import gro.gibberish.drizzle.ui.LocationListFragment;
-    import rx.Observable;
-    import rx.android.lifecycle.LifecycleObservable;
-    import rx.android.schedulers.AndroidSchedulers;
 
 
 public class MainActivity extends ActionBarActivity implements
         LocationDetailFragment.OnFragmentInteractionListener,
         LocationListFragment.OnFragmentInteractionListener {
 
-    private static final int FIFTEEN_MINUTES_MS = 900000;
+    private static final int ONE_HOUR_MS = 3600000;
     private static final String SP_LAST_REFRESH = "SP_LAST_REFRESH";
-    private static final String SERVICE_ENDPOINT ="http://api.openweathermap.org/data/2.5";
-    private String API_KEY;
-    private int lastRefresh;
+    private long lastRefresh;
+    private boolean needsRefresh = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
 
-        API_KEY = getApplicationContext().getResources().getString(R.string.api_key);
+        String API_KEY = getApplicationContext().getResources().getString(R.string.api_key);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         if (toolbar != null) {
             setSupportActionBar(toolbar);
         }
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+        lastRefresh = sp.getLong(SP_LAST_REFRESH, 0L);
+        if (System.currentTimeMillis() - lastRefresh > ONE_HOUR_MS) {
+            // refresh weather data automatically, set lastrefresh to now
+            needsRefresh = true;
+            lastRefresh = System.currentTimeMillis();
+
+        }
         if (savedInstanceState == null) {
-            LocationListFragment f = LocationListFragment.newInstance("703448,2643743", API_KEY);
+            LocationListFragment f = LocationListFragment.newInstance("703448,2643743", API_KEY, needsRefresh);
             FragmentTransaction ft = getFragmentManager().beginTransaction();
             ft.replace(R.id.weather_content, f).commit();
         }
@@ -55,12 +53,7 @@ public class MainActivity extends ActionBarActivity implements
     @Override
     protected void onResume() {
         super.onResume();
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
-        lastRefresh = sp.getInt(SP_LAST_REFRESH, 0);
-        // 900000 == 15 minutes in ms
-        if (System.currentTimeMillis() - lastRefresh > FIFTEEN_MINUTES_MS) {
-            // refresh weather data automatically, set lastrefresh to now
-        }
+
     }
 
 
@@ -87,7 +80,7 @@ public class MainActivity extends ActionBarActivity implements
     public void onPause() {
         super.onPause();
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
-        sp.edit().putInt(SP_LAST_REFRESH, lastRefresh);
+        sp.edit().putLong(SP_LAST_REFRESH, lastRefresh).apply();
 
     }
 

@@ -10,7 +10,7 @@ import java.util.List;
  * A model for a returned JSON object for a specific location from OpenWeatherMap
  */
 public class LocationModel implements BaseModel, Serializable {
-    private static final long serialVersionUID = 2L;
+    private static final long serialVersionUID = 1L;
 
     private String name;
     private List<Weather> weather = new ArrayList<Weather>();
@@ -53,7 +53,7 @@ public class LocationModel implements BaseModel, Serializable {
     }
 
 
-    public static class Main {
+    public static class Main implements Serializable{
         private double temp;
         private double humidity;
 

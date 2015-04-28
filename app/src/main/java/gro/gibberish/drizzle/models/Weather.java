@@ -1,9 +1,11 @@
 package gro.gibberish.drizzle.models;
 
+import java.io.Serializable;
+
 /**
  * Change this
  */
-public class Weather {
+public class Weather implements Serializable{
     private String main;
     private String description;
 
