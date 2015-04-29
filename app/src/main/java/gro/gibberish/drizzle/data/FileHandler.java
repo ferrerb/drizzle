@@ -1,4 +1,4 @@
-package gro.gibberish.drizzle.http;
+package gro.gibberish.drizzle.data;
 
 import android.util.Log;
 
@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.util.List;
 
 /**
  * Change this
@@ -18,7 +17,15 @@ import java.util.List;
 public class FileHandler {
     private FileHandler() {}
 
-    public static <T extends Serializable> void saveWeatherToFile(T data, String path, String fileName) {
+    /**
+     * Serializes an object to a file
+     *
+     * @param data The object to be serialized
+     * @param path The path to the to-be-created file, uses a File object since getCacheDir() returns one
+     * @param fileName The name of the file to be created
+     * @param <T> The type of object being serialized
+     */
+    public static <T extends Serializable> void saveSerializedObjectToFile(T data, File path, String fileName) {
         try {
             FileOutputStream fos = new FileOutputStream(
                     new File(path, fileName), false);
@@ -35,9 +42,25 @@ public class FileHandler {
         }
     }
 
-    public static <T> T getWeatherFromFile(Class<T> type, String path, String fileName) {
+    /**
+     * Retrieves a serialized object from file
+     *
+     * @param type The class type to be deserialized
+     * @param path The path to the desired file, uses a File object since getCacheDir() returns one
+     * @param fileName The name of the file to be deserialized
+     * @param <T> The class type to be deserialized
+     * @return An object of type <T> containing created from the specified file
+     */
+    /* The warning is from the cast from the file object, to the desired type. I don't know a good
+     * way to avoid this, and I can't move it to be more localized with the try statement. Perhaps I could
+     * create a separate object in the try block, and then assign it to the data variable. So, make
+     * sure you pass the class which matches the serialized object. No pressure.
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> T getSerializedObjectFromFile(Class<T> type, File path, String fileName) {
         Log.d("weather from files!", "true");
         T data = null;
+
         try {
             FileInputStream fis = new FileInputStream(
                     new File(path, fileName));

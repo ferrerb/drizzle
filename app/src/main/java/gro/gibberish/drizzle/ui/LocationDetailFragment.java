@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,13 +14,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import gro.gibberish.drizzle.R;
-import gro.gibberish.drizzle.http.WeatherApi;
+import gro.gibberish.drizzle.data.WeatherApi;
 import gro.gibberish.drizzle.models.BaseModel;
 import gro.gibberish.drizzle.models.LocationForecastModel;
 import gro.gibberish.drizzle.models.LocationModel;
 import rx.Observable;
-import rx.Subscription;
-import rx.android.lifecycle.LifecycleObservable;
 import rx.android.schedulers.AndroidSchedulers;
 
 /**
@@ -52,7 +49,6 @@ public class LocationDetailFragment extends Fragment {
      * @param loc The desired location's zip code.
      * @return A new instance of fragment LocationDetailFragment.
      */
-    // TODO: Rename and change types and number of parameters
     public static LocationDetailFragment newInstance(String key, String loc) {
         LocationDetailFragment fragment = new LocationDetailFragment();
         Bundle args = new Bundle();
