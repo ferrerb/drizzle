@@ -13,6 +13,7 @@ public class LocationModel implements BaseModel, Serializable {
     private static final long serialVersionUID = 1L;
 
     private String name;
+    private long id;
     private List<Weather> weather = new ArrayList<Weather>();
     private Main main;
 
@@ -34,6 +35,14 @@ public class LocationModel implements BaseModel, Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public List<Weather> getWeather() {

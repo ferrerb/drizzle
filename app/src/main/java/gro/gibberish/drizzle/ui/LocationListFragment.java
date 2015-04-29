@@ -107,17 +107,20 @@ public class LocationListFragment extends Fragment {
                 .doOnNext(weatherData -> saveWeatherToFile(weatherData))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        weatherData -> rv.swapAdapter(new WeatherListAdapter(weatherData.getLocationList()), false),
+                        weatherData -> rv.swapAdapter(
+                                new WeatherListAdapter(weatherData.getLocationList()), false),
                         // TODO Have an errorfragment or something display
                         error -> Log.d("error", error.getMessage()),
-                        () -> {});
+                        () -> {mListener.onListWeatherRefreshed(System.currentTimeMillis());});
     }
 
     private MultipleLocationModel getWeatherFromFile() {
+        //TODO Move the file get/save to a helper classes, and figure out how to do it with observables for async
         Log.d("weather from files!", "true");
         MultipleLocationModel data = null;
         try {
-            FileInputStream fis = new FileInputStream(new File(getActivity().getCacheDir(), "allCurrentWeather.srl"));
+            FileInputStream fis = new FileInputStream(
+                    new File(getActivity().getCacheDir(), "allCurrentWeather.srl"));
             ObjectInputStream in = new ObjectInputStream(fis);
 
             data = (MultipleLocationModel) in.readObject();
@@ -136,7 +139,8 @@ public class LocationListFragment extends Fragment {
 
     private void saveWeatherToFile(MultipleLocationModel data) {
         try {
-            FileOutputStream fos = new FileOutputStream(new File(getActivity().getCacheDir(),"allCurrentWeather.srl"), false);
+            FileOutputStream fos = new FileOutputStream(
+                    new File(getActivity().getCacheDir(),"allCurrentWeather.srl"), false);
             ObjectOutputStream out = new ObjectOutputStream(fos);
 
             out.writeObject(data);
@@ -170,7 +174,9 @@ public class LocationListFragment extends Fragment {
 
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        public void onLocationChosen(Uri uri);
+        void onListWeatherRefreshed(long refreshTime);
+
+        void onLocationChosen(long id);
     }
 
 }

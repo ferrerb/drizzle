@@ -1,5 +1,6 @@
 package gro.gibberish.drizzle.ui;
 
+import android.content.DialogInterface;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -43,13 +44,18 @@ public class WeatherListAdapter extends RecyclerView.Adapter<WeatherListAdapter.
 
     }
 
-    public static class RowHolder extends RecyclerView.ViewHolder {
+    public static class RowHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private final TextView locationName;
         private final TextView locationTemp;
+
         public RowHolder(View row) {
             super(row);
             this.locationName = (TextView) row.findViewById(R.id.location_list_name);
             this.locationTemp = (TextView) row.findViewById(R.id.location_list_current_temp);
+        }
+
+        @Override
+        public void onClick(View v) {
         }
 
         void bindModel(LocationModel data) {

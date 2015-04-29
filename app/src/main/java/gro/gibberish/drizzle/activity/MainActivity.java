@@ -21,7 +21,6 @@ public class MainActivity extends ActionBarActivity implements
 
     private static final int ONE_HOUR_MS = 3600000;
     private static final String SP_LAST_REFRESH = "SP_LAST_REFRESH";
-    private long lastRefresh;
     private boolean needsRefresh = false;
 
     @Override
@@ -36,12 +35,10 @@ public class MainActivity extends ActionBarActivity implements
             setSupportActionBar(toolbar);
         }
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
-        lastRefresh = sp.getLong(SP_LAST_REFRESH, 0L);
+        long lastRefresh = sp.getLong(SP_LAST_REFRESH, 0L);
         if (System.currentTimeMillis() - lastRefresh > ONE_HOUR_MS) {
             // refresh weather data automatically, set lastrefresh to now
             needsRefresh = true;
-            lastRefresh = System.currentTimeMillis();
-
         }
         if (savedInstanceState == null) {
             LocationListFragment f = LocationListFragment.newInstance("703448,2643743", API_KEY, needsRefresh);
@@ -79,9 +76,6 @@ public class MainActivity extends ActionBarActivity implements
     @Override
     public void onPause() {
         super.onPause();
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
-        sp.edit().putLong(SP_LAST_REFRESH, lastRefresh).apply();
-
     }
 
     @Override
@@ -90,7 +84,13 @@ public class MainActivity extends ActionBarActivity implements
     }
 
     @Override
-    public void onLocationChosen(Uri uri) {
-        // Interface from list fragment, launch detail fragment/activity
+    public void onListWeatherRefreshed(long l) {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+        sp.edit().putLong(SP_LAST_REFRESH, l).apply();
+    }
+
+    @Override
+    public void onLocationChosen(long id) {
+        // TODO launch the location detail fragment/activity
     }
 }
