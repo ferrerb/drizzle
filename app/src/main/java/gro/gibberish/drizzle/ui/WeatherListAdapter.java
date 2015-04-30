@@ -17,17 +17,19 @@ import gro.gibberish.drizzle.models.LocationModel;
  */
 public class WeatherListAdapter extends RecyclerView.Adapter<WeatherListAdapter.RowHolder> {
     List<LocationModel> mLocationList;
+    OnItemTouchListener mOnItemTouchListener;
 
-    public WeatherListAdapter(List<LocationModel> locationList) {
+    public WeatherListAdapter(List<LocationModel> locationList, OnItemTouchListener listener) {
         // TODO check for null? throw exception if null?
         mLocationList = locationList;
+        mOnItemTouchListener = listener;
     }
 
     @Override
     public RowHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.location_list_row, viewGroup, false);
 
-        return new RowHolder(v);
+        return new RowHolder(v, mOnItemTouchListener);
     }
 
     @Override
@@ -44,19 +46,17 @@ public class WeatherListAdapter extends RecyclerView.Adapter<WeatherListAdapter.
 
     }
 
-    public static class RowHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public static class RowHolder extends RecyclerView.ViewHolder {
         private final TextView locationName;
         private final TextView locationTemp;
 
-        public RowHolder(View row) {
+        public RowHolder(View row, OnItemTouchListener listener) {
             super(row);
             this.locationName = (TextView) row.findViewById(R.id.location_list_name);
             this.locationTemp = (TextView) row.findViewById(R.id.location_list_current_temp);
+            row.setOnClickListener(v -> listener.onLocationClick(v, getAdapterPosition()));
         }
 
-        @Override
-        public void onClick(View v) {
-        }
 
         void bindModel(LocationModel data) {
             locationName.setText(data.getName());

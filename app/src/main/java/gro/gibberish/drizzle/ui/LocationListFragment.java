@@ -17,10 +17,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.List;
 
 import gro.gibberish.drizzle.R;
 import gro.gibberish.drizzle.data.FileHandler;
 import gro.gibberish.drizzle.data.WeatherApi;
+import gro.gibberish.drizzle.models.LocationModel;
 import gro.gibberish.drizzle.models.MultipleLocationModel;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
@@ -45,6 +47,8 @@ public class LocationListFragment extends Fragment {
     private RecyclerView rv;
     private Subscription mSubscription;
     private WeatherListAdapter mAdapter;
+    private List<LocationModel> mData;
+    OnItemTouchListener mOnItemClick;
 
 
     private OnFragmentInteractionListener mListener;
@@ -86,6 +90,13 @@ public class LocationListFragment extends Fragment {
         View result = inflater.inflate(R.layout.fragment_location_list, container, false);
         rv = (RecyclerView) result.findViewById(R.id.recycler_list);
         rv.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+        mOnItemClick = new OnItemTouchListener() {
+            @Override
+            public void onLocationClick(View v, int position) {
+                mListener.onLocationChosen(mData.get(position).getId());
+            }
+        };
         if (needsRefresh) {
             getWeatherFromApi();
         } else {
@@ -94,8 +105,9 @@ public class LocationListFragment extends Fragment {
                             MultipleLocationModel.class,
                             getActivity().getCacheDir(),
                             WEATHER_LIST_FILE);
-
-            rv.swapAdapter(new WeatherListAdapter(data.getLocationList()), false);
+            mData = data.getLocationList();
+            // TODO If data == null, call the api?
+            rv.swapAdapter(new WeatherListAdapter(mData, mOnItemClick), false);
 
         }
         return result;
@@ -108,8 +120,9 @@ public class LocationListFragment extends Fragment {
                         weatherData, getActivity().getCacheDir(), WEATHER_LIST_FILE))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        weatherData -> rv.swapAdapter(
-                                new WeatherListAdapter(weatherData.getLocationList()), false),
+                        weatherData -> { mData = weatherData.getLocationList();
+                            rv.swapAdapter(
+                                new WeatherListAdapter(mData, mOnItemClick), false);},
                         // TODO Have an errorfragment or something display
                         error -> Log.d("error", error.getMessage()),
                         () -> {mListener.onListWeatherRefreshed(System.currentTimeMillis());});

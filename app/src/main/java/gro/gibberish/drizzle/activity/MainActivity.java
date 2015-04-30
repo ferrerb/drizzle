@@ -22,13 +22,14 @@ public class MainActivity extends ActionBarActivity implements
     private static final int ONE_HOUR_MS = 3600000;
     private static final String SP_LAST_REFRESH = "SP_LAST_REFRESH";
     private boolean needsRefresh = false;
+    private String API_KEY;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
 
-        String API_KEY = getApplicationContext().getResources().getString(R.string.api_key);
+        API_KEY = getApplicationContext().getResources().getString(R.string.api_key);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         if (toolbar != null) {
@@ -93,5 +94,8 @@ public class MainActivity extends ActionBarActivity implements
     @Override
     public void onLocationChosen(long id) {
         // TODO launch the location detail fragment/activity
+        LocationDetailFragment f = LocationDetailFragment.newInstance(API_KEY, Long.toString(id));
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        ft.replace(R.id.weather_content, f).commit();
     }
 }
