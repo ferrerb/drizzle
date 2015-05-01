@@ -15,10 +15,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import gro.gibberish.drizzle.R;
+import gro.gibberish.drizzle.data.FileHandler;
 import gro.gibberish.drizzle.data.WeatherApi;
 import gro.gibberish.drizzle.models.BaseModel;
 import gro.gibberish.drizzle.models.LocationForecastModel;
 import gro.gibberish.drizzle.models.LocationModel;
+import gro.gibberish.drizzle.models.MultipleLocationModel;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 
@@ -35,6 +37,7 @@ public class LocationDetailFragment extends Fragment {
     private static final String API_KEY = "API_KEY";
     private static final String LOCATION = "LOCATION";
     private static final String DAY_COUNT = "5";
+    private String unitType;
 
     private String mApiKey;
     private String mLocation;
@@ -70,13 +73,30 @@ public class LocationDetailFragment extends Fragment {
             mApiKey = getArguments().getString(API_KEY);
             mLocation = getArguments().getString(LOCATION);
         }
-        ((ActionBarActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_location_detail, container, false);
+        View result = inflater.inflate(R.layout.fragment_location_detail, container, false);
+        List<BaseModel> mList = new ArrayList<BaseModel>();
+        MultipleLocationModel asdf = FileHandler.getSerializedObjectFromFile(MultipleLocationModel.class, getActivity().getCacheDir(), "allCurrentWeather.srl");
+        for (LocationModel l : asdf.getLocationList()) {
+            if (Long.toString(l.getId()).equals(mLocation)) {
+                mList.add(l);
+            }
+        }
+        LocationForecastModel mForecast;
+        WeatherApi.getWeatherService().getLocationDailyForecast(mLocation, "5", "imperial", mApiKey)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        mList::add,
+                        System.err::println,
+                        () -> {insertLocationData(mList);});
+
+        ((ActionBarActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        return result;
     }
 
     @Override

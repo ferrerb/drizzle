@@ -143,7 +143,9 @@ public class LocationListFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
-        mSubscription.unsubscribe();
+        if (mSubscription != null) {
+            mSubscription.unsubscribe();
+        }
     }
 
     public interface OnFragmentInteractionListener {

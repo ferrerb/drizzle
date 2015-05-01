@@ -67,10 +67,10 @@ public class LocationForecastModel implements BaseModel, Serializable{
     }
 
     public static class Temp implements Serializable {
-        private int max;
-        private int min;
+        private double max;
+        private double min;
 
-        public int getMax() {
+        public double getMax() {
             return max;
         }
 
@@ -78,7 +78,7 @@ public class LocationForecastModel implements BaseModel, Serializable{
             this.max = max;
         }
 
-        public int getMin() {
+        public double getMin() {
             return min;
         }
 

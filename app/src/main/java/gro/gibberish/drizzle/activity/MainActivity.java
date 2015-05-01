@@ -94,6 +94,7 @@ public class MainActivity extends ActionBarActivity implements
     @Override
     public void onLocationChosen(long id) {
         // TODO launch the location detail fragment/activity
+        // TODO Work on back, as hitting back exits the app from detail fragment, and home doesnt work
         LocationDetailFragment f = LocationDetailFragment.newInstance(API_KEY, Long.toString(id));
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         ft.replace(R.id.weather_content, f).commit();
