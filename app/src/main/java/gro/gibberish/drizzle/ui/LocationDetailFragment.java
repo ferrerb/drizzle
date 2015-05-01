@@ -86,7 +86,6 @@ public class LocationDetailFragment extends Fragment {
                 mList.add(l);
             }
         }
-        LocationForecastModel mForecast;
         WeatherApi.getWeatherService().getLocationDailyForecast(mLocation, "5", "imperial", mApiKey)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
