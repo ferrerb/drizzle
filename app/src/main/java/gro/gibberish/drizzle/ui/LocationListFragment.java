@@ -115,6 +115,7 @@ public class LocationListFragment extends Fragment {
 
     private void getWeatherFromApi() {
         Log.d("weather from internet!", "true");
+        // TODO save each locationModel to a seperate file named after its ID
         mSubscription = WeatherApi.getWeatherService().getAllLocationsWeather(mLocations, "imperial", mApi)
                 .doOnNext(weatherData -> FileHandler.saveSerializedObjectToFile(
                         weatherData, getActivity().getCacheDir(), WEATHER_LIST_FILE))
