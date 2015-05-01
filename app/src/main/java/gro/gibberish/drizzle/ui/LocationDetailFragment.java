@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -69,6 +70,7 @@ public class LocationDetailFragment extends Fragment {
             mApiKey = getArguments().getString(API_KEY);
             mLocation = getArguments().getString(LOCATION);
         }
+        ((ActionBarActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     @Override
