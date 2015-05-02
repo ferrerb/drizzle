@@ -15,76 +15,16 @@ public class LocationForecastModel implements BaseModel, Serializable{
     private City city;
 
     @SerializedName("list")
-    private List<weatherList> weatherList = new ArrayList<weatherList>();
+    private List<WeatherList> weatherList = new ArrayList<WeatherList>();
 
     public LocationForecastModel () {}
 
-    public List<weatherList> getList() {
+    public List<WeatherList> getList() {
         return weatherList;
     }
 
-    public void setList(List<weatherList> weatherList) {
+    public void setList(List<WeatherList> weatherList) {
         this.weatherList = weatherList;
-    }
-
-    public static class weatherList implements Serializable {
-        private int dt;
-        private Temp temp;
-        private int humidity;
-        private List<Weather> weather = new ArrayList< Weather >();
-
-        public int getDt() {
-            return dt;
-        }
-
-        public void setDt(int dt) {
-            this.dt = dt;
-        }
-
-        public Temp getTemp() {
-            return temp;
-        }
-
-        public void setTemp(Temp temp) {
-            this.temp = temp;
-        }
-
-        public int getHumidity() {
-            return humidity;
-        }
-
-        public void setHumidity(int humidity) {
-            this.humidity = humidity;
-        }
-
-        public List<Weather> getWeather() {
-            return weather;
-        }
-
-        public void setWeather(List<Weather> weather) {
-            this.weather = weather;
-        }
-    }
-
-    public static class Temp implements Serializable {
-        private double max;
-        private double min;
-
-        public double getMax() {
-            return max;
-        }
-
-        public void setMax(int max) {
-            this.max = max;
-        }
-
-        public double getMin() {
-            return min;
-        }
-
-        public void setMin(int min) {
-            this.min = min;
-        }
     }
 
     public static class City implements Serializable{
