@@ -19,7 +19,7 @@ public class LocationModel implements BaseModel, Serializable {
 
     public LocationModel() {}
 
-    public int getDt() {
+    public long getDt() {
         return dt;
     }
 
@@ -27,7 +27,7 @@ public class LocationModel implements BaseModel, Serializable {
         this.dt = dt;
     }
 
-    private int dt;
+    private long dt;
 
     public String getName() {
         return name;
@@ -65,6 +65,7 @@ public class LocationModel implements BaseModel, Serializable {
     public static class Main implements Serializable{
         private double temp;
         private double humidity;
+        private double pressure;
 
         public Main() {}
 
@@ -84,6 +85,13 @@ public class LocationModel implements BaseModel, Serializable {
             this.humidity = humidity;
         }
 
+        public double getPressure() {
+            return pressure;
+        }
+
+        public void setPressure(double pressure) {
+            this.pressure = pressure;
+        }
     }
 
     @Override
@@ -106,7 +114,6 @@ public class LocationModel implements BaseModel, Serializable {
         int result = name != null ? name.hashCode() : 0;
         result = 31 * result + (weather != null ? weather.hashCode() : 0);
         result = 31 * result + (main != null ? main.hashCode() : 0);
-        result = 31 * result + dt;
         return result;
     }
 

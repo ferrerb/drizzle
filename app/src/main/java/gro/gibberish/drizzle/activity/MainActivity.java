@@ -1,6 +1,7 @@
 package gro.gibberish.drizzle.activity;
 
     import android.app.FragmentTransaction;
+    import android.content.Intent;
     import android.content.SharedPreferences;
     import android.net.Uri;
     import android.os.Bundle;
@@ -16,7 +17,6 @@ package gro.gibberish.drizzle.activity;
 
 
 public class MainActivity extends ActionBarActivity implements
-        LocationDetailFragment.OnFragmentInteractionListener,
         LocationListFragment.OnFragmentInteractionListener {
 
     private static final int ONE_HOUR_MS = 3600000;
@@ -79,10 +79,6 @@ public class MainActivity extends ActionBarActivity implements
         super.onPause();
     }
 
-    @Override
-    public void onFragmentInteraction(Uri uri) {
-        //asdf
-    }
 
     @Override
     public void onListWeatherRefreshed(long l) {
@@ -93,10 +89,12 @@ public class MainActivity extends ActionBarActivity implements
 
     @Override
     public void onLocationChosen(long id) {
-        // TODO launch the location detail fragment/activity
+        // TODO launch the location detail !activity! move this code to the DetailActivity
         // TODO Work on back, as hitting back exits the app from detail fragment, and home doesnt work
-        LocationDetailFragment f = LocationDetailFragment.newInstance(API_KEY, Long.toString(id));
-        FragmentTransaction ft = getFragmentManager().beginTransaction();
-        ft.replace(R.id.weather_content, f).commit();
+        Intent i = new Intent();
+        i.setClass(this, DetailActivity.class);
+        i.putExtra("api_key", API_KEY);
+        i.putExtra("id", Long.toString(id));
+        startActivity(i);
     }
 }

@@ -9,13 +9,14 @@ import java.util.List;
  */
 public class WeatherList implements Serializable{
     public WeatherList() {}
-    
-    private int dt;
+
+    private long dt;
     private Temp temp;
     private int humidity;
+    private double pressure;
     private List<Weather> weather = new ArrayList< Weather >();
 
-    public int getDt() {
+    public long getDt() {
         return dt;
     }
 
@@ -46,4 +47,13 @@ public class WeatherList implements Serializable{
     public void setWeather(List<Weather> weather) {
         this.weather = weather;
     }
+
+    public double getPressure() {
+        return pressure;
+    }
+
+    public void setPressure(double pressure) {
+        this.pressure = pressure;
+    }
+
 }

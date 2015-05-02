@@ -5,6 +5,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -41,10 +43,7 @@ public class LocationDetailFragment extends Fragment {
 
     private String mApiKey;
     private String mLocation;
-
-    private Observable<List<BaseModel>> mObservable;
-
-    private OnFragmentInteractionListener mListener;
+    private RecyclerView forecastList;
 
     /**
      * Returns a new instance of this fragment with the specified parameters
@@ -91,9 +90,11 @@ public class LocationDetailFragment extends Fragment {
                 .subscribe(
                         mList::add,
                         System.err::println,
-                        () -> {insertLocationData(mList);});
+                        () -> {
+                            insertLocationData(mList);
+                        });
 
-        ((ActionBarActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ((ActionBarActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         return result;
     }
@@ -115,54 +116,42 @@ public class LocationDetailFragment extends Fragment {
          * and outputs a new observable.  Exposition.
          */
         Observable.zip(
-            WeatherApi.getWeatherService().getLocationDetailWeather(mLocation, getString(R.string.units_imperial), mApiKey),
-            WeatherApi.getWeatherService().getLocationDailyForecast(mLocation, DAY_COUNT, getString(R.string.units_imperial), mApiKey),
-            (locationData, forecastData) -> { List<BaseModel> mList = new ArrayList<BaseModel>();
-                mList.add(locationData);
-                mList.add(forecastData);
-                return mList; })
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(
-                weatherData -> insertLocationData(weatherData),
-                // TODO Have an errorfragment or something display
-                error -> Log.d("error", error.getMessage()),
-                () -> {});
+                WeatherApi.getWeatherService().getLocationDetailWeather(mLocation, getString(R.string.units_imperial), mApiKey),
+                WeatherApi.getWeatherService().getLocationDailyForecast(mLocation, DAY_COUNT, getString(R.string.units_imperial), mApiKey),
+                (locationData, forecastData) -> {
+                    List<BaseModel> mList = new ArrayList<BaseModel>();
+                    mList.add(locationData);
+                    mList.add(forecastData);
+                    return mList;
+                })
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        weatherData -> insertLocationData(weatherData),
+                        // TODO Have an errorfragment or something display
+                        error -> Log.d("error", error.getMessage()),
+                        () -> {
+                        });
     }
 
     private void insertLocationData(List<BaseModel> l) {
         TextView cityName = (TextView) getActivity().findViewById(R.id.city_name);
         TextView cityTemp = (TextView) getActivity().findViewById(R.id.city_current_temp);
         TextView cityHumid = (TextView) getActivity().findViewById(R.id.city_current_humidity);
-        LocationModel mModel = (LocationModel)l.get(0);
-        LocationForecastModel mForecast = (LocationForecastModel)l.get(1);
+        forecastList = (RecyclerView) getActivity().findViewById(R.id.forecast_recyclerview);
+        LocationModel mModel = (LocationModel) l.get(0);
+        LocationForecastModel mForecast = (LocationForecastModel) l.get(1);
 
         cityName.setText(mModel.getName());
         cityTemp.setText(Double.toString(mModel.getMain().getTemp()) + getString(R.string.degrees_fahrenheit));
         cityHumid.setText(Double.toString(mModel.getMain().getHumidity()) + getString(R.string.percent));
-        //TODO Put the forecast list into some kind of adapter, ???
 
+        forecastList.setLayoutManager(new LinearLayoutManager(getActivity()));
+        forecastList.setAdapter(new WeatherForecastAdapter((LocationForecastModel) l.get(1)));
     }
 
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        try {
-            mListener = (OnFragmentInteractionListener) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
     }
-
-    public interface OnFragmentInteractionListener {
-        // TODO Come up with a reason for this fragment to talk to the activity?
-        public void onFragmentInteraction(Uri uri);
-    }
-
 }
