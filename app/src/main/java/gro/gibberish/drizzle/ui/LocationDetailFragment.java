@@ -28,16 +28,13 @@ import rx.android.schedulers.AndroidSchedulers;
 
 /**
  * Displays current and predicted weather for a specific location
- * Activities that contain this fragment must implement the
- * {@link LocationDetailFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
  * Use the {@link LocationDetailFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
 public class LocationDetailFragment extends Fragment {
     // Parameter names for creating a new fragment instance
-    private static final String API_KEY = "API_KEY";
-    private static final String LOCATION = "LOCATION";
+    private static final String API_KEY = "api_key";
+    private static final String LOCATION = "id";
     private static final String DAY_COUNT = "5";
     private String unitType;
 
