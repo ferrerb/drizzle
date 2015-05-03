@@ -1,9 +1,11 @@
 package gro.gibberish.drizzle.ui;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -36,11 +38,15 @@ public class LocationDetailFragment extends Fragment {
     private static final String API_KEY = "api_key";
     private static final String LOCATION = "id";
     private static final String DAY_COUNT = "5";
-    private String unitType;
+    private static final long ONE_HOUR_MS = 3600000;
+    // Appended to the forecast saved file and shared pref update time to differentiate from a locations saved current weather
+    private static final String FORECAST_FILE_APPENDED = "cast";
+    private static final String WEATHER_LIST_FILE = "allCurrentWeather.srl";
 
+    private SharedPreferences sp;
+    private String unitType;
     private String mApiKey;
     private String mLocation;
-    private RecyclerView forecastList;
 
     /**
      * Returns a new instance of this fragment with the specified parameters
@@ -75,21 +81,7 @@ public class LocationDetailFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View result = inflater.inflate(R.layout.fragment_location_detail, container, false);
-        List<BaseModel> mList = new ArrayList<BaseModel>();
-        MultipleLocationModel asdf = FileHandler.getSerializedObjectFromFile(MultipleLocationModel.class, getActivity().getCacheDir(), "allCurrentWeather.srl");
-        for (LocationModel l : asdf.getLocationList()) {
-            if (Long.toString(l.getId()).equals(mLocation)) {
-                mList.add(l);
-            }
-        }
-        WeatherApi.getWeatherService().getLocationDailyForecast(mLocation, "5", "imperial", mApiKey)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        mList::add,
-                        System.err::println,
-                        () -> {
-                            insertLocationData(mList);
-                        });
+        sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
         ((ActionBarActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -99,7 +91,7 @@ public class LocationDetailFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        //refreshWeather();
+        insertWeather();
     }
 
     @Override
@@ -107,34 +99,55 @@ public class LocationDetailFragment extends Fragment {
         super.onPause();
     }
 
-    private void refreshWeather() {
-        /* The zip function takes some number of observables and combines output from each one using
-         * a provided function, here just putting the original observables objects into a ArrayList,
-         * and outputs a new observable.  Exposition.
-         */
-        Observable.zip(
-                WeatherApi.getWeatherService().getLocationDetailWeather(mLocation, getString(R.string.units_imperial), mApiKey),
-                WeatherApi.getWeatherService().getLocationDailyForecast(mLocation, DAY_COUNT, getString(R.string.units_imperial), mApiKey),
-                (locationData, forecastData) -> {
-                    List<BaseModel> mList = new ArrayList<BaseModel>();
-                    mList.add(locationData);
-                    mList.add(forecastData);
-                    return mList;
-                })
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        weatherData -> insertLocationData(weatherData),
-                        // TODO Have an errorfragment or something display
-                        error -> Log.d("error", error.getMessage()),
-                        () -> {
-                        });
+    private void insertWeather() {
+        List<BaseModel> mList = new ArrayList<BaseModel>();
+        long lastForecastRefresh = sp.getLong((mLocation + FORECAST_FILE_APPENDED), 0L);
+        // TODO Move all file access stuff to observables. possibly return observable from FileHandler
+        MultipleLocationModel weatherFromFile = FileHandler.getSerializedObjectFromFile(
+                MultipleLocationModel.class, getActivity().getCacheDir(), WEATHER_LIST_FILE);
+
+        for (LocationModel l : weatherFromFile.getLocationList()) {
+            if (Long.toString(l.getId()).equals(mLocation)) {
+                mList.add(l);
+            }
+        }
+
+        LocationForecastModel forecastFromFile = FileHandler.getSerializedObjectFromFile(
+                LocationForecastModel.class,
+                getActivity().getCacheDir(),
+                mLocation + FORECAST_FILE_APPENDED);
+
+        if (System.currentTimeMillis() - lastForecastRefresh > ONE_HOUR_MS
+                || forecastFromFile == null) {
+            WeatherApi.getWeatherService().getLocationDailyForecast(
+                    mLocation, DAY_COUNT, "imperial", mApiKey)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .doOnNext(forecastData -> FileHandler.saveSerializedObjectToFile(
+                            forecastData,
+                            getActivity().getCacheDir(),
+                            mLocation + FORECAST_FILE_APPENDED))
+                    .subscribe(
+                            mList::add,
+                            System.err::println,
+                            () -> {
+                                sp.edit().putLong(
+                                        mLocation + FORECAST_FILE_APPENDED,
+                                        System.currentTimeMillis()).apply();
+                                insertLocationData(mList);
+                            });
+        } else {
+            mList.add(forecastFromFile);
+            insertLocationData(mList);
+        }
     }
 
     private void insertLocationData(List<BaseModel> l) {
+        RecyclerView forecastList;
         TextView cityName = (TextView) getActivity().findViewById(R.id.city_name);
         TextView cityTemp = (TextView) getActivity().findViewById(R.id.city_current_temp);
         TextView cityHumid = (TextView) getActivity().findViewById(R.id.city_current_humidity);
         forecastList = (RecyclerView) getActivity().findViewById(R.id.forecast_recyclerview);
+
         LocationModel mModel = (LocationModel) l.get(0);
         LocationForecastModel mForecast = (LocationForecastModel) l.get(1);
 
@@ -143,7 +156,7 @@ public class LocationDetailFragment extends Fragment {
         cityHumid.setText(Double.toString(mModel.getMain().getHumidity()) + getString(R.string.percent));
 
         forecastList.setLayoutManager(new LinearLayoutManager(getActivity()));
-        forecastList.setAdapter(new WeatherForecastAdapter((LocationForecastModel) l.get(1)));
+        forecastList.swapAdapter(new WeatherForecastAdapter(mForecast), false);
     }
 
 
