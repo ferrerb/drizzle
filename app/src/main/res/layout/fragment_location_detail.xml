@@ -31,11 +31,19 @@
         android:layout_below="@id/city_current_temp"
         android:paddingStart="12dp"
         android:paddingEnd="12dp"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/forecast_text"
+        android:text="@string/forecast"
+        android:textSize="34sp"
+        android:paddingTop="12dp"
+        android:layout_below="@+id/city_name"/>
     <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/forecast_recyclerview"
-        android:layout_below="@id/city_name"
+        android:layout_below="@id/forecast_text"
         android:clickable="false"/>
 
 

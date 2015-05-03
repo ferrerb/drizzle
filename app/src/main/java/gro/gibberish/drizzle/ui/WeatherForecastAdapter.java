@@ -68,7 +68,7 @@ public class WeatherForecastAdapter extends RecyclerView.Adapter<WeatherForecast
             long forecastDayUnixTime = data.getDt();
             String forecastDayAsString = DateFormat.format("EEEE", forecastDayUnixTime).toString();
             dayName.setText(forecastDayAsString);
-            Log.d("DT for each day", Long.toString(data.getDt()));
+            Log.d("DT for each day", forecastDayAsString);
             dayHiTemp.setText(Double.toString(data.getTemp().getMax()));
             dayLoTemp.setText(Double.toString(data.getTemp().getMin()));
             dayPressure.setText(Double.toString(data.getPressure()));
