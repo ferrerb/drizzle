@@ -153,6 +153,8 @@ public class LocationListFragment extends Fragment {
         void onListWeatherRefreshed(long refreshTime);
 
         void onLocationChosen(long id);
+
+        void onAddLocationButtonClicked();
     }
 
 }

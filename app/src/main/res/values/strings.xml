@@ -10,4 +10,7 @@
     <string name="units_imperial">imperial</string>
     <string name="percent">%</string>
     <string name="forecast">Forecast</string>
+    <string name="zip_hint">Enter zip code</string>
+    <string name="get_gps_coords">Use current location</string>
+    <string name="gps_icon">GPS icon</string>
 </resources>

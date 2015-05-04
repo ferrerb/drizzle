@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/edit_text_zip_code"
+        android:layout_centerHorizontal="true"
+        android:inputType="number"
+        android:hint="@string/zip_hint"/>
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/gps_icon"
+        android:src="@drawable/ic_gps_fixed_black_36dp"
+        android:layout_below="@+id/edit_text_zip_code"
+        android:layout_centerHorizontal="true"
+        android:contentDescription="@string/gps_icon"
+        android:paddingTop="6dp"
+        android:layout_toStartOf="@+id/btn_get_gps" />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/btn_get_gps"
+        android:layout_below="@+id/edit_text_zip_code"
+        android:layout_centerHorizontal="true"
+        android:text="@string/get_gps_coords"
+        android:textAllCaps="false"
+        style="?android:attr/borderlessButtonStyle"/>
+</RelativeLayout>

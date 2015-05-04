@@ -97,4 +97,9 @@ public class MainActivity extends ActionBarActivity implements
         i.putExtra("id", Long.toString(id));
         startActivity(i);
     }
+
+    @Override
+    public void onAddLocationButtonClicked() {
+        // TODO Call the locationaddfragment, to add a location by zip/gps. use new activity to host!
+    }
 }
