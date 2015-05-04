@@ -154,7 +154,6 @@ public class LocationListFragment extends Fragment {
 
         void onLocationChosen(long id);
 
-        void onAddLocationButtonClicked();
     }
 
 }

@@ -46,6 +46,7 @@ public class MainActivity extends ActionBarActivity implements
             FragmentTransaction ft = getFragmentManager().beginTransaction();
             ft.replace(R.id.weather_content, f).commit();
         }
+        // TODO deal with add location butotn
     }
 
     @Override
@@ -98,8 +99,4 @@ public class MainActivity extends ActionBarActivity implements
         startActivity(i);
     }
 
-    @Override
-    public void onAddLocationButtonClicked() {
-        // TODO Call the locationaddfragment, to add a location by zip/gps. use new activity to host!
-    }
 }
