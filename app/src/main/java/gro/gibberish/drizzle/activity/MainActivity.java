@@ -90,8 +90,6 @@ public class MainActivity extends ActionBarActivity implements
 
     @Override
     public void onLocationChosen(long id) {
-        // TODO launch the location detail !activity! move this code to the DetailActivity
-        // TODO Work on back, as hitting back exits the app from detail fragment, and home doesnt work
         Intent i = new Intent();
         i.setClass(this, DetailActivity.class);
         i.putExtra("api_key", API_KEY);

@@ -65,6 +65,7 @@ public class WeatherForecastAdapter extends RecyclerView.Adapter<WeatherForecast
 
 
         void bindModel(WeatherList data) {
+            // TODO fix the format or smoething, currently the day name is repeated 5 times, but correct data for subsequent days
             long forecastDayUnixTime = data.getDt();
             String forecastDayAsString = DateFormat.format("EEEE", forecastDayUnixTime).toString();
             dayName.setText(forecastDayAsString);

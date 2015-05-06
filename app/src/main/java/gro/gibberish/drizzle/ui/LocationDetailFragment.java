@@ -103,6 +103,7 @@ public class LocationDetailFragment extends Fragment {
         List<BaseModel> mList = new ArrayList<BaseModel>();
         long lastForecastRefresh = sp.getLong((mLocation + FORECAST_FILE_APPENDED), 0L);
         // TODO Move all file access stuff to observables. possibly return observable from FileHandler
+        // TODO need to get the location from its individual file, instead of MultipleLocationModel
         MultipleLocationModel weatherFromFile = FileHandler.getSerializedObjectFromFile(
                 MultipleLocationModel.class, getActivity().getCacheDir(), WEATHER_LIST_FILE);
 

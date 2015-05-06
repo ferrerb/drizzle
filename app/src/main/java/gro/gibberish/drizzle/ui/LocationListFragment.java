@@ -28,7 +28,7 @@ import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 
 /**
- * A simple {@link Fragment} subclass.
+ * A fragment that displays a recyclerview containing weather at user submitted locations
  * Activities that contain this fragment must implement the
  * {@link LocationListFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
@@ -40,13 +40,11 @@ public class LocationListFragment extends Fragment {
     private static final String LOCATIONS = "locations";
     private static final String API_KEY = "api_key";
     private static final String NEEDS_REFRESH = "needs_refresh";
-    private static final String WEATHER_LIST_FILE = "allCurrentWeather.srl";
     private String mLocations;
     private String mApi;
     private boolean needsRefresh;
     private RecyclerView rv;
     private Subscription mSubscription;
-    private WeatherListAdapter mAdapter;
     private List<LocationModel> mData;
     OnItemTouchListener mOnItemClick;
 
@@ -56,7 +54,7 @@ public class LocationListFragment extends Fragment {
     /**
      * Creates a new fragment containing a recycler view
      *
-     * @param location List of locations as city ID, comma seperated
+     * @param location List of locations as city ID, comma separated
      * @return A new instance of fragment LocationListFragment.
      */
     public static LocationListFragment newInstance(String location, String apiKey, Boolean refresh) {
@@ -70,7 +68,6 @@ public class LocationListFragment extends Fragment {
     }
 
     public LocationListFragment() {
-        // Required empty public constructor
     }
 
     @Override
@@ -86,28 +83,25 @@ public class LocationListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View result = inflater.inflate(R.layout.fragment_location_list, container, false);
         rv = (RecyclerView) result.findViewById(R.id.recycler_list);
         rv.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        mOnItemClick = new OnItemTouchListener() {
-            @Override
-            public void onLocationClick(View v, int position) {
-                mListener.onLocationChosen(mData.get(position).getId());
-            }
-        };
+        mOnItemClick = (view, position) -> mListener.onLocationChosen(mData.get(position).getId());
         if (needsRefresh) {
             getWeatherFromApi();
         } else {
-            MultipleLocationModel data =
-                    FileHandler.getSerializedObjectFromFile(
-                            MultipleLocationModel.class,
-                            getActivity().getCacheDir(),
-                            WEATHER_LIST_FILE);
-            mData = data.getLocationList();
-            // TODO If data == null, call the api?
-            rv.swapAdapter(new WeatherListAdapter(mData, mOnItemClick), false);
+            for (String s : mLocations.split(",")) {
+                mData.add(FileHandler.getSerializedObjectFromFile(
+                        LocationModel.class,
+                        getActivity().getCacheDir(),
+                        s));
+            }
+            if (mData != null) {
+                rv.swapAdapter(new WeatherListAdapter(mData, mOnItemClick), false);
+            } else {
+                getWeatherFromApi();
+            }
 
         }
         return result;
@@ -115,10 +109,8 @@ public class LocationListFragment extends Fragment {
 
     private void getWeatherFromApi() {
         Log.d("weather from internet!", "true");
-        // TODO save each locationModel to a seperate file named after its ID
         mSubscription = WeatherApi.getWeatherService().getAllLocationsWeather(mLocations, "imperial", mApi)
-                .doOnNext(weatherData -> FileHandler.saveSerializedObjectToFile(
-                        weatherData, getActivity().getCacheDir(), WEATHER_LIST_FILE))
+                .doOnNext(this::saveLocationWeatherToSeparateFiles)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         weatherData -> { mData = weatherData.getLocationList();
@@ -126,7 +118,16 @@ public class LocationListFragment extends Fragment {
                                 new WeatherListAdapter(mData, mOnItemClick), false);},
                         // TODO Have an errorfragment or something display
                         error -> Log.d("error", error.getMessage()),
-                        () -> {mListener.onListWeatherRefreshed(System.currentTimeMillis());});
+                        () -> mListener.onListWeatherRefreshed(System.currentTimeMillis()));
+    }
+
+    private void saveLocationWeatherToSeparateFiles(MultipleLocationModel m) {
+        for ( LocationModel loc : m.getLocationList() ) {
+            FileHandler.saveSerializedObjectToFile(
+                    loc,
+                    getActivity().getCacheDir(),
+                    Long.toString(loc.getId()));
+        }
     }
 
     @Override
@@ -151,7 +152,6 @@ public class LocationListFragment extends Fragment {
 
     public interface OnFragmentInteractionListener {
         void onListWeatherRefreshed(long refreshTime);
-
         void onLocationChosen(long id);
 
     }
