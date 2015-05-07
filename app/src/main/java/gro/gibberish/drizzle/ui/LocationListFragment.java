@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -35,7 +36,8 @@ import rx.android.schedulers.AndroidSchedulers;
  * Use the {@link LocationListFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class LocationListFragment extends Fragment {
+public class LocationListFragment extends Fragment
+        implements LocationAddFragment.OnLocationSubmitted{
 
     private static final String LOCATIONS = "locations";
     private static final String API_KEY = "api_key";
@@ -46,9 +48,7 @@ public class LocationListFragment extends Fragment {
     private RecyclerView rv;
     private Subscription mSubscription;
     private List<LocationModel> mData;
-    OnItemTouchListener mOnItemClick;
-
-
+    private OnItemTouchListener mOnItemClick;
     private OnFragmentInteractionListener mListener;
 
     /**
@@ -70,6 +70,22 @@ public class LocationListFragment extends Fragment {
     public LocationListFragment() {
     }
 
+    public interface OnFragmentInteractionListener {
+        void onListWeatherRefreshed(long refreshTime);
+        void onLocationChosen(long id);
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try {
+            mListener = (OnFragmentInteractionListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -88,8 +104,9 @@ public class LocationListFragment extends Fragment {
         rv.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         mOnItemClick = (view, position) -> mListener.onLocationChosen(mData.get(position).getId());
+
         if (needsRefresh) {
-            getWeatherFromApi();
+            getWeatherFromApi(mLocations);
         } else {
             for (String s : mLocations.split(",")) {
                 mData.add(FileHandler.getSerializedObjectFromFile(
@@ -100,16 +117,24 @@ public class LocationListFragment extends Fragment {
             if (mData != null) {
                 rv.swapAdapter(new WeatherListAdapter(mData, mOnItemClick), false);
             } else {
-                getWeatherFromApi();
+                getWeatherFromApi(mLocations);
             }
 
         }
+        // TODO possibly move the FAB to this fragments layout
+        ImageButton addLocation = (ImageButton) result.findViewById(R.id.btn_add_location_fab);
+        addLocation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Launch add location fragment/dialog
+            }
+        });
         return result;
     }
 
-    private void getWeatherFromApi() {
+    private void getWeatherFromApi(String loc) {
         Log.d("weather from internet!", "true");
-        mSubscription = WeatherApi.getWeatherService().getAllLocationsWeather(mLocations, "imperial", mApi)
+        mSubscription = WeatherApi.getWeatherService().getAllLocationsWeather(loc, "imperial", mApi)
                 .doOnNext(this::saveLocationWeatherToSeparateFiles)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
@@ -121,6 +146,7 @@ public class LocationListFragment extends Fragment {
                         () -> mListener.onListWeatherRefreshed(System.currentTimeMillis()));
     }
 
+    // Hvae this take a list of location models instead, then could pass it an added location
     private void saveLocationWeatherToSeparateFiles(MultipleLocationModel m) {
         for ( LocationModel loc : m.getLocationList() ) {
             FileHandler.saveSerializedObjectToFile(
@@ -131,14 +157,14 @@ public class LocationListFragment extends Fragment {
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        try {
-            mListener = (OnFragmentInteractionListener) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
+    public void onZipCodeEntered(int zip) {
+        // Make the call to the API for a single location, add it to the saved IDs, and to mLocaions, and getweatherformapi
+    }
+
+    @Override
+    public void onGpsCoordsChosen(int x, int y) {
+        // Make the call to the API for a single location, add it to the saved IDs, and to mLocaions, and getweatherformapi
+
     }
 
     @Override
@@ -149,11 +175,4 @@ public class LocationListFragment extends Fragment {
             mSubscription.unsubscribe();
         }
     }
-
-    public interface OnFragmentInteractionListener {
-        void onListWeatherRefreshed(long refreshTime);
-        void onLocationChosen(long id);
-
-    }
-
 }

@@ -104,14 +104,12 @@ public class LocationDetailFragment extends Fragment {
         long lastForecastRefresh = sp.getLong((mLocation + FORECAST_FILE_APPENDED), 0L);
         // TODO Move all file access stuff to observables. possibly return observable from FileHandler
         // TODO need to get the location from its individual file, instead of MultipleLocationModel
-        MultipleLocationModel weatherFromFile = FileHandler.getSerializedObjectFromFile(
-                MultipleLocationModel.class, getActivity().getCacheDir(), WEATHER_LIST_FILE);
+        LocationModel weatherFromFile = FileHandler.getSerializedObjectFromFile(
+                LocationModel.class,
+                getActivity().getCacheDir(),
+                mLocation);
 
-        for (LocationModel l : weatherFromFile.getLocationList()) {
-            if (Long.toString(l.getId()).equals(mLocation)) {
-                mList.add(l);
-            }
-        }
+        mList.add(weatherFromFile);
 
         LocationForecastModel forecastFromFile = FileHandler.getSerializedObjectFromFile(
                 LocationForecastModel.class,
@@ -130,16 +128,18 @@ public class LocationDetailFragment extends Fragment {
                     .subscribe(
                             mList::add,
                             System.err::println,
-                            () -> {
+                            () ->
                                 sp.edit().putLong(
                                         mLocation + FORECAST_FILE_APPENDED,
-                                        System.currentTimeMillis()).apply();
-                                insertLocationData(mList);
-                            });
+                                        System.currentTimeMillis()).apply()
+                            );
         } else {
             mList.add(forecastFromFile);
+        }
+        if (mList.size() == 2) {
             insertLocationData(mList);
         }
+        // TODO Else - redo this method? find which model isnt in the list?
     }
 
     private void insertLocationData(List<BaseModel> l) {

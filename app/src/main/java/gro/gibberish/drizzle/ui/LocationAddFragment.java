@@ -1,11 +1,12 @@
 package gro.gibberish.drizzle.ui;
 
+import android.app.DialogFragment;
 import android.app.Fragment;
 
 /**
  * Change this
  */
-public class LocationAddFragment extends Fragment {
+public class LocationAddFragment extends DialogFragment {
 
     public static LocationAddFragment newInstance() {
         LocationAddFragment frag = new LocationAddFragment();
