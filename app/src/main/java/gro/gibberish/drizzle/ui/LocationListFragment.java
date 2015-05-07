@@ -1,6 +1,7 @@
 package gro.gibberish.drizzle.ui;
 
 import android.app.Activity;
+import android.app.FragmentManager;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -18,6 +19,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 import gro.gibberish.drizzle.R;
@@ -47,7 +49,7 @@ public class LocationListFragment extends Fragment
     private boolean needsRefresh;
     private RecyclerView rv;
     private Subscription mSubscription;
-    private List<LocationModel> mData;
+    private List<LocationModel> mData = new ArrayList<LocationModel>();
     private OnItemTouchListener mOnItemClick;
     private OnFragmentInteractionListener mListener;
 
@@ -122,11 +124,14 @@ public class LocationListFragment extends Fragment
 
         }
         // TODO possibly move the FAB to this fragments layout
-        ImageButton addLocation = (ImageButton) result.findViewById(R.id.btn_add_location_fab);
+        ImageButton addLocation = (ImageButton) getActivity().findViewById(R.id.btn_add_location_fab);
         addLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Launch add location fragment/dialog
+                FragmentManager fm = getFragmentManager();
+                LocationAddFragment frag = LocationAddFragment.newInstance();
+                frag.setTargetFragment(LocationListFragment.this, 0);
+                frag.show(fm, "");
             }
         });
         return result;
@@ -135,7 +140,7 @@ public class LocationListFragment extends Fragment
     private void getWeatherFromApi(String loc) {
         Log.d("weather from internet!", "true");
         mSubscription = WeatherApi.getWeatherService().getAllLocationsWeather(loc, "imperial", mApi)
-                .doOnNext(this::saveLocationWeatherToSeparateFiles)
+                .doOnNext(weatherData -> saveLocationWeatherToSeparateFiles(weatherData.getLocationList()))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         weatherData -> { mData = weatherData.getLocationList();
@@ -147,8 +152,8 @@ public class LocationListFragment extends Fragment
     }
 
     // Hvae this take a list of location models instead, then could pass it an added location
-    private void saveLocationWeatherToSeparateFiles(MultipleLocationModel m) {
-        for ( LocationModel loc : m.getLocationList() ) {
+    private void saveLocationWeatherToSeparateFiles(List<LocationModel> data) {
+        for ( LocationModel loc : data ) {
             FileHandler.saveSerializedObjectToFile(
                     loc,
                     getActivity().getCacheDir(),
@@ -157,8 +162,11 @@ public class LocationListFragment extends Fragment
     }
 
     @Override
-    public void onZipCodeEntered(int zip) {
+    public void onZipCodeEntered(String zip) {
         // Make the call to the API for a single location, add it to the saved IDs, and to mLocaions, and getweatherformapi
+        if (zip.length() == 5) {
+            // Call the search by zip location API
+        }
     }
 
     @Override
