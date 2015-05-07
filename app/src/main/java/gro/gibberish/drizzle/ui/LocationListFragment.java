@@ -1,9 +1,9 @@
 package gro.gibberish.drizzle.ui;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.app.FragmentManager;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -12,13 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,7 +19,6 @@ import gro.gibberish.drizzle.R;
 import gro.gibberish.drizzle.data.FileHandler;
 import gro.gibberish.drizzle.data.WeatherApi;
 import gro.gibberish.drizzle.models.LocationModel;
-import gro.gibberish.drizzle.models.MultipleLocationModel;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 
@@ -75,6 +67,7 @@ public class LocationListFragment extends Fragment
     public interface OnFragmentInteractionListener {
         void onListWeatherRefreshed(long refreshTime);
         void onLocationChosen(long id);
+        void onLocationAdded(String locations);
     }
 
     @Override
@@ -163,9 +156,20 @@ public class LocationListFragment extends Fragment
 
     @Override
     public void onZipCodeEntered(String zip) {
-        // Make the call to the API for a single location, add it to the saved IDs, and to mLocaions, and getweatherformapi
+        // TODO I dont like this code
         if (zip.length() == 5) {
             // Call the search by zip location API
+            WeatherApi.getWeatherService().searchLocationByZip(zip, "imperial", mApi)
+                    .subscribe(
+                            locationModel -> { if (mLocations == null) {
+                                    mLocations = Long.toString(locationModel.getId());
+                                } else {
+                                    mLocations += "," + Long.toString(locationModel.getId());
+                                }
+                                mListener.onLocationAdded(mLocations);},
+                            error -> Log.d("error", error.getMessage()),
+                            () -> getWeatherFromApi(mLocations)
+                    );
         }
     }
 

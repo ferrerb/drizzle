@@ -21,8 +21,11 @@ public class MainActivity extends ActionBarActivity implements
 
     private static final int ONE_HOUR_MS = 3600000;
     private static final String SP_LAST_REFRESH = "SP_LAST_REFRESH";
+    private static final String LOCATIONS = "locations";
     private boolean needsRefresh = false;
     private String API_KEY;
+    private SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,18 +38,17 @@ public class MainActivity extends ActionBarActivity implements
         if (toolbar != null) {
             setSupportActionBar(toolbar);
         }
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
         long lastRefresh = sp.getLong(SP_LAST_REFRESH, 0L);
         if (System.currentTimeMillis() - lastRefresh > ONE_HOUR_MS) {
             // refresh weather data automatically, set lastrefresh to now
             needsRefresh = true;
         }
+        String mLocations = sp.getString(LOCATIONS, null);
         if (savedInstanceState == null) {
-            LocationListFragment f = LocationListFragment.newInstance("703448,2643743", API_KEY, needsRefresh);
+            LocationListFragment f = LocationListFragment.newInstance(mLocations, API_KEY, needsRefresh);
             FragmentTransaction ft = getFragmentManager().beginTransaction();
             ft.replace(R.id.weather_content, f).commit();
         }
-        // TODO deal with add location butotn
     }
 
     @Override
@@ -66,8 +68,7 @@ public class MainActivity extends ActionBarActivity implements
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
+        // Actually have some settings, like units (imperial, metric)
         if (id == R.id.action_settings) {
             return true;
         }
@@ -84,7 +85,6 @@ public class MainActivity extends ActionBarActivity implements
     @Override
     public void onListWeatherRefreshed(long l) {
         // TODO Think about when the last refresh is saved, should each location have its own SP for this just for forecast data?
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
         sp.edit().putLong(SP_LAST_REFRESH, l).apply();
     }
 
@@ -95,6 +95,11 @@ public class MainActivity extends ActionBarActivity implements
         i.putExtra("api_key", API_KEY);
         i.putExtra("id", Long.toString(id));
         startActivity(i);
+    }
+
+    @Override
+    public void onLocationAdded(String locations) {
+        sp.edit().putString(LOCATIONS, locations).apply();
     }
 
 }

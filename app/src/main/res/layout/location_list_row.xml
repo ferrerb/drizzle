@@ -4,6 +4,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_margin="4dp"
     card_view:cardCornerRadius="4dp">
     <RelativeLayout
         android:layout_height="match_parent"
