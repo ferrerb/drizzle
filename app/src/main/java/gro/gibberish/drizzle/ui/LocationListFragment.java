@@ -16,8 +16,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import gro.gibberish.drizzle.R;
+import gro.gibberish.drizzle.data.ApiProvider;
 import gro.gibberish.drizzle.data.FileHandler;
-import gro.gibberish.drizzle.data.WeatherApi;
 import gro.gibberish.drizzle.models.LocationModel;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
@@ -132,7 +132,7 @@ public class LocationListFragment extends Fragment
 
     private void getWeatherFromApi(String loc) {
         Log.d("weather from internet!", "true");
-        mSubscription = WeatherApi.getWeatherService().getAllLocationsWeather(loc, "imperial", mApi)
+        mSubscription = ApiProvider.getWeatherService().getAllLocationsWeather(loc, "imperial", mApi)
                 .doOnNext(weatherData -> saveLocationWeatherToSeparateFiles(weatherData.getLocationList()))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
@@ -159,7 +159,7 @@ public class LocationListFragment extends Fragment
         // TODO I dont like this code
         if (zip.length() == 5) {
             // Call the search by zip location API
-            WeatherApi.getWeatherService().searchLocationByZip(zip, "imperial", mApi)
+            ApiProvider.getWeatherService().searchLocationByZip(zip, "imperial", mApi)
                     .subscribe(
                             locationModel -> { if (mLocations == null) {
                                     mLocations = Long.toString(locationModel.getId());

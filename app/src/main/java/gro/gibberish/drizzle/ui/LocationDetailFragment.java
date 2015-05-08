@@ -1,15 +1,12 @@
 package gro.gibberish.drizzle.ui;
 
-import android.app.Activity;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,13 +16,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import gro.gibberish.drizzle.R;
+import gro.gibberish.drizzle.data.ApiProvider;
 import gro.gibberish.drizzle.data.FileHandler;
-import gro.gibberish.drizzle.data.WeatherApi;
 import gro.gibberish.drizzle.models.BaseModel;
 import gro.gibberish.drizzle.models.LocationForecastModel;
 import gro.gibberish.drizzle.models.LocationModel;
-import gro.gibberish.drizzle.models.MultipleLocationModel;
-import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 
 /**
@@ -118,7 +113,7 @@ public class LocationDetailFragment extends Fragment {
 
         if (System.currentTimeMillis() - lastForecastRefresh > ONE_HOUR_MS
                 || forecastFromFile == null) {
-            WeatherApi.getWeatherService().getLocationDailyForecast(
+            ApiProvider.getWeatherService().getLocationDailyForecast(
                     mLocation, DAY_COUNT, "imperial", mApiKey)
                     .observeOn(AndroidSchedulers.mainThread())
                     .doOnNext(forecastData -> FileHandler.saveSerializedObjectToFile(
