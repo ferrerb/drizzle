@@ -8,7 +8,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import gro.gibberish.drizzle.R;
@@ -65,11 +67,11 @@ public class WeatherForecastAdapter extends RecyclerView.Adapter<WeatherForecast
 
 
         void bindModel(WeatherList data) {
-            // TODO fix the format or smoething, currently the day name is repeated 5 times, but correct data for subsequent days
-            long forecastDayUnixTime = data.getDt();
-            String forecastDayAsString = DateFormat.format("EEEE", forecastDayUnixTime).toString();
+            // The received time is multiplied by 1000 to convert to milliseconds
+            long forecastDayUnixTime = data.getDt() * 1000L;
+            String forecastDayAsString =
+                    DateFormat.format("EEE", new Date(forecastDayUnixTime)).toString();
             dayName.setText(forecastDayAsString);
-            Log.d("DT for each day", forecastDayAsString);
             dayHiTemp.setText(Double.toString(data.getTemp().getMax()));
             dayLoTemp.setText(Double.toString(data.getTemp().getMin()));
             dayPressure.setText(Double.toString(data.getPressure()));

@@ -24,7 +24,7 @@ public class MainActivity extends ActionBarActivity implements
     private static final String LOCATIONS = "locations";
     private boolean needsRefresh = false;
     private String API_KEY;
-    private SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+    private SharedPreferences sp;
 
 
     @Override
@@ -33,6 +33,7 @@ public class MainActivity extends ActionBarActivity implements
         setContentView(R.layout.main);
 
         API_KEY = getApplicationContext().getResources().getString(R.string.api_key);
+        sp = PreferenceManager.getDefaultSharedPreferences(this);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         if (toolbar != null) {
@@ -45,7 +46,7 @@ public class MainActivity extends ActionBarActivity implements
         }
         String mLocations = sp.getString(LOCATIONS, null);
         if (savedInstanceState == null) {
-            LocationListFragment f = LocationListFragment.newInstance(mLocations, API_KEY, needsRefresh);
+            LocationListFragment f = LocationListFragment.newInstance("4180439,5660340", API_KEY, needsRefresh);
             FragmentTransaction ft = getFragmentManager().beginTransaction();
             ft.replace(R.id.weather_content, f).commit();
         }

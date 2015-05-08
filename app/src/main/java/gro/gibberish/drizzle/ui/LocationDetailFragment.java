@@ -121,7 +121,8 @@ public class LocationDetailFragment extends Fragment {
                             getActivity().getCacheDir(),
                             mLocation + FORECAST_FILE_APPENDED))
                     .subscribe(
-                            mList::add,
+                            forecast -> { mList.add(forecast);
+                                insertLocationData(mList); },
                             System.err::println,
                             () ->
                                 sp.edit().putLong(
@@ -130,10 +131,10 @@ public class LocationDetailFragment extends Fragment {
                             );
         } else {
             mList.add(forecastFromFile);
-        }
-        if (mList.size() == 2) {
             insertLocationData(mList);
+
         }
+
         // TODO Else - redo this method? find which model isnt in the list?
     }
 

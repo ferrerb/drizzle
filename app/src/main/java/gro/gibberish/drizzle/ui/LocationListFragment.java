@@ -110,6 +110,8 @@ public class LocationListFragment extends Fragment
                         s));
             }
             if (mData != null) {
+                Log.d("locations from file", mLocations);
+
                 rv.swapAdapter(new WeatherListAdapter(mData, mOnItemClick), false);
             } else {
                 getWeatherFromApi(mLocations);
@@ -157,25 +159,31 @@ public class LocationListFragment extends Fragment
     @Override
     public void onZipCodeEntered(String zip) {
         // TODO I dont like this code
-        if (zip.length() == 5) {
-            // Call the search by zip location API
-            ApiProvider.getWeatherService().searchLocationByZip(zip, "imperial", mApi)
-                    .subscribe(
-                            locationModel -> { if (mLocations == null) {
-                                    mLocations = Long.toString(locationModel.getId());
-                                } else {
-                                    mLocations += "," + Long.toString(locationModel.getId());
-                                }
-                                mListener.onLocationAdded(mLocations);},
-                            error -> Log.d("error", error.getMessage()),
-                            () -> getWeatherFromApi(mLocations)
-                    );
-        }
+        // TODO rethink searching/adding locaitons since nothing works well together. despair
+//        if (zip.length() == 5) {
+//            // Call the search by zip location API, get the location ID from response
+//            // and add it to the location list, and refresh the list on complete
+//            zip = zip + ",us"; // To conform to the API needs
+//            ApiProvider.getWeatherService().searchLocationByZip(zip, "imperial", mApi)
+//                    .subscribe(
+//                            locationModel -> { if (mLocations == null) {
+//                                    mLocations = Long.toString(locationModel.getId());
+//                                } else {
+//                                    mLocations += "," + Long.toString(locationModel.getId());
+//                                }
+//                                Log.d("added locations", mLocations);
+//
+//                                mListener.onLocationAdded(mLocations);},
+//                            error -> Log.d("error", error.getMessage()),
+//                            () -> getWeatherFromApi(mLocations)
+//                    );
+//        }
     }
 
     @Override
     public void onGpsCoordsChosen(int x, int y) {
-        // Make the call to the API for a single location, add it to the saved IDs, and to mLocaions, and getweatherformapi
+        // Make the call to the API for a single location, add it
+        // to the saved IDs, and to mLocaions, and getweatherformapi
 
     }
 
