@@ -11,6 +11,10 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
+import rx.Observable;
+import rx.Subscriber;
+import rx.schedulers.Schedulers;
+
 /**
  * Change this
  */
@@ -67,6 +71,7 @@ public class FileHandler {
             ObjectInputStream in = new ObjectInputStream(fis);
 
             data = (T) in.readObject();
+            in.close();
         }
         catch (FileNotFoundException e) {
             System.err.println("FileNotFoundException " + e.getMessage());
@@ -78,6 +83,35 @@ public class FileHandler {
             System.err.println("ClassNotFoundException " + e.getMessage());
         }
         return data;
+    }
+
+    public static <T> Observable<T> getSerializedObjectObservable(Class<T> type, File path, String filename) {
+        return Observable.just(getSerializedObjectFromFile(type, path, filename))
+                .subscribeOn(Schedulers.io());
+    }
+
+    public static <T extends Serializable> void saveSerializedObjectObservable(T data, File path, String fileName) {
+        Observable<Void> o = Observable.create(new Observable.OnSubscribe<Void>() {
+            @Override
+            public void call(Subscriber<? super Void> subscriber) {
+                try {
+                    FileOutputStream fos = new FileOutputStream(
+                            new File(path, fileName), false);
+                    ObjectOutputStream out = new ObjectOutputStream(fos);
+
+                    out.writeObject(data);
+                    out.close();
+                }
+                catch (FileNotFoundException e) {
+                    System.err.println("FileNotFoundException " + e.getMessage());
+                }
+                catch (IOException e) {
+                    System.err.println("IOException " + e.getMessage());
+                }
+                subscriber.onCompleted();
+            }
+
+        }).subscribeOn(Schedulers.io());
     }
 
 }

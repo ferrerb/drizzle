@@ -19,6 +19,7 @@ import gro.gibberish.drizzle.R;
 import gro.gibberish.drizzle.data.ApiProvider;
 import gro.gibberish.drizzle.data.FileHandler;
 import gro.gibberish.drizzle.models.LocationModel;
+import rx.Observable;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 
