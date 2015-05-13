@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * A model for a returned JSON object for a specific location from OpenWeatherMap
  */
-public class LocationForecastModel implements BaseModel, Serializable{
+public class LocationForecastModel implements Serializable{
     private static final long serialVersionUID = 1L;
 
     private City city;

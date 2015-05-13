@@ -8,18 +8,26 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:id="@+id/forecast_row_day"/>
+        android:id="@+id/forecast_row_day"
+        android:paddingStart="4dp"
+        android:paddingEnd="4dp"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:id="@+id/forecast_row_hi"/>
+        android:id="@+id/forecast_row_hi"
+        android:paddingStart="4dp"
+        android:paddingEnd="4dp"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:id="@+id/forecast_row_lo"/>
+        android:id="@+id/forecast_row_lo"
+        android:paddingStart="4dp"
+        android:paddingEnd="4dp"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:id="@+id/forecast_row_pressure"/>
+        android:id="@+id/forecast_row_pressure"
+        android:paddingStart="4dp"
+        android:paddingEnd="4dp"/>
 
 </LinearLayout>

@@ -12,16 +12,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import gro.gibberish.drizzle.R;
 import gro.gibberish.drizzle.data.ApiProvider;
 import gro.gibberish.drizzle.data.FileHandler;
-import gro.gibberish.drizzle.models.BaseModel;
 import gro.gibberish.drizzle.models.LocationForecastModel;
 import gro.gibberish.drizzle.models.LocationModel;
-import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 
 /**
@@ -39,6 +34,7 @@ public class LocationDetailFragment extends Fragment {
     private static final String FORECAST_FILE_APPENDED = "cast";
     private static final String WEATHER_LIST_FILE = "allCurrentWeather.srl";
     private View result;
+    private RecyclerView forecastList;
 
     private SharedPreferences sp;
     private String unitType;
@@ -79,6 +75,7 @@ public class LocationDetailFragment extends Fragment {
                              Bundle savedInstanceState) {
         result = inflater.inflate(R.layout.fragment_location_detail, container, false);
         sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        forecastList = (RecyclerView) result.findViewById(R.id.forecast_recyclerview);
 
         ((ActionBarActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -97,74 +94,67 @@ public class LocationDetailFragment extends Fragment {
     }
 
     private void insertWeather() {
-        List<BaseModel> mList = new ArrayList<BaseModel>();
         long lastForecastRefresh = sp.getLong((mLocation + FORECAST_FILE_APPENDED), 0L);
-        // TODO Move all file access stuff to observables. possibly return observable from FileHandler
-        // TODO need to get the location from its individual file, instead of MultipleLocationModel
+
         FileHandler.getSerializedObjectObservable(
                 LocationModel.class,
                 getActivity().getCacheDir(),
                 mLocation)
                     .subscribe(
-                            mList::add,
+                            this::insertCurrentData,
                             System.err::println,
                             () -> {}
                     );
 
-        FileHandler.getSerializedObjectObservable(
-                LocationForecastModel.class,
-                getActivity().getCacheDir(),
-                mLocation + FORECAST_FILE_APPENDED)
+        if (System.currentTimeMillis() - lastForecastRefresh > ONE_HOUR_MS) {
+            getForecastFromApi();
+        } else {
+            FileHandler.getSerializedObjectObservable(
+                    LocationForecastModel.class,
+                    getActivity().getCacheDir(),
+                    mLocation + FORECAST_FILE_APPENDED)
                     .subscribe(
-                            data -> { if (data != null) { mList.add(data); }},
-                            System.err::println,
+                            this::insertForecastData,
+                            e -> { System.err.println(e);
+                                   getForecastFromApi(); },
                             () -> {}
                     );
+        }
+    }
 
-
-        if (System.currentTimeMillis() - lastForecastRefresh > ONE_HOUR_MS
-                || mList.get(1) != null) {
-            ApiProvider.getWeatherService().getLocationDailyForecast(
-                    mLocation, DAY_COUNT, "imperial", mApiKey)
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .doOnNext(forecastData -> FileHandler.saveSerializedObjectToFile(
-                            forecastData,
-                            getActivity().getCacheDir(),
-                            mLocation + FORECAST_FILE_APPENDED))
-                    .subscribe(
-                            forecast -> { mList.add(forecast);
-                                insertLocationData(mList); },
-                            System.err::println,
-                            () ->
+    private void getForecastFromApi() {
+        ApiProvider.getWeatherService().getLocationDailyForecast(
+                mLocation, DAY_COUNT, "imperial", mApiKey)
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnNext(forecastData -> FileHandler.saveSerializedObjectObservable(
+                        forecastData,
+                        getActivity().getCacheDir(),
+                        mLocation + FORECAST_FILE_APPENDED).subscribe())
+                .subscribe(
+                        this::insertForecastData,
+                        System.err::println,
+                        () ->
                                 sp.edit().putLong(
                                         mLocation + FORECAST_FILE_APPENDED,
                                         System.currentTimeMillis()).apply()
-                            );
-        } else {
-            insertLocationData(mList);
-        }
-
-        // TODO Else - redo this method? find which model isnt in the list?
+                );
     }
 
-    private void insertLocationData(List<BaseModel> l) {
-        RecyclerView forecastList;
+    private void insertCurrentData(LocationModel data) {
         TextView cityName = (TextView) result.findViewById(R.id.city_name);
         TextView cityTemp = (TextView) result.findViewById(R.id.city_current_temp);
         TextView cityHumid = (TextView) result.findViewById(R.id.city_current_humidity);
         TextView cityPressure = (TextView) result.findViewById(R.id.city_current_pressure);
-        forecastList = (RecyclerView) getActivity().findViewById(R.id.forecast_recyclerview);
 
-        LocationModel mModel = (LocationModel) l.get(0);
-        LocationForecastModel mForecast = (LocationForecastModel) l.get(1);
+        cityName.setText(data.getName());
+        cityTemp.setText(Double.toString(data.getMain().getTemp()) + getString(R.string.degrees_fahrenheit));
+        cityHumid.setText(Double.toString(data.getMain().getHumidity()) + getString(R.string.percent));
+        cityPressure.setText(Double.toString(data.getMain().getPressure()) + R.string.percent);
+    }
 
-        cityName.setText(mModel.getName());
-        cityTemp.setText(Double.toString(mModel.getMain().getTemp()) + getString(R.string.degrees_fahrenheit));
-        cityHumid.setText(Double.toString(mModel.getMain().getHumidity()) + getString(R.string.percent));
-        cityPressure.setText(Double.toString(mModel.getMain().getPressure()) + R.string.percent);
-
+    private void insertForecastData(LocationForecastModel data) {
         forecastList.setLayoutManager(new LinearLayoutManager(getActivity()));
-        forecastList.swapAdapter(new WeatherForecastAdapter(mForecast), false);
+        forecastList.swapAdapter(new WeatherForecastAdapter(data), false);
     }
 
 
