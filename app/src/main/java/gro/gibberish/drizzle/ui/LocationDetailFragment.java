@@ -21,6 +21,7 @@ import gro.gibberish.drizzle.data.FileHandler;
 import gro.gibberish.drizzle.models.BaseModel;
 import gro.gibberish.drizzle.models.LocationForecastModel;
 import gro.gibberish.drizzle.models.LocationModel;
+import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 
 /**
@@ -37,6 +38,7 @@ public class LocationDetailFragment extends Fragment {
     // Appended to the forecast saved file and shared pref update time to differentiate from a locations saved current weather
     private static final String FORECAST_FILE_APPENDED = "cast";
     private static final String WEATHER_LIST_FILE = "allCurrentWeather.srl";
+    private View result;
 
     private SharedPreferences sp;
     private String unitType;
@@ -75,7 +77,7 @@ public class LocationDetailFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View result = inflater.inflate(R.layout.fragment_location_detail, container, false);
+        result = inflater.inflate(R.layout.fragment_location_detail, container, false);
         sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
         ((ActionBarActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -99,20 +101,29 @@ public class LocationDetailFragment extends Fragment {
         long lastForecastRefresh = sp.getLong((mLocation + FORECAST_FILE_APPENDED), 0L);
         // TODO Move all file access stuff to observables. possibly return observable from FileHandler
         // TODO need to get the location from its individual file, instead of MultipleLocationModel
-        LocationModel weatherFromFile = FileHandler.getSerializedObjectFromFile(
+        FileHandler.getSerializedObjectObservable(
                 LocationModel.class,
                 getActivity().getCacheDir(),
-                mLocation);
+                mLocation)
+                    .subscribe(
+                            mList::add,
+                            System.err::println,
+                            () -> {}
+                    );
 
-        mList.add(weatherFromFile);
-
-        LocationForecastModel forecastFromFile = FileHandler.getSerializedObjectFromFile(
+        FileHandler.getSerializedObjectObservable(
                 LocationForecastModel.class,
                 getActivity().getCacheDir(),
-                mLocation + FORECAST_FILE_APPENDED);
+                mLocation + FORECAST_FILE_APPENDED)
+                    .subscribe(
+                            data -> { if (data != null) { mList.add(data); }},
+                            System.err::println,
+                            () -> {}
+                    );
+
 
         if (System.currentTimeMillis() - lastForecastRefresh > ONE_HOUR_MS
-                || forecastFromFile == null) {
+                || mList.get(1) != null) {
             ApiProvider.getWeatherService().getLocationDailyForecast(
                     mLocation, DAY_COUNT, "imperial", mApiKey)
                     .observeOn(AndroidSchedulers.mainThread())
@@ -130,9 +141,7 @@ public class LocationDetailFragment extends Fragment {
                                         System.currentTimeMillis()).apply()
                             );
         } else {
-            mList.add(forecastFromFile);
             insertLocationData(mList);
-
         }
 
         // TODO Else - redo this method? find which model isnt in the list?
@@ -140,9 +149,10 @@ public class LocationDetailFragment extends Fragment {
 
     private void insertLocationData(List<BaseModel> l) {
         RecyclerView forecastList;
-        TextView cityName = (TextView) getActivity().findViewById(R.id.city_name);
-        TextView cityTemp = (TextView) getActivity().findViewById(R.id.city_current_temp);
-        TextView cityHumid = (TextView) getActivity().findViewById(R.id.city_current_humidity);
+        TextView cityName = (TextView) result.findViewById(R.id.city_name);
+        TextView cityTemp = (TextView) result.findViewById(R.id.city_current_temp);
+        TextView cityHumid = (TextView) result.findViewById(R.id.city_current_humidity);
+        TextView cityPressure = (TextView) result.findViewById(R.id.city_current_pressure);
         forecastList = (RecyclerView) getActivity().findViewById(R.id.forecast_recyclerview);
 
         LocationModel mModel = (LocationModel) l.get(0);
@@ -151,6 +161,7 @@ public class LocationDetailFragment extends Fragment {
         cityName.setText(mModel.getName());
         cityTemp.setText(Double.toString(mModel.getMain().getTemp()) + getString(R.string.degrees_fahrenheit));
         cityHumid.setText(Double.toString(mModel.getMain().getHumidity()) + getString(R.string.percent));
+        cityPressure.setText(Double.toString(mModel.getMain().getPressure()) + R.string.percent);
 
         forecastList.setLayoutManager(new LinearLayoutManager(getActivity()));
         forecastList.swapAdapter(new WeatherForecastAdapter(mForecast), false);

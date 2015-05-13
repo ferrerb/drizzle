@@ -131,6 +131,7 @@ public class FileHandler {
      * @param path The path to the to-be-created file, uses a File object since getCacheDir() returns one
      * @param fileName The name of the file to be created
      * @param <T> The type of object being serialized
+     * @return An observable which emits nothing, but will provide errors.
      */
     public static <T extends Serializable> Observable<Void> saveSerializedObjectObservable(T data, File path, String fileName) {
         return Observable.create(new Observable.OnSubscribe<Void>() {

@@ -27,8 +27,14 @@
         android:layout_height="wrap_content"
         android:id="@+id/city_current_humidity"
         android:textSize="28sp"
-        android:layout_toEndOf="@id/city_name"
-        android:layout_below="@id/city_current_temp"
+        android:layout_below="@id/city_name"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/city_current_pressure"
+        android:layout_below="@+id/city_current_humidity"
         android:paddingStart="12dp"
         android:paddingEnd="12dp"/>
     <TextView
@@ -38,7 +44,7 @@
         android:text="@string/forecast"
         android:textSize="34sp"
         android:paddingTop="12dp"
-        android:layout_below="@+id/city_name"/>
+        android:layout_below="@+id/city_current_pressure"/>
     <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -19,7 +19,7 @@ import gro.gibberish.drizzle.R;
 import gro.gibberish.drizzle.data.ApiProvider;
 import gro.gibberish.drizzle.data.FileHandler;
 import gro.gibberish.drizzle.models.LocationModel;
-import rx.Observable;
+import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 
@@ -41,7 +41,7 @@ public class LocationListFragment extends Fragment
     private String mApi;
     private boolean needsRefresh;
     private RecyclerView rv;
-    private Subscription mSubscription;
+    private Subscription mWeatherDownloadSubscription;
     private List<LocationModel> mData = new ArrayList<LocationModel>();
     private OnItemTouchListener mOnItemClick;
     private OnFragmentInteractionListener mListener;
@@ -105,11 +105,15 @@ public class LocationListFragment extends Fragment
             getWeatherFromApi(mLocations);
         } else {
             for (String s : mLocations.split(",")) {
-                mData.add(FileHandler.getSerializedObjectFromFile(
-                        LocationModel.class,
-                        getActivity().getCacheDir(),
-                        s));
+                FileHandler.getSerializedObjectObservable(
+                        LocationModel.class, getActivity().getCacheDir(), s)
+                        .subscribe(
+                                mData::add,
+                                System.err::println,
+                                () -> {}
+                );
             }
+
             if (mData != null) {
                 Log.d("locations from file", mLocations);
 
@@ -120,8 +124,8 @@ public class LocationListFragment extends Fragment
 
         }
         // TODO possibly move the FAB to this fragments layout
-        ImageButton addLocation = (ImageButton) getActivity().findViewById(R.id.btn_add_location_fab);
-        addLocation.setOnClickListener(new View.OnClickListener() {
+        ImageButton btnAddLocation = (ImageButton) getActivity().findViewById(R.id.btn_add_location_fab);
+        btnAddLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 FragmentManager fm = getFragmentManager();
@@ -135,7 +139,7 @@ public class LocationListFragment extends Fragment
 
     private void getWeatherFromApi(String loc) {
         Log.d("weather from internet!", "true");
-        mSubscription = ApiProvider.getWeatherService().getAllLocationsWeather(loc, "imperial", mApi)
+        mWeatherDownloadSubscription = ApiProvider.getWeatherService().getAllLocationsWeather(loc, "imperial", mApi)
                 .doOnNext(weatherData -> saveLocationWeatherToSeparateFiles(weatherData.getLocationList()))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
@@ -147,13 +151,14 @@ public class LocationListFragment extends Fragment
                         () -> mListener.onListWeatherRefreshed(System.currentTimeMillis()));
     }
 
-    // Hvae this take a list of location models instead, then could pass it an added location
+    // TODO Currently not doing anything with errors from the observable.
     private void saveLocationWeatherToSeparateFiles(List<LocationModel> data) {
         for ( LocationModel loc : data ) {
-            FileHandler.saveSerializedObjectToFile(
+            FileHandler.saveSerializedObjectObservable(
                     loc,
                     getActivity().getCacheDir(),
-                    Long.toString(loc.getId()));
+                    Long.toString(loc.getId()))
+            .subscribe();
         }
     }
 
@@ -192,8 +197,8 @@ public class LocationListFragment extends Fragment
     public void onDetach() {
         super.onDetach();
         mListener = null;
-        if (mSubscription != null) {
-            mSubscription.unsubscribe();
+        if (mWeatherDownloadSubscription != null) {
+            mWeatherDownloadSubscription.unsubscribe();
         }
     }
 }
