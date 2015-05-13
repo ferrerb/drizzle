@@ -19,7 +19,6 @@ import gro.gibberish.drizzle.R;
 import gro.gibberish.drizzle.data.ApiProvider;
 import gro.gibberish.drizzle.data.FileHandler;
 import gro.gibberish.drizzle.models.LocationModel;
-import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 
@@ -165,25 +164,27 @@ public class LocationListFragment extends Fragment
     @Override
     public void onZipCodeEntered(String zip) {
         // TODO I dont like this code
-        // TODO rethink searching/adding locaitons since nothing works well together. despair
-//        if (zip.length() == 5) {
-//            // Call the search by zip location API, get the location ID from response
-//            // and add it to the location list, and refresh the list on complete
-//            zip = zip + ",us"; // To conform to the API needs
-//            ApiProvider.getWeatherService().searchLocationByZip(zip, "imperial", mApi)
-//                    .subscribe(
-//                            locationModel -> { if (mLocations == null) {
-//                                    mLocations = Long.toString(locationModel.getId());
-//                                } else {
-//                                    mLocations += "," + Long.toString(locationModel.getId());
-//                                }
-//                                Log.d("added locations", mLocations);
-//
-//                                mListener.onLocationAdded(mLocations);},
-//                            error -> Log.d("error", error.getMessage()),
-//                            () -> getWeatherFromApi(mLocations)
-//                    );
-//        }
+        if (zip.length() == 5) {
+            String azip = zip + ",us"; // To conform to the API needs
+            ApiProvider.getWeatherService().getLocationByZip(azip, "imperial", mApi)
+                    .flatMap(data -> ApiProvider.getWeatherService().getLocationByCoords(
+                            Double.toString(data.getCoord().getLat()),
+                            Double.toString(data.getCoord().getLon()),
+                            "imperial",
+                            mApi))
+                    .subscribe(
+                            locationModel -> { if (mLocations == null) {
+                                    mLocations = Long.toString(locationModel.getId());
+                                } else {
+                                    mLocations += "," + Long.toString(locationModel.getId());
+                                }
+                                Log.d("added locations", mLocations);
+
+                                mListener.onLocationAdded(mLocations);},
+                            error -> Log.d("error", error.getMessage()),
+                            () -> getWeatherFromApi(mLocations)
+                    );
+        }
     }
 
     @Override

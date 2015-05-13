@@ -14,10 +14,20 @@ public class LocationModel implements Serializable {
 
     private String name;
     private long id;
+    private Coord coord;
     private List<Weather> weather = new ArrayList<Weather>();
     private Main main;
+    private long dt;
 
     public LocationModel() {}
+
+    public void setCoord(Coord coord) {
+        this.coord = coord;
+    }
+
+    public Coord getCoord() {
+        return coord;
+    }
 
     public long getDt() {
         return dt;
@@ -26,8 +36,6 @@ public class LocationModel implements Serializable {
     public void setDt(int dt) {
         this.dt = dt;
     }
-
-    private long dt;
 
     public String getName() {
         return name;
@@ -61,8 +69,28 @@ public class LocationModel implements Serializable {
         this.main = main;
     }
 
+    public static class Coord implements Serializable {
+        private double lon;
+        private double lat;
 
-    public static class Main implements Serializable{
+        public void setLon(double lon) {
+            this.lon = lon;
+        }
+
+        public double getLon() {
+            return lon;
+        }
+
+        public void setLat(double lat) {
+            this.lat = lat;
+        }
+
+        public double getLat() {
+            return lat;
+        }
+    }
+
+    public static class Main implements Serializable {
         private double temp;
         private double humidity;
         private double pressure;

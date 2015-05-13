@@ -13,8 +13,15 @@ import rx.Observable;
 public interface OpenWeatherApi {
     // The zip query string must have ",us", or some country abbreviation,  appended to indicate a US city
     @GET("/weather")
-    Observable<LocationModel> searchLocationByZip(
+    Observable<LocationModel> getLocationByZip(
             @Query("zip") String zip,
+            @Query("units") String units,
+            @Query("APPID") String api);
+
+    @GET("/weather")
+    Observable<LocationModel> getLocationByCoords(
+            @Query("lat") String lat,
+            @Query("lon") String lon,
             @Query("units") String units,
             @Query("APPID") String api);
 
