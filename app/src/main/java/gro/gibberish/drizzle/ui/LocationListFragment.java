@@ -3,7 +3,9 @@ package gro.gibberish.drizzle.ui;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -14,6 +16,7 @@ import android.widget.ImageButton;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import gro.gibberish.drizzle.R;
 import gro.gibberish.drizzle.data.ApiProvider;
@@ -100,6 +103,24 @@ public class LocationListFragment extends Fragment
 
         mOnItemClick = (view, position) -> mListener.onLocationChosen(mData.get(position).getId());
 
+        if (mLocations.length() > 0) {
+            insertWeather();
+        }
+
+        // TODO possibly move the FAB to this fragments layout
+        ImageButton btnAddLocation = (ImageButton) getActivity().findViewById(R.id.btn_add_location_fab);
+        btnAddLocation.setOnClickListener(
+                view -> {
+                FragmentManager fm = getFragmentManager();
+                LocationAddFragment frag = LocationAddFragment.newInstance();
+                frag.setTargetFragment(LocationListFragment.this, 0);
+                frag.show(fm, "");
+                }
+        );
+        return result;
+    }
+
+    private void insertWeather() {
         if (needsRefresh) {
             getWeatherFromApi(mLocations);
         } else {
@@ -110,7 +131,7 @@ public class LocationListFragment extends Fragment
                                 mData::add,
                                 System.err::println,
                                 () -> {}
-                );
+                        );
             }
 
             if (mData != null) {
@@ -122,18 +143,6 @@ public class LocationListFragment extends Fragment
             }
 
         }
-        // TODO possibly move the FAB to this fragments layout
-        ImageButton btnAddLocation = (ImageButton) getActivity().findViewById(R.id.btn_add_location_fab);
-        btnAddLocation.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                FragmentManager fm = getFragmentManager();
-                LocationAddFragment frag = LocationAddFragment.newInstance();
-                frag.setTargetFragment(LocationListFragment.this, 0);
-                frag.show(fm, "");
-            }
-        });
-        return result;
     }
 
     private void getWeatherFromApi(String loc) {
@@ -142,9 +151,10 @@ public class LocationListFragment extends Fragment
                 .doOnNext(weatherData -> saveLocationWeatherToSeparateFiles(weatherData.getLocationList()))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        weatherData -> { mData = weatherData.getLocationList();
+                        weatherData -> {
+                            mData = weatherData.getLocationList();
                             rv.swapAdapter(
-                                new WeatherListAdapter(mData, mOnItemClick), false);},
+                                new WeatherListAdapter(mData, mOnItemClick), false); },
                         // TODO Have an errorfragment or something display
                         error -> Log.d("error", error.getMessage()),
                         () -> mListener.onListWeatherRefreshed(System.currentTimeMillis()));
@@ -163,7 +173,8 @@ public class LocationListFragment extends Fragment
 
     @Override
     public void onZipCodeEntered(String zip) {
-        // TODO I dont like this code
+        // The second call with flatmap is to get the location ID, since a request for location
+        // by zip code does not return the ID, but does return the coordinates :|
         if (zip.length() == 5) {
             String azip = zip + ",us"; // To conform to the API needs
             ApiProvider.getWeatherService().getLocationByZip(azip, "imperial", mApi)
@@ -173,7 +184,7 @@ public class LocationListFragment extends Fragment
                             "imperial",
                             mApi))
                     .subscribe(
-                            locationModel -> { if (mLocations == null) {
+                            locationModel -> { if (mLocations.length() == 0) {
                                     mLocations = Long.toString(locationModel.getId());
                                 } else {
                                     mLocations += "," + Long.toString(locationModel.getId());

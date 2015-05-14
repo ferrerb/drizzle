@@ -9,24 +9,32 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:id="@+id/forecast_row_day"
+        android:layout_weight="25"
+        android:layout_gravity="center"
         android:paddingStart="4dp"
         android:paddingEnd="4dp"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:id="@+id/forecast_row_hi"
+        android:layout_weight="25"
+        android:layout_gravity="center"
         android:paddingStart="4dp"
         android:paddingEnd="4dp"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:id="@+id/forecast_row_lo"
+        android:layout_weight="25"
+        android:layout_gravity="center"
         android:paddingStart="4dp"
         android:paddingEnd="4dp"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:id="@+id/forecast_row_pressure"
+        android:layout_weight="25"
+        android:layout_gravity="center"
         android:paddingStart="4dp"
         android:paddingEnd="4dp"/>
 

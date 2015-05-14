@@ -10,9 +10,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/city_name"
-        android:textSize="56sp"
-        android:paddingStart="12dp"
-        android:paddingEnd="12dp"/>
+        android:textSize="48sp"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

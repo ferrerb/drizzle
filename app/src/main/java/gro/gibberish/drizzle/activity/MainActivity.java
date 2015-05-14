@@ -29,6 +29,7 @@ public class MainActivity extends ActionBarActivity implements
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // TODO Check for internet access
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
 
@@ -44,9 +45,10 @@ public class MainActivity extends ActionBarActivity implements
             // refresh weather data automatically, set lastrefresh to now
             needsRefresh = true;
         }
+        // TODO Decide how to store locations
         String mLocations = sp.getString(LOCATIONS, null);
         if (savedInstanceState == null) {
-            LocationListFragment f = LocationListFragment.newInstance("4180439,5660340", API_KEY, needsRefresh);
+            LocationListFragment f = LocationListFragment.newInstance(mLocations, API_KEY, needsRefresh);
             FragmentTransaction ft = getFragmentManager().beginTransaction();
             ft.replace(R.id.weather_content, f).commit();
         }
