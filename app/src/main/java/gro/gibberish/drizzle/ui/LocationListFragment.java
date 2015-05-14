@@ -22,6 +22,7 @@ import gro.gibberish.drizzle.R;
 import gro.gibberish.drizzle.data.ApiProvider;
 import gro.gibberish.drizzle.data.FileHandler;
 import gro.gibberish.drizzle.models.LocationModel;
+import rx.Observable;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 
@@ -121,26 +122,27 @@ public class LocationListFragment extends Fragment
     }
 
     private void insertWeather() {
+        // TODO Mad fixes. list updates but not with all locations, should merge? observables
         if (needsRefresh) {
             getWeatherFromApi(mLocations);
         } else {
-            for (String s : mLocations.split(",")) {
-                FileHandler.getSerializedObjectObservable(
-                        LocationModel.class, getActivity().getCacheDir(), s)
-                        .subscribe(
-                                mData::add,
-                                System.err::println,
-                                () -> {}
-                        );
-            }
+            String[] locationsArray = mLocations.split(",");
+            Observable.from(locationsArray)
+                    .flatMap(s ->  FileHandler.getSerializedObjectObservable(
+                            LocationModel.class, getActivity().getCacheDir(), s))
+                    .subscribe(
+                            mData::add,
+                            System.err::println,
+                            () -> {
+                                if (mData != null) {
+                                    Log.d("locations from file", mLocations);
 
-            if (mData != null) {
-                Log.d("locations from file", mLocations);
-
-                rv.swapAdapter(new WeatherListAdapter(mData, mOnItemClick), false);
-            } else {
-                getWeatherFromApi(mLocations);
-            }
+                                    rv.swapAdapter(new WeatherListAdapter(mData, mOnItemClick), true);
+                                } else {
+                                    getWeatherFromApi(mLocations);
+                                }
+                            }
+                    );
 
         }
     }
