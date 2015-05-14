@@ -22,6 +22,7 @@ import gro.gibberish.drizzle.R;
 import gro.gibberish.drizzle.data.ApiProvider;
 import gro.gibberish.drizzle.data.FileHandler;
 import gro.gibberish.drizzle.models.LocationModel;
+import gro.gibberish.drizzle.models.MultipleLocationModel;
 import rx.Observable;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
@@ -148,17 +149,18 @@ public class LocationListFragment extends Fragment
     }
 
     private void getWeatherFromApi(String loc) {
-        Log.d("weather from internet!", "true");
         mWeatherDownloadSubscription = ApiProvider.getWeatherService().getAllLocationsWeather(loc, "imperial", mApi)
                 .doOnNext(weatherData -> saveLocationWeatherToSeparateFiles(weatherData.getLocationList()))
+                .map(MultipleLocationModel::getLocationList)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         weatherData -> {
-                            mData = weatherData.getLocationList();
+                            mData = weatherData;
                             rv.swapAdapter(
-                                new WeatherListAdapter(mData, mOnItemClick), false); },
+                                    new WeatherListAdapter(mData, mOnItemClick), true);
+                            },
                         // TODO Have an errorfragment or something display
-                        error -> Log.d("error", error.getMessage()),
+                        System.err::println,
                         () -> mListener.onListWeatherRefreshed(System.currentTimeMillis()));
     }
 
@@ -191,7 +193,6 @@ public class LocationListFragment extends Fragment
                                 } else {
                                     mLocations += "," + Long.toString(locationModel.getId());
                                 }
-                                Log.d("added locations", mLocations);
 
                                 mListener.onLocationAdded(mLocations);},
                             error -> Log.d("error", error.getMessage()),

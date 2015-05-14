@@ -46,7 +46,7 @@ public class MainActivity extends ActionBarActivity implements
             needsRefresh = true;
         }
         // TODO Decide how to store locations
-        String mLocations = sp.getString(LOCATIONS, null);
+        String mLocations = sp.getString(LOCATIONS, "");
         if (savedInstanceState == null) {
             LocationListFragment f = LocationListFragment.newInstance(mLocations, API_KEY, needsRefresh);
             FragmentTransaction ft = getFragmentManager().beginTransaction();
