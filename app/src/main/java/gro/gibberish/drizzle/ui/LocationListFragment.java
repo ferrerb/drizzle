@@ -123,7 +123,7 @@ public class LocationListFragment extends Fragment
     }
 
     private void insertWeather() {
-        // TODO Mad fixes. list updates but not with all locations, should merge? observables
+        // TODO All locations are added but they are not necessarily in the order in mLocations
         if (needsRefresh) {
             getWeatherFromApi(mLocations);
         } else {
@@ -136,8 +136,6 @@ public class LocationListFragment extends Fragment
                             System.err::println,
                             () -> {
                                 if (mData != null) {
-                                    Log.d("locations from file", mLocations);
-
                                     rv.swapAdapter(new WeatherListAdapter(mData, mOnItemClick), true);
                                 } else {
                                     getWeatherFromApi(mLocations);
@@ -156,8 +154,7 @@ public class LocationListFragment extends Fragment
                 .subscribe(
                         weatherData -> {
                             mData = weatherData;
-                            rv.swapAdapter(
-                                    new WeatherListAdapter(mData, mOnItemClick), true);
+                            rv.swapAdapter(new WeatherListAdapter(mData, mOnItemClick), true);
                             },
                         // TODO Have an errorfragment or something display
                         System.err::println,

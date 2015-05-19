@@ -3,13 +3,15 @@ package gro.gibberish.drizzle.ui;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
-import android.app.Fragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 
 import gro.gibberish.drizzle.R;
+import gro.gibberish.drizzle.data.ObservableLocationProvider;
+import rx.Subscription;
 
 /**
  * Change this
@@ -18,6 +20,7 @@ public class LocationAddFragment extends DialogFragment implements DialogInterfa
     private OnLocationSubmitted mCallbacks;
     private EditText mZipCode;
     private View mForm;
+    private Subscription mGpsSubscription;
 
     public static LocationAddFragment newInstance() {
         LocationAddFragment frag = new LocationAddFragment();
@@ -48,6 +51,8 @@ public class LocationAddFragment extends DialogFragment implements DialogInterfa
         mForm = getActivity().getLayoutInflater().inflate(R.layout.fragment_add_location, null);
         builder.setView(mForm);
         mZipCode = (EditText) mForm.findViewById(R.id.edit_text_zip_code);
+        Button mGpsButton = (Button) mForm.findViewById(R.id.btn_get_gps);
+        mGpsButton.setOnClickListener(view -> getGpsLocation());
 
         return builder.setTitle("Add a location")
                 .setPositiveButton("OK", this)
@@ -63,9 +68,20 @@ public class LocationAddFragment extends DialogFragment implements DialogInterfa
         }
     }
 
+    private void getGpsLocation() {
+        setRetainInstance(true);
+        mGpsSubscription = ObservableLocationProvider.retrieveLocationObservable(getActivity())
+                .subscribe(
+                        location -> location.getLongitude(),
+                        System.err::println,
+                        () -> {}
+                );
+    }
+
     @Override
     public void onDismiss(DialogInterface dialog) {
         super.onDismiss(dialog);
         mCallbacks = null;
+        mGpsSubscription.unsubscribe();
     }
 }
