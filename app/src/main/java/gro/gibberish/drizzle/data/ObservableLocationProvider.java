@@ -27,8 +27,11 @@ public final class ObservableLocationProvider {
 
     public static Observable<Location> retrieveLocationObservable(Context ctxt) {
         mLocationManager = (LocationManager) ctxt.getSystemService(Context.LOCATION_SERVICE);
+        // TODO checks for location services existing? maybe should be in the add dialog fragment
+        // TODO also this is ugly. do i need to make the anonymous class here?
+        // TODO async, although this created errors
 
-        return Observable.create(new Observable.OnSubscribe<Location>() {
+        Observable<Location> mObservable = Observable.create(new Observable.OnSubscribe<Location>() {
             @Override
             public void call(Subscriber<? super Location> subscriber) {
 
@@ -52,10 +55,13 @@ public final class ObservableLocationProvider {
                 Criteria c = new Criteria();
                 c.setAccuracy(Criteria.ACCURACY_COARSE);
                 String provider = mLocationManager.getBestProvider(c, true);
-                mLocationManager.requestSingleUpdate(provider, mLocationListener, null);
+                mLocationManager.requestLocationUpdates(provider, 200L, 1, mLocationListener);
             }
         }
 
-        ).subscribeOn(Schedulers.io());
+        )
+         .doOnUnsubscribe(() -> mLocationManager.removeUpdates(mLocationListener));
+
+        return mObservable;
     }
 }

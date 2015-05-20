@@ -75,7 +75,7 @@ public class LocationAddFragment extends DialogFragment implements DialogInterfa
                 .subscribe(
                         location -> mCallbacks
                                 .onGpsCoordsChosen(location.getLatitude(), location.getLongitude()),
-                        System.err::println,
+                        Throwable::printStackTrace,
                         this::dismiss
                 );
     }
@@ -84,6 +84,8 @@ public class LocationAddFragment extends DialogFragment implements DialogInterfa
     public void onDismiss(DialogInterface dialog) {
         super.onDismiss(dialog);
         mCallbacks = null;
-        mGpsSubscription.unsubscribe();
+        if (mGpsSubscription != null) {
+            mGpsSubscription.unsubscribe();
+        }
     }
 }

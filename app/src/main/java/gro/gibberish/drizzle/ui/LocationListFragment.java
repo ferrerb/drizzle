@@ -205,7 +205,7 @@ public class LocationListFragment extends Fragment
     public void onGpsCoordsChosen(double latitude, double longitude) {
         // Make the call to the API for a single location, add it
         // to the saved IDs, and to mLocaions, and getweatherformapi
-        Toast.makeText(getActivity(), Double.toString(latitude), Toast.LENGTH_SHORT).show();
+        Log.d("latitude", Double.toString(latitude));
     }
 
     private List<LocationModel> sortRetrievedLocations(List<LocationModel> data, String[] original) {
