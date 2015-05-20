@@ -103,6 +103,7 @@ public class LocationListFragment extends Fragment
                              Bundle savedInstanceState) {
         View result = inflater.inflate(R.layout.fragment_location_list, container, false);
         rv = (RecyclerView) result.findViewById(R.id.recycler_list);
+        // TODO make use of insert item, etc?
         rv.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         mOnItemClick = (view, position) -> mListener.onLocationChosen(mData.get(position).getId());
@@ -160,7 +161,7 @@ public class LocationListFragment extends Fragment
                             rv.swapAdapter(new WeatherListAdapter(mData, mOnItemClick), true);
                             },
                         // TODO Have an errorfragment or something display
-                        System.err::println,
+                        Throwable::printStackTrace,
                         () -> mListener.onListWeatherRefreshed(System.currentTimeMillis()));
     }
 
@@ -188,13 +189,7 @@ public class LocationListFragment extends Fragment
                             "imperial",
                             mApi))
                     .subscribe(
-                            locationModel -> { if (mLocations.length() == 0) {
-                                    mLocations = Long.toString(locationModel.getId());
-                                } else {
-                                    mLocations += "," + Long.toString(locationModel.getId());
-                                }
-
-                                mListener.onLocationAdded(mLocations);},
+                            this::updateLocationList,
                             error -> Log.d("error", error.getMessage()),
                             () -> getWeatherFromApi(mLocations)
                     );
@@ -205,11 +200,27 @@ public class LocationListFragment extends Fragment
     public void onGpsCoordsChosen(double latitude, double longitude) {
         // Make the call to the API for a single location, add it
         // to the saved IDs, and to mLocaions, and getweatherformapi
-        Log.d("latitude", Double.toString(latitude));
+        ApiProvider.getWeatherService().getLocationByCoords(
+                Double.toString(latitude), Double.toString(longitude), "imperial", mApi)
+                    .subscribe(
+                            this::updateLocationList,
+                            Throwable::printStackTrace,
+                            () -> getWeatherFromApi(mLocations)
+                    );
     }
 
-    private List<LocationModel> sortRetrievedLocations(List<LocationModel> data, String[] original) {
-        return null;
+    private void sortRetrievedLocations(LocationModel data, String[] original) {
+
+    }
+
+    private void updateLocationList(LocationModel data) {
+        if (mLocations.length() == 0) {
+            mLocations = Long.toString(data.getId());
+        } else {
+            mLocations += "," + Long.toString(data.getId());
+        }
+
+        mListener.onLocationAdded(mLocations);
     }
 
     @Override
