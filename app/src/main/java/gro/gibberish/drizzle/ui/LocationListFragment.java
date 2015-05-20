@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +27,7 @@ import gro.gibberish.drizzle.models.MultipleLocationModel;
 import rx.Observable;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.subscriptions.CompositeSubscription;
 
 /**
  * A fragment that displays a recyclerview containing weather at user submitted locations
@@ -108,15 +110,15 @@ public class LocationListFragment extends Fragment
         if (mLocations.length() > 0) {
             insertWeather();
         }
-
+        // TODO CompositeSubscription
         // TODO possibly move the FAB to this fragments layout
         ImageButton btnAddLocation = (ImageButton) getActivity().findViewById(R.id.btn_add_location_fab);
         btnAddLocation.setOnClickListener(
                 view -> {
-                FragmentManager fm = getFragmentManager();
-                LocationAddFragment frag = LocationAddFragment.newInstance();
-                frag.setTargetFragment(LocationListFragment.this, 0);
-                frag.show(fm, "");
+                    FragmentManager fm = getFragmentManager();
+                    LocationAddFragment frag = LocationAddFragment.newInstance();
+                    frag.setTargetFragment(LocationListFragment.this, 0);
+                    frag.show(fm, "");
                 }
         );
         return result;
@@ -129,12 +131,13 @@ public class LocationListFragment extends Fragment
         } else {
             String[] locationsArray = mLocations.split(",");
             Observable.from(locationsArray)
-                    .flatMap(s ->  FileHandler.getSerializedObjectObservable(
+                    .flatMap(s -> FileHandler.getSerializedObjectObservable(
                             LocationModel.class, getActivity().getCacheDir(), s))
                     .subscribe(
                             mData::add,
                             System.err::println,
                             () -> {
+                                // TODO maybe dont need this check, since needRefresh should be true if mdata would be null
                                 if (mData != null) {
                                     rv.swapAdapter(new WeatherListAdapter(mData, mOnItemClick), true);
                                 } else {
@@ -199,10 +202,14 @@ public class LocationListFragment extends Fragment
     }
 
     @Override
-    public void onGpsCoordsChosen(int x, int y) {
+    public void onGpsCoordsChosen(double latitude, double longitude) {
         // Make the call to the API for a single location, add it
         // to the saved IDs, and to mLocaions, and getweatherformapi
+        Toast.makeText(getActivity(), Double.toString(latitude), Toast.LENGTH_SHORT).show();
+    }
 
+    private List<LocationModel> sortRetrievedLocations(List<LocationModel> data, String[] original) {
+        return null;
     }
 
     @Override

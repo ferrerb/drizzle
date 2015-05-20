@@ -12,6 +12,7 @@ import android.widget.EditText;
 import gro.gibberish.drizzle.R;
 import gro.gibberish.drizzle.data.ObservableLocationProvider;
 import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
 
 /**
  * Change this
@@ -31,7 +32,7 @@ public class LocationAddFragment extends DialogFragment implements DialogInterfa
     public interface OnLocationSubmitted {
         void onZipCodeEntered(String zip);
         // Don't actually know whta GPS service provides
-        void onGpsCoordsChosen(int x, int y);
+        void onGpsCoordsChosen(double latitude, double longitude);
     }
 
     @Override
@@ -72,9 +73,10 @@ public class LocationAddFragment extends DialogFragment implements DialogInterfa
         setRetainInstance(true);
         mGpsSubscription = ObservableLocationProvider.retrieveLocationObservable(getActivity())
                 .subscribe(
-                        location -> location.getLongitude(),
+                        location -> mCallbacks
+                                .onGpsCoordsChosen(location.getLatitude(), location.getLongitude()),
                         System.err::println,
-                        () -> {}
+                        this::dismiss
                 );
     }
 

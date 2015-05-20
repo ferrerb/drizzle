@@ -19,15 +19,20 @@ import rx.schedulers.Schedulers;
  * Change this
  */
 public final class ObservableLocationProvider {
-    private ObservableLocationProvider() {}
+    private static LocationManager mLocationManager;
+    private static LocationListener mLocationListener;
 
-    public static Observable<Location> retrieveLocationObservable(Context context) {
+    private ObservableLocationProvider() {
+    }
+
+    public static Observable<Location> retrieveLocationObservable(Context ctxt) {
+        mLocationManager = (LocationManager) ctxt.getSystemService(Context.LOCATION_SERVICE);
+
         return Observable.create(new Observable.OnSubscribe<Location>() {
             @Override
             public void call(Subscriber<? super Location> subscriber) {
-                LocationManager mLocation =
-                        (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-                LocationListener mLocationListener = new LocationListener() {
+
+                mLocationListener = new LocationListener() {
                     @Override
                     public void onStatusChanged(String s, int i, Bundle bundle) {}
 
@@ -43,13 +48,14 @@ public final class ObservableLocationProvider {
                         subscriber.onCompleted();
                     }
                 };
+
                 Criteria c = new Criteria();
                 c.setAccuracy(Criteria.ACCURACY_COARSE);
-                String provider = mLocation.getBestProvider(c, true);
-                mLocation.requestLocationUpdates(provider, 0L, 0, mLocationListener);
+                String provider = mLocationManager.getBestProvider(c, true);
+                mLocationManager.requestSingleUpdate(provider, mLocationListener, null);
             }
         }
 
-        ).subscribeOn(Schedulers.newThread());
+        ).subscribeOn(Schedulers.io());
     }
 }
