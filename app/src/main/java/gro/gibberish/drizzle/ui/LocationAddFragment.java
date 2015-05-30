@@ -3,16 +3,17 @@ package gro.gibberish.drizzle.ui;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
 import gro.gibberish.drizzle.R;
-import gro.gibberish.drizzle.data.ObservableLocationProvider;
+import gro.gibberish.drizzle.data.LocationObservableProvider;
 import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
 
 /**
  * Change this
@@ -52,12 +53,13 @@ public class LocationAddFragment extends DialogFragment implements DialogInterfa
         mForm = getActivity().getLayoutInflater().inflate(R.layout.fragment_add_location, null);
         builder.setView(mForm);
         mZipCode = (EditText) mForm.findViewById(R.id.edit_text_zip_code);
+
         Button mGpsButton = (Button) mForm.findViewById(R.id.btn_get_gps);
-        mGpsButton.setOnClickListener(view -> getGpsLocation());
+        mGpsButton.setOnClickListener(view -> checkForLocationServices());
 
         return builder.setTitle("Add a location")
-                .setPositiveButton("OK", this)
-                .setNegativeButton("Cancel", null).create();
+                .setPositiveButton(R.string.ok, this)
+                .setNegativeButton(R.string.cancel, null).create();
     }
 
     @Override
@@ -69,9 +71,21 @@ public class LocationAddFragment extends DialogFragment implements DialogInterfa
         }
     }
 
-    private void getGpsLocation() {
+    private void checkForLocationServices() {
+        LocationManager mgr =
+                (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+        // TODO Check for other providers, and send different accuracy types based on it
+        // TODO Could the check go in a static method in observablelocationprovider
+        // TODO use googleapiservices?
+        if (mgr.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+            getLocation();
+        } else {
+        }
+    }
+
+    private void getLocation() {
         setRetainInstance(true);
-        mGpsSubscription = ObservableLocationProvider.retrieveLocationObservable(getActivity())
+        mGpsSubscription = LocationObservableProvider.retrieveLocationObservable(getActivity())
                 .subscribe(
                         location -> mCallbacks
                                 .onGpsCoordsChosen(location.getLatitude(), location.getLongitude()),

@@ -87,7 +87,6 @@ public class MainActivity extends ActionBarActivity implements
 
     @Override
     public void onListWeatherRefreshed(long l) {
-        // TODO Think about when the last refresh is saved, should each location have its own SP for this just for forecast data?
         sp.edit().putLong(SP_LAST_REFRESH, l).apply();
     }
 

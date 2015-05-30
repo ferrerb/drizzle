@@ -18,18 +18,16 @@ import rx.schedulers.Schedulers;
 /**
  * Change this
  */
-public final class ObservableLocationProvider {
+public final class LocationObservableProvider {
     private static LocationManager mLocationManager;
     private static LocationListener mLocationListener;
 
-    private ObservableLocationProvider() {
+    private LocationObservableProvider() {
     }
 
     public static Observable<Location> retrieveLocationObservable(Context ctxt) {
         mLocationManager = (LocationManager) ctxt.getSystemService(Context.LOCATION_SERVICE);
-        // TODO checks for location services existing? maybe should be in the add dialog fragment
         // TODO also this is ugly. do i need to make the anonymous class here?
-        // TODO async, although this created errors
 
         Observable<Location> mObservable = Observable.create(new Observable.OnSubscribe<Location>() {
             @Override
@@ -57,9 +55,7 @@ public final class ObservableLocationProvider {
                 String provider = mLocationManager.getBestProvider(c, true);
                 mLocationManager.requestLocationUpdates(provider, 200L, 1, mLocationListener);
             }
-        }
-
-        )
+        })
          .doOnUnsubscribe(() -> mLocationManager.removeUpdates(mLocationListener));
 
         return mObservable;

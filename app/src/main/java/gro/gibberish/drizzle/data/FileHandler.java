@@ -37,7 +37,8 @@ public class FileHandler {
      * sure you pass the class which matches the serialized object. No pressure.
      */
     @SuppressWarnings("unchecked")
-    public static <T> Observable<T> getSerializedObjectObservable(Class<T> type, File path, String fileName) {
+    public static <T> Observable<T> getSerializedObjectObservable(
+            Class<T> type, File path, String fileName) {
         return Observable.create(new Observable.OnSubscribe<T>() {
             @Override
             public void call(Subscriber<? super T> subscriber) {
@@ -52,8 +53,7 @@ public class FileHandler {
 
                     subscriber.onNext(data);
                     subscriber.onCompleted();
-                }
-                catch (IOException | ClassNotFoundException e) {
+                } catch (IOException | ClassNotFoundException e) {
                     throw OnErrorThrowable.from(e);
                 }
             }
@@ -69,7 +69,8 @@ public class FileHandler {
      * @param <T> The type of object being serialized
      * @return An observable which emits nothing, but will provide errors.
      */
-    public static <T extends Serializable> Observable<Void> saveSerializedObjectObservable(T data, File path, String fileName) {
+    public static <T extends Serializable> Observable<Void> saveSerializedObjectObservable(
+            T data, File path, String fileName) {
         return Observable.create(new Observable.OnSubscribe<Void>() {
             @Override
             public void call(Subscriber<? super Void> subscriber) {
@@ -80,16 +81,28 @@ public class FileHandler {
 
                     out.writeObject(data);
                     out.close();
-                }
-                catch (FileNotFoundException e) {
+                } catch (FileNotFoundException e) {
                     throw OnErrorThrowable.from(e);
-                }
-                catch (IOException e) {
+                } catch (IOException e) {
                     throw OnErrorThrowable.from(e);
                 }
                 subscriber.onCompleted();
             }
 
+        }).subscribeOn(Schedulers.io());
+    }
+
+    public static Observable<Void> deleteSerializedObjectObservable(File path, String filename) {
+        return Observable.create(new Observable.OnSubscribe<Void>() {
+            @Override
+            public void call(Subscriber<? super Void> subscriber) {
+                try {
+                    File file = new File(path, filename);
+                    file.delete();
+                } catch (SecurityException e) {
+                    throw OnErrorThrowable.from(e);
+                }
+            }
         }).subscribeOn(Schedulers.io());
     }
 

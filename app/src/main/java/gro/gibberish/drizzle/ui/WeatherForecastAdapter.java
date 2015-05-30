@@ -25,7 +25,6 @@ public class WeatherForecastAdapter extends RecyclerView.Adapter<WeatherForecast
     List<WeatherList> mWeatherList = new ArrayList<WeatherList>();
 
     public WeatherForecastAdapter(LocationForecastModel data) {
-        // TODO check for null? throw exception if null?
         mWeatherList = data.getList();
     }
 
