@@ -9,16 +9,17 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/city_name"
-        android:textSize="48sp"
+        android:id="@+id/current_text"
+        android:text="@string/current"
+        android:textSize="34sp"
         android:paddingStart="8dp"
         android:paddingEnd="8dp"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/city_current_temp"
-        android:textSize="34sp"
-        android:layout_toEndOf="@id/city_name"
+        android:textSize="48sp"
+        android:layout_below="@id/current_text"
         android:layout_alignParentEnd="true"
         android:paddingStart="12dp"
         android:paddingEnd="12dp"/>
@@ -27,14 +28,17 @@
         android:layout_height="wrap_content"
         android:id="@+id/city_current_humidity"
         android:textSize="28sp"
-        android:layout_below="@id/city_name"
+        android:layout_below="@id/city_current_temp"
+        android:layout_alignParentEnd="true"
         android:paddingStart="12dp"
         android:paddingEnd="12dp"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/city_current_pressure"
+        android:textSize="28sp"
         android:layout_below="@+id/city_current_humidity"
+        android:layout_alignParentEnd="true"
         android:paddingStart="12dp"
         android:paddingEnd="12dp"/>
     <TextView

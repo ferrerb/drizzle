@@ -1,20 +1,28 @@
 package gro.gibberish.drizzle.ui;
 
+import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.preference.PreferenceManager;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.text.NumberFormat;
+
 import gro.gibberish.drizzle.R;
 import gro.gibberish.drizzle.data.ApiProvider;
 import gro.gibberish.drizzle.data.FileHandler;
+import gro.gibberish.drizzle.data.NumberFormatting;
 import gro.gibberish.drizzle.models.LocationForecastModel;
 import gro.gibberish.drizzle.models.LocationModel;
 import rx.android.schedulers.AndroidSchedulers;
@@ -32,9 +40,10 @@ public class LocationDetailFragment extends Fragment {
     private static final long ONE_HOUR_MS = 3600000;
     // Appended to the forecast saved file and shared pref update time to differentiate from a locations saved current weather
     private static final String FORECAST_FILE_APPENDED = "cast";
-    private static final String WEATHER_LIST_FILE = "allCurrentWeather.srl";
     private View result;
     private RecyclerView forecastList;
+    private ActionBar actionBar;
+    private OnLocationDetailCallbacks mCallbacks;
 
     private SharedPreferences sp;
     private String unitType;
@@ -45,7 +54,7 @@ public class LocationDetailFragment extends Fragment {
      * Returns a new instance of this fragment with the specified parameters
      *
      * @param key The API key for openweathermap
-     * @param loc The desired location's zip code.
+     * @param loc The desired location's ID, provided by the OpenWeatherAPI
      * @return A new instance of fragment LocationDetailFragment.
      */
     public static LocationDetailFragment newInstance(String key, String loc) {
@@ -61,6 +70,21 @@ public class LocationDetailFragment extends Fragment {
         // Required empty public constructor
     }
 
+    public interface OnLocationDetailCallbacks {
+        void onDeleteLocation(String locationId);
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try {
+            mCallbacks = (OnLocationDetailCallbacks) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString() +
+                    " must implement OnLocationDetailCallbacks");
+        }
+
+    }
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,7 +101,8 @@ public class LocationDetailFragment extends Fragment {
         sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
         forecastList = (RecyclerView) result.findViewById(R.id.forecast_recyclerview);
 
-        ((ActionBarActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        actionBar = ((ActionBarActivity) getActivity()).getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
 
         return result;
     }
@@ -86,6 +111,22 @@ public class LocationDetailFragment extends Fragment {
     public void onResume() {
         super.onResume();
         insertWeather();
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_location_detail, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case (R.id.action_delete):
+                mCallbacks.onDeleteLocation(mLocation);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     @Override
@@ -141,15 +182,17 @@ public class LocationDetailFragment extends Fragment {
     }
 
     private void insertCurrentData(LocationModel data) {
-        TextView cityName = (TextView) result.findViewById(R.id.city_name);
         TextView cityTemp = (TextView) result.findViewById(R.id.city_current_temp);
         TextView cityHumid = (TextView) result.findViewById(R.id.city_current_humidity);
         TextView cityPressure = (TextView) result.findViewById(R.id.city_current_pressure);
 
-        cityName.setText(data.getName());
-        cityTemp.setText(Double.toString(data.getMain().getTemp()) + getString(R.string.degrees_fahrenheit));
-        cityHumid.setText(Double.toString(data.getMain().getHumidity()) + getString(R.string.percent));
-        cityPressure.setText(Double.toString(data.getMain().getPressure()) + R.string.percent);
+        actionBar.setTitle(data.getName());
+        cityTemp.setText(NumberFormatting.doubleToStringNoDecimals(data.getMain().getTemp()) +
+                getString(R.string.degrees));
+        cityHumid.setText(NumberFormatting.doubleToStringNoDecimals(data.getMain().getHumidity()) +
+                getString(R.string.percent));
+        cityPressure.setText(NumberFormatting.doubleToStringOneDecimal(data.getMain().getPressure()) +
+                getString(R.string.percent));
     }
 
     private void insertForecastData(LocationForecastModel data) {
@@ -161,5 +204,6 @@ public class LocationDetailFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
+        mCallbacks = null;
     }
 }

@@ -14,6 +14,7 @@ import java.util.Date;
 import java.util.List;
 
 import gro.gibberish.drizzle.R;
+import gro.gibberish.drizzle.data.NumberFormatting;
 import gro.gibberish.drizzle.models.LocationForecastModel;
 import gro.gibberish.drizzle.models.LocationModel;
 import gro.gibberish.drizzle.models.WeatherList;
@@ -71,9 +72,12 @@ public class WeatherForecastAdapter extends RecyclerView.Adapter<WeatherForecast
             String forecastDayAsString =
                     DateFormat.format("EEE", new Date(forecastDayUnixTime)).toString();
             dayName.setText(forecastDayAsString);
-            dayHiTemp.setText(Double.toString(data.getTemp().getMax()));
-            dayLoTemp.setText(Double.toString(data.getTemp().getMin()));
-            dayPressure.setText(Double.toString(data.getPressure()));
+            dayHiTemp.setText(
+                    NumberFormatting.doubleToStringNoDecimals(data.getTemp().getMax()) + "\u00b0");
+            dayLoTemp.setText(
+                    NumberFormatting.doubleToStringNoDecimals(data.getTemp().getMin()) + "\u00b0");
+            dayPressure.setText(
+                    NumberFormatting.doubleToStringOneDecimal(data.getPressure()) + "\u0025");
         }
     }
 }

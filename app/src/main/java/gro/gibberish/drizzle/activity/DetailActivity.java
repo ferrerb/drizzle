@@ -10,7 +10,7 @@ import gro.gibberish.drizzle.ui.LocationDetailFragment;
 /**
  * Hosts the location detail fragment
  */
-public class DetailActivity extends ActionBarActivity {
+public class DetailActivity extends ActionBarActivity implements LocationDetailFragment.OnLocationDetailCallbacks{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -24,5 +24,11 @@ public class DetailActivity extends ActionBarActivity {
             frag.setArguments(getIntent().getExtras());
             getFragmentManager().beginTransaction().add(R.id.location_detail, frag).commit();
         }
+    }
+
+    @Override
+    public void onDeleteLocation(String location) {
+        // TODO Open the mainactivity with an intent containing the location string?
+        // TODO Could this be some eventbus/observable thing?
     }
 }

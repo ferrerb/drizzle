@@ -10,6 +10,7 @@ import android.widget.TextView;
 import java.util.List;
 
 import gro.gibberish.drizzle.R;
+import gro.gibberish.drizzle.data.NumberFormatting;
 import gro.gibberish.drizzle.models.LocationModel;
 
 /**
@@ -60,7 +61,8 @@ public class WeatherListAdapter extends RecyclerView.Adapter<WeatherListAdapter.
 
         void bindModel(LocationModel data) {
             locationName.setText(data.getName());
-            locationTemp.setText(Double.toString(data.getMain().getTemp()));
+            locationTemp.setText(
+                    NumberFormatting.doubleToStringNoDecimals(data.getMain().getTemp()) + "\u00b0");
         }
     }
 }

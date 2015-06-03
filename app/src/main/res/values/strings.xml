@@ -8,8 +8,10 @@
     <string name="cancel">Cancel</string>
     <string name="degrees_fahrenheit">&#176;F</string>
     <string name="degrees_celsius">&#176;C</string>
+    <string name="degrees">&#176;</string>
     <string name="units_imperial">imperial</string>
     <string name="percent">%</string>
+    <string name="current">Current</string>
     <string name="forecast">Forecast</string>
     <string name="zip_hint">Enter zip code</string>
     <string name="get_gps_coords">Use current location</string>
