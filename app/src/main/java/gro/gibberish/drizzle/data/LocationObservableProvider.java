@@ -6,6 +6,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Looper;
 
 import java.util.List;
 
@@ -45,15 +46,19 @@ public final class LocationObservableProvider {
 
                     @Override
                     public void onLocationChanged(Location l) {
+                        Looper.myLooper().quit();
                         subscriber.onNext(l);
                         subscriber.onCompleted();
                     }
                 };
+                Looper.prepare();
 
                 Criteria c = new Criteria();
                 c.setAccuracy(Criteria.ACCURACY_COARSE);
                 String provider = mLocationManager.getBestProvider(c, true);
-                mLocationManager.requestLocationUpdates(provider, 200L, 1, mLocationListener);
+                mLocationManager.requestSingleUpdate(
+                        provider, mLocationListener, Looper.myLooper());
+                Looper.loop();
             }
         })
          .doOnUnsubscribe(() -> mLocationManager.removeUpdates(mLocationListener));

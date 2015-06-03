@@ -14,6 +14,8 @@ import android.widget.EditText;
 import gro.gibberish.drizzle.R;
 import gro.gibberish.drizzle.data.LocationObservableProvider;
 import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Change this
@@ -77,15 +79,21 @@ public class LocationAddFragment extends DialogFragment implements DialogInterfa
         // TODO Check for other providers, and send different accuracy types based on it
         // TODO Could the check go in a static method in observablelocationprovider
         // TODO use googleapiservices?
-        if (mgr.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+        if (mgr.isProviderEnabled(LocationManager.NETWORK_PROVIDER) ||
+                mgr.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
             getLocation();
+            // TODO Have the location observable use the enabled provider
         } else {
+            //getLocation();
+
         }
     }
 
     private void getLocation() {
         setRetainInstance(true);
         mGpsSubscription = LocationObservableProvider.retrieveLocationObservable(getActivity())
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         location -> mCallbacks
                                 .onGpsCoordsChosen(location.getLatitude(), location.getLongitude()),

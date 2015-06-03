@@ -39,6 +39,7 @@ import rx.subscriptions.CompositeSubscription;
  */
 public class LocationListFragment extends Fragment
         implements LocationAddFragment.OnLocationSubmitted{
+    // TODO Add a static TAG with getclass.getsimplename
 
     private static final String LOCATIONS = "locations";
     private static final String API_KEY = "api_key";
@@ -183,6 +184,7 @@ public class LocationListFragment extends Fragment
         if (zip.length() == 5) {
             String azip = zip + ",us"; // To conform to the API needs
             ApiProvider.getWeatherService().getLocationByZip(azip, "imperial", mApi)
+                    .doOnError(e -> Log.d("first get zip ", e.getMessage()))
                     .flatMap(data -> ApiProvider.getWeatherService().getLocationByCoords(
                             Double.toString(data.getCoord().getLat()),
                             Double.toString(data.getCoord().getLon()),
@@ -190,7 +192,7 @@ public class LocationListFragment extends Fragment
                             mApi))
                     .subscribe(
                             this::updateLocationList,
-                            error -> Log.d("error", error.getMessage()),
+                            error -> Log.d("error onzipentered", error.getMessage()),
                             () -> getWeatherFromApi(mLocations)
                     );
         }
