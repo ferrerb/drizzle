@@ -90,6 +90,13 @@ public class FileHandler {
         }).subscribeOn(Schedulers.io());
     }
 
+    /**
+     * Deletes a file
+     *
+     * @param path The path to the file, as a File object
+     * @param filename
+     * @return An observable which emits a boolean, true if the file was deleted
+     */
     public static Observable<Boolean> deleteSerializedObjectObservable(File path, String filename) {
         return Observable.create(new Observable.OnSubscribe<Boolean>() {
             @Override

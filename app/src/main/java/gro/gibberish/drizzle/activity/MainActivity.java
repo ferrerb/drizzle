@@ -1,31 +1,23 @@
 package gro.gibberish.drizzle.activity;
 
-    import android.app.FragmentTransaction;
-    import android.content.Intent;
-    import android.content.SharedPreferences;
-    import android.net.Uri;
-    import android.os.Bundle;
-    import android.preference.PreferenceManager;
-    import android.support.v7.app.ActionBarActivity;
-    import android.support.v7.widget.Toolbar;
-    import android.view.Menu;
-    import android.view.MenuItem;
+import android.app.FragmentTransaction;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 
-    import gro.gibberish.drizzle.R;
-    import gro.gibberish.drizzle.ui.LocationDetailFragment;
-    import gro.gibberish.drizzle.ui.LocationListFragment;
+import gro.gibberish.drizzle.R;
+import gro.gibberish.drizzle.ui.LocationListFragment;
 
 
 public class MainActivity extends ActionBarActivity implements
         LocationListFragment.OnFragmentInteractionListener {
 
-    private static final int ONE_HOUR_MS = 3600000;
-    private static final String SP_LAST_REFRESH = "SP_LAST_REFRESH";
-    private static final String LOCATIONS = "locations";
-    private boolean needsRefresh = false;
     private String API_KEY;
-    private SharedPreferences sp;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,22 +25,16 @@ public class MainActivity extends ActionBarActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
 
-        API_KEY = getApplicationContext().getResources().getString(R.string.api_key);
-        sp = PreferenceManager.getDefaultSharedPreferences(this);
+        API_KEY = getResources().getString(R.string.api_key);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         if (toolbar != null) {
             setSupportActionBar(toolbar);
         }
-        long lastRefresh = sp.getLong(SP_LAST_REFRESH, 0L);
-        if (System.currentTimeMillis() - lastRefresh > ONE_HOUR_MS) {
-            // refresh weather data automatically, set lastrefresh to now
-            needsRefresh = true;
-        }
+
         // TODO Decide how to store locations
-        String mLocations = sp.getString(LOCATIONS, "");
         if (savedInstanceState == null) {
-            LocationListFragment f = LocationListFragment.newInstance(mLocations, API_KEY, needsRefresh);
+            LocationListFragment f = LocationListFragment.newInstance(API_KEY);
             FragmentTransaction ft = getFragmentManager().beginTransaction();
             ft.replace(R.id.weather_content, f).commit();
         }
@@ -57,13 +43,10 @@ public class MainActivity extends ActionBarActivity implements
     @Override
     protected void onResume() {
         super.onResume();
-
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
@@ -71,7 +54,6 @@ public class MainActivity extends ActionBarActivity implements
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        // Actually have some settings, like units (imperial, metric)
         if (id == R.id.action_settings) {
             return true;
         }
@@ -84,12 +66,6 @@ public class MainActivity extends ActionBarActivity implements
         super.onPause();
     }
 
-
-    @Override
-    public void onListWeatherRefreshed(long l) {
-        sp.edit().putLong(SP_LAST_REFRESH, l).apply();
-    }
-
     @Override
     public void onLocationChosen(long id) {
         Intent i = new Intent();
@@ -98,10 +74,4 @@ public class MainActivity extends ActionBarActivity implements
         i.putExtra("id", Long.toString(id));
         startActivity(i);
     }
-
-    @Override
-    public void onLocationAdded(String locations) {
-        sp.edit().putString(LOCATIONS, locations).apply();
-    }
-
 }

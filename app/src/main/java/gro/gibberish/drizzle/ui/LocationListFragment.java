@@ -13,11 +13,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import gro.gibberish.drizzle.R;
 import gro.gibberish.drizzle.data.ApiProvider;
@@ -27,7 +25,6 @@ import gro.gibberish.drizzle.models.MultipleLocationModel;
 import rx.Observable;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.subscriptions.CompositeSubscription;
 
 /**
  * A fragment that displays a recyclerview containing weather at user submitted locations
@@ -41,30 +38,30 @@ public class LocationListFragment extends Fragment
         implements LocationAddFragment.OnLocationSubmitted{
     // TODO Add a static TAG with getclass.getsimplename
 
-    private static final String LOCATIONS = "locations";
     private static final String API_KEY = "api_key";
-    private static final String NEEDS_REFRESH = "needs_refresh";
+    private static final String SP_LAST_REFRESH = "SP_LAST_REFRESH";
+    private static final String LOCATIONS = "locations";
+    private static final int ONE_HOUR_MS = 3600000;
     private String mLocations;
     private String mApi;
     private boolean needsRefresh;
     private RecyclerView rv;
     private Subscription mWeatherDownloadSubscription;
-    private List<LocationModel> mData = new ArrayList<LocationModel>();
+    private List<LocationModel> mData = new ArrayList<>();
     private OnItemTouchListener mOnItemClick;
     private OnFragmentInteractionListener mListener;
+    private SharedPreferences sp;
 
     /**
      * Creates a new fragment containing a recycler view
      *
-     * @param location List of locations as city ID, comma separated
+     * @param apiKey The api key for accessing openweathermap
      * @return A new instance of fragment LocationListFragment.
      */
-    public static LocationListFragment newInstance(String location, String apiKey, Boolean refresh) {
+    public static LocationListFragment newInstance( String apiKey) {
         LocationListFragment fragment = new LocationListFragment();
         Bundle args = new Bundle();
-        args.putString(LOCATIONS, location);
         args.putString(API_KEY, apiKey);
-        args.putBoolean(NEEDS_REFRESH, refresh);
         fragment.setArguments(args);
         return fragment;
     }
@@ -73,9 +70,7 @@ public class LocationListFragment extends Fragment
     }
 
     public interface OnFragmentInteractionListener {
-        void onListWeatherRefreshed(long refreshTime);
         void onLocationChosen(long id);
-        void onLocationAdded(String locations);
     }
 
     @Override
@@ -93,10 +88,13 @@ public class LocationListFragment extends Fragment
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mLocations = getArguments().getString(LOCATIONS);
             mApi = getArguments().getString(API_KEY);
-            needsRefresh = getArguments().getBoolean(NEEDS_REFRESH);
         }
+
+        sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        long lastRefresh = sp.getLong(SP_LAST_REFRESH, 0L);
+        needsRefresh = (System.currentTimeMillis() - lastRefresh) > ONE_HOUR_MS;
+        mLocations = sp.getString(LOCATIONS, "");
     }
 
     @Override
@@ -163,7 +161,8 @@ public class LocationListFragment extends Fragment
                             },
                         // TODO Have an errorfragment or something display
                         Throwable::printStackTrace,
-                        () -> mListener.onListWeatherRefreshed(System.currentTimeMillis()));
+                        () -> sp.edit().putLong(SP_LAST_REFRESH, System.currentTimeMillis()).apply()
+                );
     }
 
     // TODO Currently not doing anything with errors from the observable.
@@ -211,10 +210,6 @@ public class LocationListFragment extends Fragment
                     );
     }
 
-    private void sortRetrievedLocations(LocationModel data, String[] original) {
-
-    }
-
     private void updateLocationList(LocationModel data) {
         if (mLocations.length() == 0) {
             mLocations = Long.toString(data.getId());
@@ -222,7 +217,7 @@ public class LocationListFragment extends Fragment
             mLocations += "," + Long.toString(data.getId());
         }
 
-        mListener.onLocationAdded(mLocations);
+        sp.edit().putString(LOCATIONS, mLocations).apply();
     }
 
     @Override
