@@ -1,12 +1,6 @@
 package gro.gibberish.drizzle.data;
 
-import gro.gibberish.drizzle.models.LocationForecastModel;
-import gro.gibberish.drizzle.models.LocationModel;
-import gro.gibberish.drizzle.models.MultipleLocationModel;
 import retrofit.RestAdapter;
-import retrofit.http.GET;
-import retrofit.http.Query;
-import rx.Observable;
 
 /**
  * Holds a static instance of the rest adapter for accessing the OpenWeather API

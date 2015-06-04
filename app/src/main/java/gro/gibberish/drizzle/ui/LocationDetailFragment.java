@@ -25,6 +25,7 @@ import gro.gibberish.drizzle.data.FileHandler;
 import gro.gibberish.drizzle.data.NumberFormatting;
 import gro.gibberish.drizzle.models.LocationForecastModel;
 import gro.gibberish.drizzle.models.LocationModel;
+import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 
 /**
@@ -88,6 +89,8 @@ public class LocationDetailFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+
         if (getArguments() != null) {
             mApiKey = getArguments().getString(API_KEY);
             mLocation = getArguments().getString(LOCATION);
@@ -136,6 +139,7 @@ public class LocationDetailFragment extends Fragment {
 
     private void insertWeather() {
         long lastForecastRefresh = sp.getLong((mLocation + FORECAST_FILE_APPENDED), 0L);
+        boolean needsRefresh = (System.currentTimeMillis() - lastForecastRefresh) > ONE_HOUR_MS;
 
         FileHandler.getSerializedObjectObservable(
                 LocationModel.class,
@@ -144,10 +148,11 @@ public class LocationDetailFragment extends Fragment {
                     .subscribe(
                             this::insertCurrentData,
                             System.err::println,
-                            () -> {}
+                            () -> {
+                            }
                     );
 
-        if (System.currentTimeMillis() - lastForecastRefresh > ONE_HOUR_MS) {
+        if (needsRefresh) {
             getForecastFromApi();
         } else {
             FileHandler.getSerializedObjectObservable(
@@ -173,9 +178,8 @@ public class LocationDetailFragment extends Fragment {
                         mLocation + FORECAST_FILE_APPENDED).subscribe())
                 .subscribe(
                         this::insertForecastData,
-                        System.err::println,
-                        () ->
-                                sp.edit().putLong(
+                        Throwable::printStackTrace,
+                        () -> sp.edit().putLong(
                                         mLocation + FORECAST_FILE_APPENDED,
                                         System.currentTimeMillis()).apply()
                 );

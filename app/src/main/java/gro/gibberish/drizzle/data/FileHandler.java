@@ -1,7 +1,5 @@
 package gro.gibberish.drizzle.data;
 
-import android.util.Log;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -92,16 +90,19 @@ public class FileHandler {
         }).subscribeOn(Schedulers.io());
     }
 
-    public static Observable<Void> deleteSerializedObjectObservable(File path, String filename) {
-        return Observable.create(new Observable.OnSubscribe<Void>() {
+    public static Observable<Boolean> deleteSerializedObjectObservable(File path, String filename) {
+        return Observable.create(new Observable.OnSubscribe<Boolean>() {
             @Override
-            public void call(Subscriber<? super Void> subscriber) {
+            public void call(Subscriber<? super Boolean> subscriber) {
                 try {
+                    boolean fileDeleted;
                     File file = new File(path, filename);
-                    file.delete();
+                    fileDeleted = file.delete();
+                    subscriber.onNext(fileDeleted);
                 } catch (SecurityException e) {
                     throw OnErrorThrowable.from(e);
                 }
+                subscriber.onCompleted();
             }
         }).subscribeOn(Schedulers.io());
     }
