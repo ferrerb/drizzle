@@ -70,7 +70,7 @@ public class LocationDetailFragment extends Fragment {
     public LocationDetailFragment() {
         // Required empty public constructor
     }
-
+    // TODO Instead of sending this back to some other activity, what about deleting here.
     public interface OnLocationDetailCallbacks {
         void onDeleteLocation(String locationId);
     }

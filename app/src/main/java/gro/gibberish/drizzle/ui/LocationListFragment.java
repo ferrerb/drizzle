@@ -16,6 +16,7 @@ import android.widget.ImageButton;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import gro.gibberish.drizzle.R;
 import gro.gibberish.drizzle.data.ApiProvider;
@@ -104,7 +105,6 @@ public class LocationListFragment extends Fragment
         rv = (RecyclerView) result.findViewById(R.id.recycler_list);
         // TODO make use of insert item, etc?
         rv.setLayoutManager(new LinearLayoutManager(getActivity()));
-
         mOnItemClick = (view, position) -> mListener.onLocationChosen(mData.get(position).getId());
 
         if (mLocations.length() > 0) {
@@ -112,7 +112,8 @@ public class LocationListFragment extends Fragment
         }
         // TODO CompositeSubscription
         // TODO possibly move the FAB to this fragments layout
-        ImageButton btnAddLocation = (ImageButton) getActivity().findViewById(R.id.btn_add_location_fab);
+        ImageButton btnAddLocation =
+                (ImageButton) getActivity().findViewById(R.id.btn_add_location_fab);
         btnAddLocation.setOnClickListener(
                 view -> {
                     FragmentManager fm = getFragmentManager();
@@ -150,7 +151,8 @@ public class LocationListFragment extends Fragment
     }
 
     private void getWeatherFromApi(String loc) {
-        mWeatherDownloadSubscription = ApiProvider.getWeatherService().getAllLocationsWeather(loc, "imperial", mApi)
+        mWeatherDownloadSubscription =
+                ApiProvider.getWeatherService().getAllLocationsWeather(loc, "imperial", mApi)
                 .doOnNext(weatherData -> saveLocationWeatherToSeparateFiles(weatherData.getLocationList()))
                 .map(MultipleLocationModel::getLocationList)
                 .observeOn(AndroidSchedulers.mainThread())
