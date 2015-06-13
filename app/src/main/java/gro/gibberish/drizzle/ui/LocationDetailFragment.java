@@ -204,6 +204,10 @@ public class LocationDetailFragment extends Fragment {
         forecastList.swapAdapter(new WeatherForecastAdapter(data), false);
     }
 
+    private void deleteLocation() {
+        // TODO get the location list, remove current location, deleted associated files, go back to listview
+        String allLocations = sp.getString("locations", "");
+    }
 
     @Override
     public void onDetach() {
