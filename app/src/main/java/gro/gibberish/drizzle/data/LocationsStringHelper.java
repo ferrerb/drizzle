@@ -1,5 +1,6 @@
 package gro.gibberish.drizzle.data;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -26,10 +27,11 @@ public final class LocationsStringHelper {
     }
 
     public static List<String> createListFromCommaSeparatedString(String toBeSplit) {
-        return Arrays.asList(toBeSplit.split(","));
+        List<String> list = new ArrayList<>(Arrays.asList(toBeSplit.split(",")));
+        return list;
     }
 
-    private static String createCommaSeparatedStringFromList(List<String> data) {
+    public static String createCommaSeparatedStringFromList(List<String> data) {
         StringBuilder builder = new StringBuilder();
         for (String s : data) {
             builder.append(s).append(",");
