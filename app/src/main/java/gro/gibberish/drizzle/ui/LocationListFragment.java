@@ -21,6 +21,7 @@ import java.util.Map;
 import gro.gibberish.drizzle.R;
 import gro.gibberish.drizzle.data.ApiProvider;
 import gro.gibberish.drizzle.data.FileHandler;
+import gro.gibberish.drizzle.data.LocationsStringHelper;
 import gro.gibberish.drizzle.models.LocationModel;
 import gro.gibberish.drizzle.models.MultipleLocationModel;
 import rx.Observable;
@@ -130,8 +131,7 @@ public class LocationListFragment extends Fragment
         if (needsRefresh) {
             getWeatherFromApi(mLocations);
         } else {
-            String[] locationsArray = mLocations.split(",");
-            Observable.from(locationsArray)
+            Observable.from(LocationsStringHelper.createListFromCommaSeparatedString(mLocations))
                     .flatMap(s -> FileHandler.getSerializedObjectObservable(
                             LocationModel.class, getActivity().getCacheDir(), s))
                     .subscribe(

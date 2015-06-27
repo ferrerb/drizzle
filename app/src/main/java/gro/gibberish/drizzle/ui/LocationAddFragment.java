@@ -34,7 +34,6 @@ public class LocationAddFragment extends DialogFragment implements DialogInterfa
 
     public interface OnLocationSubmitted {
         void onZipCodeEntered(String zip);
-        // Don't actually know whta GPS service provides
         void onGpsCoordsChosen(double latitude, double longitude);
     }
 
@@ -91,6 +90,7 @@ public class LocationAddFragment extends DialogFragment implements DialogInterfa
 
     private void getLocation() {
         setRetainInstance(true);
+        // TODO Could use the find API to search by name, or with zip,
         mGpsSubscription = LocationObservableProvider.retrieveLocationObservable(getActivity())
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
