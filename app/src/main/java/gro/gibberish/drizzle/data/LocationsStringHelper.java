@@ -11,7 +11,7 @@ public final class LocationsStringHelper {
     }
 
     public static String deleteLocationFromString(
-            String commaSeparatedLocations, String locationToBeDeleted) {
+            String locationToBeDeleted, String commaSeparatedLocations) {
         if (commaSeparatedLocations.equals(locationToBeDeleted)) {
             return "";
         }

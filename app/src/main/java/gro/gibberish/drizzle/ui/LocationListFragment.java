@@ -27,14 +27,6 @@ import rx.Observable;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 
-/**
- * A fragment that displays a recyclerview containing weather at user submitted locations
- * Activities that contain this fragment must implement the
- * {@link LocationListFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link LocationListFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class LocationListFragment extends Fragment
         implements LocationAddFragment.OnLocationSubmitted{
     // TODO Add a static TAG with getclass.getsimplename
@@ -123,6 +115,15 @@ public class LocationListFragment extends Fragment
                 }
         );
         return result;
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+        if (mWeatherDownloadSubscription != null) {
+            mWeatherDownloadSubscription.unsubscribe();
+        }
     }
 
     private void insertWeather() {
@@ -221,12 +222,4 @@ public class LocationListFragment extends Fragment
         sp.edit().putString(LOCATIONS, mLocations).apply();
     }
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-        if (mWeatherDownloadSubscription != null) {
-            mWeatherDownloadSubscription.unsubscribe();
-        }
-    }
 }

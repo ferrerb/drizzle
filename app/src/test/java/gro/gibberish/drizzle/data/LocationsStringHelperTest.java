@@ -1,7 +1,5 @@
 package gro.gibberish.drizzle.data;
 
-import android.location.Location;
-
 import org.junit.Before;
 import org.junit.Test;
 import java.util.ArrayList;
@@ -44,7 +42,7 @@ public class LocationsStringHelperTest{
     public void testDeleteLocationFromCommaSeparatedString() {
         String toBeRemoved = "b";
         String expected = "a,c";
-        String actual = LocationsStringHelper.deleteLocationFromString(locationStrings, toBeRemoved);
+        String actual = LocationsStringHelper.deleteLocationFromString(toBeRemoved, locationStrings);
         assertEquals(expected, actual);
     }
 }

@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -14,7 +15,7 @@ import gro.gibberish.drizzle.R;
 import gro.gibberish.drizzle.ui.LocationListFragment;
 
 
-public class MainActivity extends ActionBarActivity implements
+public class MainActivity extends AppCompatActivity implements
         LocationListFragment.OnFragmentInteractionListener {
 
     private String API_KEY;
