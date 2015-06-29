@@ -1,5 +1,7 @@
 package gro.gibberish.drizzle.data;
 
+import android.location.Location;
+
 import org.junit.Before;
 import org.junit.Test;
 import java.util.ArrayList;
@@ -19,23 +21,30 @@ public class LocationsStringHelperTest{
 
     @Test
     public void testListToCommaSeparatedString() {
-        String stringFromList = LocationsStringHelper.createCommaSeparatedStringFromList(expectedList);
-        assertEquals(locationStrings, stringFromList);
+        String actual = LocationsStringHelper.createCommaSeparatedStringFromList(expectedList);
+        assertEquals(locationStrings, actual);
     }
 
     @Test
     public void testCommaSeparatedStringToList() {
-        List<String> returnedList =
+        List<String> actual =
                 new ArrayList<>(LocationsStringHelper.createListFromCommaSeparatedString(locationStrings));
-        assertEquals(expectedList, returnedList);
+        assertEquals(expectedList, actual);
+    }
+
+    @Test
+    public void testDeleteLocationWithOneLocationString() {
+        String toBeDeleted = "a";
+        String expected = "";
+        String actual = LocationsStringHelper.deleteLocationFromString(toBeDeleted, toBeDeleted);
+        assertEquals(expected, actual);
     }
 
     @Test
     public void testDeleteLocationFromCommaSeparatedString() {
         String toBeRemoved = "b";
-        String expectedString = "a,c";
-        String locationStringsAfterDelete =
-                LocationsStringHelper.deleteLocationFromString(locationStrings, toBeRemoved);
-        assertEquals(expectedString, locationStringsAfterDelete);
+        String expected = "a,c";
+        String actual = LocationsStringHelper.deleteLocationFromString(locationStrings, toBeRemoved);
+        assertEquals(expected, actual);
     }
 }

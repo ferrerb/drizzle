@@ -12,6 +12,10 @@ public final class LocationsStringHelper {
 
     public static String deleteLocationFromString(
             String commaSeparatedLocations, String locationToBeDeleted) {
+        if (commaSeparatedLocations.equals(locationToBeDeleted)) {
+            return "";
+        }
+
         List<String> newList = createListFromCommaSeparatedString(commaSeparatedLocations);
         Iterator<String> iter = newList.iterator();
 
@@ -27,8 +31,7 @@ public final class LocationsStringHelper {
     }
 
     public static List<String> createListFromCommaSeparatedString(String toBeSplit) {
-        List<String> list = new ArrayList<>(Arrays.asList(toBeSplit.split(",")));
-        return list;
+        return new ArrayList<>(Arrays.asList(toBeSplit.split(",")));
     }
 
     public static String createCommaSeparatedStringFromList(List<String> data) {
@@ -36,7 +39,8 @@ public final class LocationsStringHelper {
         for (String s : data) {
             builder.append(s).append(",");
         }
-        builder.deleteCharAt(builder.length() - 1);
+        builder.deleteCharAt(builder.length() - 1); // remove trailing ','
+
         return builder.toString();
     }
 }
