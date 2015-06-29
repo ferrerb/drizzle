@@ -17,15 +17,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.text.NumberFormat;
-
 import gro.gibberish.drizzle.R;
 import gro.gibberish.drizzle.data.ApiProvider;
 import gro.gibberish.drizzle.data.FileHandler;
 import gro.gibberish.drizzle.data.NumberFormatting;
 import gro.gibberish.drizzle.models.LocationForecastModel;
 import gro.gibberish.drizzle.models.LocationModel;
-import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 
 /**
@@ -141,7 +138,7 @@ public class LocationDetailFragment extends Fragment {
         long lastForecastRefresh = sp.getLong((mLocation + FORECAST_FILE_APPENDED), 0L);
         boolean needsRefresh = (System.currentTimeMillis() - lastForecastRefresh) > ONE_HOUR_MS;
 
-        FileHandler.getSerializedObjectObservable(
+        FileHandler.getSerializedObjectFromFile(
                 LocationModel.class,
                 getActivity().getCacheDir(),
                 mLocation)
@@ -155,7 +152,7 @@ public class LocationDetailFragment extends Fragment {
         if (needsRefresh) {
             getForecastFromApi();
         } else {
-            FileHandler.getSerializedObjectObservable(
+            FileHandler.getSerializedObjectFromFile(
                     LocationForecastModel.class,
                     getActivity().getCacheDir(),
                     mLocation + FORECAST_FILE_APPENDED)
@@ -172,7 +169,7 @@ public class LocationDetailFragment extends Fragment {
         ApiProvider.getWeatherService().getLocationDailyForecast(
                 mLocation, DAY_COUNT, "imperial", mApiKey)
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext(forecastData -> FileHandler.saveSerializedObjectObservable(
+                .doOnNext(forecastData -> FileHandler.saveSerializableObjectToFile(
                         forecastData,
                         getActivity().getCacheDir(),
                         mLocation + FORECAST_FILE_APPENDED).subscribe())

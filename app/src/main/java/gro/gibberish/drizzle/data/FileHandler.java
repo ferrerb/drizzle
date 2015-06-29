@@ -14,29 +14,13 @@ import rx.Subscriber;
 import rx.exceptions.OnErrorThrowable;
 import rx.schedulers.Schedulers;
 
-/**
- * Utility class for dealing with files through observables
- */
 public class FileHandler {
     private FileHandler() {}
 
-    /**
-     * Retrieves a serialized object from a file
-     *
-     * @param type The class type to be deserialized
-     * @param path The path to the desired file, uses a File object since getCacheDir() returns one
-     * @param fileName The name of the file to be deserialized
-     * @param <T> The class type to be deserialized
-     * @return An observable which emits an object of type <T> containing created from the specified file
-     */
-    /* The warning is from the cast from the file object, to the desired type. I don't know a good
-     * way to avoid this, and I can't move it to be more localized with the try statement. Perhaps I could
-     * create a separate object in the try block, and then assign it to the data variable. So, make
-     * sure you pass the class which matches the serialized object. No pressure.
-     */
+    // Suppresses a warning about casting a deserialized object to its original type
     @SuppressWarnings("unchecked")
-    public static <T> Observable<T> getSerializedObjectObservable(
-            Class<T> type, File path, String fileName) {
+    public static <T> Observable<T> getSerializedObjectFromFile(
+            Class<T> typeToBeDeserialized, File path, String fileName) {
         return Observable.create(new Observable.OnSubscribe<T>() {
             @Override
             public void call(Subscriber<? super T> subscriber) {
@@ -58,17 +42,8 @@ public class FileHandler {
         }).subscribeOn(Schedulers.io());
     }
 
-    /**
-     * Serializes an object to a file
-     *
-     * @param data The object to be serialized
-     * @param path The path to the to-be-created file, uses a File object since getCacheDir() returns one
-     * @param fileName The name of the file to be created
-     * @param <T> The type of object being serialized
-     * @return An observable which emits nothing, but will provide errors.
-     */
-    public static <T extends Serializable> Observable<Void> saveSerializedObjectObservable(
-            T data, File path, String fileName) {
+    public static <T extends Serializable> Observable<Void> saveSerializableObjectToFile(
+            T objectToBeSerialized, File path, String fileName) {
         return Observable.create(new Observable.OnSubscribe<Void>() {
             @Override
             public void call(Subscriber<? super Void> subscriber) {
@@ -77,7 +52,7 @@ public class FileHandler {
                             new File(path, fileName), false);
                     ObjectOutputStream out = new ObjectOutputStream(fos);
 
-                    out.writeObject(data);
+                    out.writeObject(objectToBeSerialized);
                     out.close();
                 } catch (FileNotFoundException e) {
                     throw OnErrorThrowable.from(e);
@@ -86,25 +61,16 @@ public class FileHandler {
                 }
                 subscriber.onCompleted();
             }
-
         }).subscribeOn(Schedulers.io());
     }
 
-    /**
-     * Deletes a file
-     *
-     * @param path The path to the file, as a File object
-     * @param filename
-     * @return An observable which emits a boolean, true if the file was deleted
-     */
-    public static Observable<Boolean> deleteSerializedObjectObservable(File path, String filename) {
+    public static Observable<Boolean> deleteFile(File path, String fileName) {
         return Observable.create(new Observable.OnSubscribe<Boolean>() {
             @Override
             public void call(Subscriber<? super Boolean> subscriber) {
                 try {
-                    boolean fileDeleted;
-                    File file = new File(path, filename);
-                    fileDeleted = file.delete();
+                    File file = new File(path, fileName);
+                    boolean fileDeleted = file.delete();
                     subscriber.onNext(fileDeleted);
                 } catch (SecurityException e) {
                     throw OnErrorThrowable.from(e);
@@ -113,5 +79,4 @@ public class FileHandler {
             }
         }).subscribeOn(Schedulers.io());
     }
-
 }

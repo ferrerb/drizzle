@@ -16,7 +16,6 @@ import android.widget.ImageButton;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import gro.gibberish.drizzle.R;
 import gro.gibberish.drizzle.data.ApiProvider;
@@ -132,7 +131,7 @@ public class LocationListFragment extends Fragment
             getWeatherFromApi(mLocations);
         } else {
             Observable.from(LocationsStringHelper.createListFromCommaSeparatedString(mLocations))
-                    .flatMap(s -> FileHandler.getSerializedObjectObservable(
+                    .flatMap(s -> FileHandler.getSerializedObjectFromFile(
                             LocationModel.class, getActivity().getCacheDir(), s))
                     .subscribe(
                             mData::add,
@@ -170,7 +169,7 @@ public class LocationListFragment extends Fragment
     // TODO Currently not doing anything with errors from the observable.
     private void saveLocationWeatherToSeparateFiles(List<LocationModel> data) {
         for ( LocationModel loc : data ) {
-            FileHandler.saveSerializedObjectObservable(
+            FileHandler.saveSerializableObjectToFile(
                     loc,
                     getActivity().getCacheDir(),
                     Long.toString(loc.getId()))
