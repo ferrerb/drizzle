@@ -121,17 +121,16 @@ public class LocationListFragment extends Fragment
     }
 
     private void retrieveWeatherFromFileOrInternet() {
-        // TODO All locations are added but they are not necessarily in the order in commaSeparatedLocations
         if (needsRefresh) {
-            getWeatherFromInternet(commaSeparatedLocations);
+            getWeatherFromInternet();
         } else {
             getWeatherFromFile();
         }
     }
 
-    private void getWeatherFromInternet(String loc) {
+    private void getWeatherFromInternet() {
         mWeatherDownloadSubscription =
-                ApiProvider.getWeatherService().getAllLocationsWeather(loc, "imperial", mApi)
+                ApiProvider.getWeatherService().getAllLocationsWeather(commaSeparatedLocations, "imperial", mApi)
                 .doOnNext(weatherData -> saveLocationWeatherToSeparateFiles(weatherData.getLocationList()))
                 .map(MultipleLocationModel::getLocationList)
                 .observeOn(AndroidSchedulers.mainThread())
@@ -147,6 +146,7 @@ public class LocationListFragment extends Fragment
     }
 
     private void getWeatherFromFile() {
+        // TODO All locations are added but they are not necessarily in the order in commaSeparatedLocations
         Observable.from(LocationsStringHelper.createListFromCommaSeparatedString(commaSeparatedLocations))
                 .flatMap(s -> FileHandler.getSerializedObjectFromFile(
                         LocationModel.class, getActivity().getCacheDir(), s))
@@ -155,10 +155,10 @@ public class LocationListFragment extends Fragment
                         System.err::println,
                         () -> {
                             // TODO maybe dont need this check, since needRefresh should be true if mdata would be null
-                            if (mData != null) {
-                                rv.swapAdapter(new WeatherListAdapter(mData, mOnItemClick), true);
+                            if (mData == null) {
+                                getWeatherFromInternet();
                             } else {
-                                getWeatherFromInternet(commaSeparatedLocations);
+                                rv.swapAdapter(new WeatherListAdapter(mData, mOnItemClick), true);
                             }
                         }
                 );
@@ -180,8 +180,8 @@ public class LocationListFragment extends Fragment
         // The second call with flatmap is to get the location ID, since a request for location
         // by zip code does not return the ID, but does return the coordinates :|
         if (zip.length() == 5) {
-            String azip = zip + ",us"; // To conform to the API needs
-            ApiProvider.getWeatherService().getLocationByZip(azip, "imperial", mApi)
+            zip += ",us"; // To conform to the API needs
+            ApiProvider.getWeatherService().getLocationByZip(zip, "imperial", mApi)
                     .doOnError(e -> Log.d("first get zip ", e.getMessage()))
                     .flatMap(data -> ApiProvider.getWeatherService().getLocationByCoords(
                             Double.toString(data.getCoord().getLat()),
@@ -189,27 +189,25 @@ public class LocationListFragment extends Fragment
                             "imperial",
                             mApi))
                     .subscribe(
-                            this::updateLocationList,
+                            this::updateCommaSeparatedLocations,
                             error -> Log.d("error onzipentered", error.getMessage()),
-                            () -> getWeatherFromInternet(commaSeparatedLocations)
+                            this::getWeatherFromInternet
                     );
         }
     }
 
     @Override
     public void onGpsCoordsChosen(double latitude, double longitude) {
-        // Make the call to the API for a single location, add it
-        // to the saved IDs, and to mLocaions, and getweatherformapi
         ApiProvider.getWeatherService().getLocationByCoords(
                 Double.toString(latitude), Double.toString(longitude), "imperial", mApi)
                     .subscribe(
-                            this::updateLocationList,
+                            this::updateCommaSeparatedLocations,
                             Throwable::printStackTrace,
-                            () -> getWeatherFromInternet(commaSeparatedLocations)
+                            this::getWeatherFromInternet
                     );
     }
 
-    private void updateLocationList(LocationModel data) {
+    private void updateCommaSeparatedLocations(LocationModel data) {
         String newLocation = Long.toString(data.getId());
         commaSeparatedLocations = LocationsStringHelper
                 .addLocationToCommaSeparatedString(newLocation, commaSeparatedLocations);

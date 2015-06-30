@@ -13,9 +13,6 @@ import gro.gibberish.drizzle.R;
 import gro.gibberish.drizzle.data.NumberFormatting;
 import gro.gibberish.drizzle.models.LocationModel;
 
-/**
- * Change this
- */
 public class WeatherListAdapter extends RecyclerView.Adapter<WeatherListAdapter.RowHolder> {
     List<LocationModel> mLocationList;
     OnItemTouchListener mOnItemTouchListener;

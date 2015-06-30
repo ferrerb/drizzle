@@ -1,6 +1,7 @@
 package gro.gibberish.drizzle.ui;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.app.Fragment;
@@ -99,6 +100,9 @@ public class LocationDetailFragment extends Fragment {
         switch (item.getItemId()) {
             case (R.id.action_delete):
                 deleteLocation();
+                Intent i = new Intent();
+                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(i);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -191,7 +195,6 @@ public class LocationDetailFragment extends Fragment {
     }
 
     private void deleteLocation() {
-        // TODO get the location list, remove current location, deleted associated files, go back to listview
         String allLocations = sharedPreferences.getString("locations", "");
         String locationsAfterDelete = LocationsStringHelper.deleteLocationFromString(currentLocation, allLocations);
         sharedPreferences.edit().putString("locations", locationsAfterDelete).apply();
