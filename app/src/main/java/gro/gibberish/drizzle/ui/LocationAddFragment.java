@@ -24,12 +24,10 @@ public class LocationAddFragment extends DialogFragment implements DialogInterfa
     private OnLocationSubmitted mCallbacks;
     private EditText mZipCode;
     private View mForm;
-    private Subscription mGpsSubscription;
+    private Subscription locationServiceSubscription;
 
     public static LocationAddFragment newInstance() {
-        LocationAddFragment frag = new LocationAddFragment();
-
-        return frag;
+        return new LocationAddFragment();
     }
 
     public interface OnLocationSubmitted {
@@ -66,9 +64,17 @@ public class LocationAddFragment extends DialogFragment implements DialogInterfa
     @Override
     public void onClick(DialogInterface diag, int button) {
         if (button == DialogInterface.BUTTON_POSITIVE) {
-            // Send either zip code or gps coord interface. For now just zip code
             String enteredZip = mZipCode.getText().toString();
             mCallbacks.onZipCodeEntered(enteredZip);
+        }
+    }
+
+    @Override
+    public void onDismiss(DialogInterface dialog) {
+        super.onDismiss(dialog);
+        mCallbacks = null;
+        if (locationServiceSubscription != null) {
+            locationServiceSubscription.unsubscribe();
         }
     }
 
@@ -91,7 +97,7 @@ public class LocationAddFragment extends DialogFragment implements DialogInterfa
     private void getLocation() {
         setRetainInstance(true);
         // TODO Could use the find API to search by name, or with zip,
-        mGpsSubscription = LocationObservableProvider.retrieveLocationObservable(getActivity())
+        locationServiceSubscription = LocationObservableProvider.retrieveLocationObservable(getActivity())
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
@@ -102,12 +108,5 @@ public class LocationAddFragment extends DialogFragment implements DialogInterfa
                 );
     }
 
-    @Override
-    public void onDismiss(DialogInterface dialog) {
-        super.onDismiss(dialog);
-        mCallbacks = null;
-        if (mGpsSubscription != null) {
-            mGpsSubscription.unsubscribe();
-        }
-    }
+
 }

@@ -45,4 +45,20 @@ public class LocationsStringHelperTest{
         String actual = LocationsStringHelper.deleteLocationFromString(toBeRemoved, locationStrings);
         assertEquals(expected, actual);
     }
+
+    @Test
+    public void testAddLocationToCommaSeparatedString() {
+        String toBeAdded = "f";
+        String expected = "a,b,c,f";
+        String actual = LocationsStringHelper.addLocationToCommaSeparatedString(toBeAdded, locationStrings);
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void testAddLocationToEmptyString() {
+        String toBeAdded = "f";
+        String expected = "f";
+        String actual = LocationsStringHelper.addLocationToCommaSeparatedString(toBeAdded, "");
+        assertEquals(expected, actual);
+    }
 }

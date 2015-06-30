@@ -35,7 +35,7 @@ public class LocationListFragment extends Fragment
     private static final String SP_LAST_REFRESH = "SP_LAST_REFRESH";
     private static final String LOCATIONS = "locations";
     private static final int ONE_HOUR_MS = 3600000;
-    private String mLocations;
+    private String commaSeparatedLocations;
     private String mApi;
     private boolean needsRefresh;
     private RecyclerView rv;
@@ -43,14 +43,8 @@ public class LocationListFragment extends Fragment
     private List<LocationModel> mData = new ArrayList<>();
     private OnItemTouchListener mOnItemClick;
     private OnFragmentInteractionListener mListener;
-    private SharedPreferences sp;
+    private SharedPreferences sharedPreferences;
 
-    /**
-     * Creates a new fragment containing a recycler view
-     *
-     * @param apiKey The api key for accessing openweathermap
-     * @return A new instance of fragment LocationListFragment.
-     */
     public static LocationListFragment newInstance( String apiKey) {
         LocationListFragment fragment = new LocationListFragment();
         Bundle args = new Bundle();
@@ -84,10 +78,10 @@ public class LocationListFragment extends Fragment
             mApi = getArguments().getString(API_KEY);
         }
 
-        sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        long lastRefresh = sp.getLong(SP_LAST_REFRESH, 0L);
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        long lastRefresh = sharedPreferences.getLong(SP_LAST_REFRESH, 0L);
         needsRefresh = (System.currentTimeMillis() - lastRefresh) > ONE_HOUR_MS;
-        mLocations = sp.getString(LOCATIONS, "");
+        commaSeparatedLocations = sharedPreferences.getString(LOCATIONS, "");
     }
 
     @Override
@@ -99,8 +93,8 @@ public class LocationListFragment extends Fragment
         rv.setLayoutManager(new LinearLayoutManager(getActivity()));
         mOnItemClick = (view, position) -> mListener.onLocationChosen(mData.get(position).getId());
 
-        if (mLocations.length() > 0) {
-            insertWeather();
+        if (commaSeparatedLocations.length() > 0) {
+            retrieveWeatherFromFileOrInternet();
         }
         // TODO CompositeSubscription
         // TODO possibly move the FAB to this fragments layout
@@ -126,31 +120,16 @@ public class LocationListFragment extends Fragment
         }
     }
 
-    private void insertWeather() {
-        // TODO All locations are added but they are not necessarily in the order in mLocations
+    private void retrieveWeatherFromFileOrInternet() {
+        // TODO All locations are added but they are not necessarily in the order in commaSeparatedLocations
         if (needsRefresh) {
-            getWeatherFromApi(mLocations);
+            getWeatherFromInternet(commaSeparatedLocations);
         } else {
-            Observable.from(LocationsStringHelper.createListFromCommaSeparatedString(mLocations))
-                    .flatMap(s -> FileHandler.getSerializedObjectFromFile(
-                            LocationModel.class, getActivity().getCacheDir(), s))
-                    .subscribe(
-                            mData::add,
-                            System.err::println,
-                            () -> {
-                                // TODO maybe dont need this check, since needRefresh should be true if mdata would be null
-                                if (mData != null) {
-                                    rv.swapAdapter(new WeatherListAdapter(mData, mOnItemClick), true);
-                                } else {
-                                    getWeatherFromApi(mLocations);
-                                }
-                            }
-                    );
-
+            getWeatherFromFile();
         }
     }
 
-    private void getWeatherFromApi(String loc) {
+    private void getWeatherFromInternet(String loc) {
         mWeatherDownloadSubscription =
                 ApiProvider.getWeatherService().getAllLocationsWeather(loc, "imperial", mApi)
                 .doOnNext(weatherData -> saveLocationWeatherToSeparateFiles(weatherData.getLocationList()))
@@ -163,7 +142,25 @@ public class LocationListFragment extends Fragment
                             },
                         // TODO Have an errorfragment or something display
                         Throwable::printStackTrace,
-                        () -> sp.edit().putLong(SP_LAST_REFRESH, System.currentTimeMillis()).apply()
+                        () -> sharedPreferences.edit().putLong(SP_LAST_REFRESH, System.currentTimeMillis()).apply()
+                );
+    }
+
+    private void getWeatherFromFile() {
+        Observable.from(LocationsStringHelper.createListFromCommaSeparatedString(commaSeparatedLocations))
+                .flatMap(s -> FileHandler.getSerializedObjectFromFile(
+                        LocationModel.class, getActivity().getCacheDir(), s))
+                .subscribe(
+                        mData::add,
+                        System.err::println,
+                        () -> {
+                            // TODO maybe dont need this check, since needRefresh should be true if mdata would be null
+                            if (mData != null) {
+                                rv.swapAdapter(new WeatherListAdapter(mData, mOnItemClick), true);
+                            } else {
+                                getWeatherFromInternet(commaSeparatedLocations);
+                            }
+                        }
                 );
     }
 
@@ -194,7 +191,7 @@ public class LocationListFragment extends Fragment
                     .subscribe(
                             this::updateLocationList,
                             error -> Log.d("error onzipentered", error.getMessage()),
-                            () -> getWeatherFromApi(mLocations)
+                            () -> getWeatherFromInternet(commaSeparatedLocations)
                     );
         }
     }
@@ -208,18 +205,16 @@ public class LocationListFragment extends Fragment
                     .subscribe(
                             this::updateLocationList,
                             Throwable::printStackTrace,
-                            () -> getWeatherFromApi(mLocations)
+                            () -> getWeatherFromInternet(commaSeparatedLocations)
                     );
     }
 
     private void updateLocationList(LocationModel data) {
-        if (mLocations.length() == 0) {
-            mLocations = Long.toString(data.getId());
-        } else {
-            mLocations += "," + Long.toString(data.getId());
-        }
+        String newLocation = Long.toString(data.getId());
+        commaSeparatedLocations = LocationsStringHelper
+                .addLocationToCommaSeparatedString(newLocation, commaSeparatedLocations);
 
-        sp.edit().putString(LOCATIONS, mLocations).apply();
+        sharedPreferences.edit().putString(LOCATIONS, commaSeparatedLocations).apply();
     }
 
 }

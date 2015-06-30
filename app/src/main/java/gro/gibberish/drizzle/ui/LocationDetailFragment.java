@@ -35,7 +35,6 @@ public class LocationDetailFragment extends Fragment {
     private View result;
     private RecyclerView forecastList;
     private ActionBar actionBar;
-    private OnLocationDetailCallbacks mCallbacks;
     private SharedPreferences sharedPreferences;
     private String unitType;
     private String apiKey;
@@ -54,21 +53,10 @@ public class LocationDetailFragment extends Fragment {
     public LocationDetailFragment() {
     }
 
-    // TODO Instead of sending this back to some other activity, what about deleting here.
-    public interface OnLocationDetailCallbacks {
-        void onDeleteLocation(String locationId);
-    }
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        try {
-            mCallbacks = (OnLocationDetailCallbacks) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString() +
-                    " must implement OnLocationDetailCallbacks");
-        }
-
     }
 
     @Override
@@ -125,7 +113,6 @@ public class LocationDetailFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
-        mCallbacks = null;
     }
 
     private void retrieveWeatherFromFileOrInternet() {

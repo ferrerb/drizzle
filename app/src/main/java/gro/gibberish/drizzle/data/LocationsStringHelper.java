@@ -10,6 +10,17 @@ public final class LocationsStringHelper {
     private LocationsStringHelper() {
     }
 
+    public static String addLocationToCommaSeparatedString(String newLocation,
+                                                           String commaSeparatedLocations) {
+        if (commaSeparatedLocations.length() == 0) {
+            commaSeparatedLocations = newLocation;
+        } else {
+            commaSeparatedLocations += "," + newLocation;
+        }
+
+        return commaSeparatedLocations;
+    }
+
     public static String deleteLocationFromString(
             String locationToBeDeleted, String commaSeparatedLocations) {
         if (commaSeparatedLocations.equals(locationToBeDeleted)) {
@@ -18,7 +29,6 @@ public final class LocationsStringHelper {
 
         List<String> newList = createListFromCommaSeparatedString(commaSeparatedLocations);
         Iterator<String> iter = newList.iterator();
-
         while (iter.hasNext()) {
             String s = iter.next();
             if (s.equals(locationToBeDeleted)) {
