@@ -25,7 +25,8 @@ public class WeatherListAdapter extends RecyclerView.Adapter<WeatherListAdapter.
 
     @Override
     public RowHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
-        View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.location_list_row, viewGroup, false);
+        View v = LayoutInflater.from(viewGroup.getContext())
+                .inflate(R.layout.location_list_row, viewGroup, false);
 
         return new RowHolder(v, mOnItemTouchListener);
     }

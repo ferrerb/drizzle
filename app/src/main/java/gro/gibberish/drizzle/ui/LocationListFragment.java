@@ -37,7 +37,6 @@ public class LocationListFragment extends Fragment
     private static final int ONE_HOUR_MS = 3600000;
     private String commaSeparatedLocations;
     private String mApi;
-    private boolean needsRefresh;
     private RecyclerView rv;
     private Subscription mWeatherDownloadSubscription;
     private List<LocationModel> mData = new ArrayList<>();
@@ -77,10 +76,7 @@ public class LocationListFragment extends Fragment
         if (getArguments() != null) {
             mApi = getArguments().getString(API_KEY);
         }
-
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        long lastRefresh = sharedPreferences.getLong(SP_LAST_REFRESH, 0L);
-        needsRefresh = (System.currentTimeMillis() - lastRefresh) > ONE_HOUR_MS;
         commaSeparatedLocations = sharedPreferences.getString(LOCATIONS, "");
     }
 
@@ -92,22 +88,13 @@ public class LocationListFragment extends Fragment
         // TODO make use of insert item, etc?
         rv.setLayoutManager(new LinearLayoutManager(getActivity()));
         mOnItemClick = (view, position) -> mListener.onLocationChosen(mData.get(position).getId());
-
         if (commaSeparatedLocations.length() > 0) {
             retrieveWeatherFromFileOrInternet();
         }
-        // TODO CompositeSubscription
         // TODO possibly move the FAB to this fragments layout
         ImageButton btnAddLocation =
                 (ImageButton) getActivity().findViewById(R.id.btn_add_location_fab);
-        btnAddLocation.setOnClickListener(
-                view -> {
-                    FragmentManager fm = getFragmentManager();
-                    LocationAddFragment frag = LocationAddFragment.newInstance();
-                    frag.setTargetFragment(LocationListFragment.this, 0);
-                    frag.show(fm, "");
-                }
-        );
+        btnAddLocation.setOnClickListener(view -> createAddLocationDialog());
         return result;
     }
 
@@ -120,7 +107,48 @@ public class LocationListFragment extends Fragment
         }
     }
 
+    private void createAddLocationDialog() {
+        FragmentManager fm = getFragmentManager();
+        LocationAddFragment frag = LocationAddFragment.newInstance();
+        frag.setTargetFragment(LocationListFragment.this, 0);
+        frag.show(fm, "");
+    }
+
+    @Override
+    public void onZipCodeEntered(String zip) {
+        // The second call with flatmap is to get the location ID, since a request for location
+        // by zip code does not return the ID, but does return the coordinates :|
+        if (zip.length() == 5) {
+            zip += ",us"; // To conform to the API needs
+            ApiProvider.getWeatherService().getLocationByZip(zip, "imperial", mApi)
+                    .doOnError(e -> Log.d("first get zip ", e.getMessage()))
+                    .flatMap(data -> ApiProvider.getWeatherService().getLocationByCoords(
+                            Double.toString(data.getCoord().getLat()),
+                            Double.toString(data.getCoord().getLon()),
+                            "imperial",
+                            mApi))
+                    .subscribe(
+                            this::saveLocationToLocationString,
+                            error -> Log.d("error onzipentered", error.getMessage()),
+                            this::getWeatherFromInternet
+                    );
+        }
+    }
+
+    @Override
+    public void onGpsCoordsChosen(double latitude, double longitude) {
+        ApiProvider.getWeatherService().getLocationByCoords(
+                Double.toString(latitude), Double.toString(longitude), "imperial", mApi)
+                .subscribe(
+                        this::saveLocationToLocationString,
+                        Throwable::printStackTrace,
+                        this::getWeatherFromInternet
+                );
+    }
+
     private void retrieveWeatherFromFileOrInternet() {
+        long lastRefresh = sharedPreferences.getLong(SP_LAST_REFRESH, 0L);
+        boolean needsRefresh = (System.currentTimeMillis() - lastRefresh) > ONE_HOUR_MS;
         if (needsRefresh) {
             getWeatherFromInternet();
         } else {
@@ -175,39 +203,7 @@ public class LocationListFragment extends Fragment
         }
     }
 
-    @Override
-    public void onZipCodeEntered(String zip) {
-        // The second call with flatmap is to get the location ID, since a request for location
-        // by zip code does not return the ID, but does return the coordinates :|
-        if (zip.length() == 5) {
-            zip += ",us"; // To conform to the API needs
-            ApiProvider.getWeatherService().getLocationByZip(zip, "imperial", mApi)
-                    .doOnError(e -> Log.d("first get zip ", e.getMessage()))
-                    .flatMap(data -> ApiProvider.getWeatherService().getLocationByCoords(
-                            Double.toString(data.getCoord().getLat()),
-                            Double.toString(data.getCoord().getLon()),
-                            "imperial",
-                            mApi))
-                    .subscribe(
-                            this::updateCommaSeparatedLocations,
-                            error -> Log.d("error onzipentered", error.getMessage()),
-                            this::getWeatherFromInternet
-                    );
-        }
-    }
-
-    @Override
-    public void onGpsCoordsChosen(double latitude, double longitude) {
-        ApiProvider.getWeatherService().getLocationByCoords(
-                Double.toString(latitude), Double.toString(longitude), "imperial", mApi)
-                    .subscribe(
-                            this::updateCommaSeparatedLocations,
-                            Throwable::printStackTrace,
-                            this::getWeatherFromInternet
-                    );
-    }
-
-    private void updateCommaSeparatedLocations(LocationModel data) {
+    private void saveLocationToLocationString(LocationModel data) {
         String newLocation = Long.toString(data.getId());
         commaSeparatedLocations = LocationsStringHelper
                 .addLocationToCommaSeparatedString(newLocation, commaSeparatedLocations);

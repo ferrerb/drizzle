@@ -25,14 +25,16 @@ import gro.gibberish.drizzle.data.LocationsStringHelper;
 import gro.gibberish.drizzle.data.NumberFormatting;
 import gro.gibberish.drizzle.models.LocationForecastModel;
 import gro.gibberish.drizzle.models.LocationModel;
+import rx.Observer;
+import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 
 public class LocationDetailFragment extends Fragment {
     private static final String API_KEY = "api_key";
     private static final String LOCATION = "id";
     private static final String DAY_COUNT = "5";
-    private static final long ONE_HOUR_MS = 3600000;
     private static final String FORECAST_FILE_APPENDED = "cast";
+    private static final long ONE_HOUR_MS = 3600000;
     private View result;
     private RecyclerView forecastList;
     private ActionBar actionBar;
@@ -79,7 +81,9 @@ public class LocationDetailFragment extends Fragment {
         forecastList = (RecyclerView) result.findViewById(R.id.forecast_recyclerview);
 
         actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
 
         return result;
     }
