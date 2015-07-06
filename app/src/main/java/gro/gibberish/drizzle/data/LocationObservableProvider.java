@@ -16,9 +16,6 @@ import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-/**
- * Change this
- */
 public final class LocationObservableProvider {
     private static LocationManager mLocationManager;
     private static LocationListener mLocationListener;
@@ -26,7 +23,7 @@ public final class LocationObservableProvider {
     private LocationObservableProvider() {
     }
 
-    public static Observable<Location> retrieveLocationObservable(Context ctxt) {
+    public static Observable<Location> retrieveGpsCoordsSingleUpdate(Context ctxt) {
         mLocationManager = (LocationManager) ctxt.getSystemService(Context.LOCATION_SERVICE);
         // TODO also this is ugly. do i need to make the anonymous class here?
 

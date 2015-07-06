@@ -36,10 +36,10 @@ public class LocationListFragment extends Fragment
     private static final String LOCATIONS = "locations";
     private static final int ONE_HOUR_MS = 3600000;
     private String commaSeparatedLocations;
-    private String mApi;
-    private RecyclerView rv;
-    private Subscription mWeatherDownloadSubscription;
-    private List<LocationModel> mData = new ArrayList<>();
+    private String apiKey;
+    private RecyclerView recyclerView;
+    private Subscription weatherDownloadSubscription;
+    private List<LocationModel> locationWeatherList = new ArrayList<>();
     private OnItemTouchListener mOnItemClick;
     private OnFragmentInteractionListener mListener;
     private SharedPreferences sharedPreferences;
@@ -74,7 +74,7 @@ public class LocationListFragment extends Fragment
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mApi = getArguments().getString(API_KEY);
+            apiKey = getArguments().getString(API_KEY);
         }
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         commaSeparatedLocations = sharedPreferences.getString(LOCATIONS, "");
@@ -84,10 +84,10 @@ public class LocationListFragment extends Fragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View result = inflater.inflate(R.layout.fragment_location_list, container, false);
-        rv = (RecyclerView) result.findViewById(R.id.recycler_list);
+        recyclerView = (RecyclerView) result.findViewById(R.id.recycler_list);
         // TODO make use of insert item, etc?
-        rv.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mOnItemClick = (view, position) -> mListener.onLocationChosen(mData.get(position).getId());
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mOnItemClick = (view, position) -> mListener.onLocationChosen(locationWeatherList.get(position).getId());
         if (commaSeparatedLocations.length() > 0) {
             retrieveWeatherFromFileOrInternet();
         }
@@ -102,8 +102,8 @@ public class LocationListFragment extends Fragment
     public void onDetach() {
         super.onDetach();
         mListener = null;
-        if (mWeatherDownloadSubscription != null) {
-            mWeatherDownloadSubscription.unsubscribe();
+        if (weatherDownloadSubscription != null) {
+            weatherDownloadSubscription.unsubscribe();
         }
     }
 
@@ -120,13 +120,13 @@ public class LocationListFragment extends Fragment
         // by zip code does not return the ID, but does return the coordinates :|
         if (zip.length() == 5) {
             zip += ",us"; // To conform to the API needs
-            ApiProvider.getWeatherService().getLocationByZip(zip, "imperial", mApi)
+            ApiProvider.getWeatherService().getLocationByZip(zip, "imperial", apiKey)
                     .doOnError(e -> Log.d("first get zip ", e.getMessage()))
                     .flatMap(data -> ApiProvider.getWeatherService().getLocationByCoords(
                             Double.toString(data.getCoord().getLat()),
                             Double.toString(data.getCoord().getLon()),
                             "imperial",
-                            mApi))
+                            apiKey))
                     .subscribe(
                             this::saveLocationToLocationString,
                             error -> Log.d("error onzipentered", error.getMessage()),
@@ -138,7 +138,7 @@ public class LocationListFragment extends Fragment
     @Override
     public void onGpsCoordsChosen(double latitude, double longitude) {
         ApiProvider.getWeatherService().getLocationByCoords(
-                Double.toString(latitude), Double.toString(longitude), "imperial", mApi)
+                Double.toString(latitude), Double.toString(longitude), "imperial", apiKey)
                 .subscribe(
                         this::saveLocationToLocationString,
                         Throwable::printStackTrace,
@@ -157,15 +157,15 @@ public class LocationListFragment extends Fragment
     }
 
     private void getWeatherFromInternet() {
-        mWeatherDownloadSubscription =
-                ApiProvider.getWeatherService().getAllLocationsWeather(commaSeparatedLocations, "imperial", mApi)
+        weatherDownloadSubscription =
+                ApiProvider.getWeatherService().getAllLocationsWeather(commaSeparatedLocations, "imperial", apiKey)
                 .doOnNext(weatherData -> saveLocationWeatherToSeparateFiles(weatherData.getLocationList()))
                 .map(MultipleLocationModel::getLocationList)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         weatherData -> {
-                            mData = weatherData;
-                            rv.swapAdapter(new WeatherListAdapter(mData, mOnItemClick), true);
+                            locationWeatherList = weatherData;
+                            recyclerView.swapAdapter(new WeatherListAdapter(locationWeatherList, mOnItemClick), true);
                             },
                         // TODO Have an errorfragment or something display
                         Throwable::printStackTrace,
@@ -179,14 +179,14 @@ public class LocationListFragment extends Fragment
                 .flatMap(s -> FileHandler.getSerializedObjectFromFile(
                         LocationModel.class, getActivity().getCacheDir(), s))
                 .subscribe(
-                        mData::add,
+                        locationWeatherList::add,
                         System.err::println,
                         () -> {
                             // TODO maybe dont need this check, since needRefresh should be true if mdata would be null
-                            if (mData == null) {
+                            if (locationWeatherList == null) {
                                 getWeatherFromInternet();
                             } else {
-                                rv.swapAdapter(new WeatherListAdapter(mData, mOnItemClick), true);
+                                recyclerView.swapAdapter(new WeatherListAdapter(locationWeatherList, mOnItemClick), true);
                             }
                         }
                 );

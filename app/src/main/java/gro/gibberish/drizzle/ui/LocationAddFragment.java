@@ -17,9 +17,6 @@ import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-/**
- * Change this
- */
 public class LocationAddFragment extends DialogFragment implements DialogInterface.OnClickListener {
     private OnLocationSubmitted mCallbacks;
     private EditText mZipCode;
@@ -97,7 +94,7 @@ public class LocationAddFragment extends DialogFragment implements DialogInterfa
     private void getLocation() {
         setRetainInstance(true);
         // TODO Could use the find API to search by name, or with zip,
-        locationServiceSubscription = LocationObservableProvider.retrieveLocationObservable(getActivity())
+        locationServiceSubscription = LocationObservableProvider.retrieveGpsCoordsSingleUpdate(getActivity())
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
