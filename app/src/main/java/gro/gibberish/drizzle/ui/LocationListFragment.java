@@ -20,7 +20,7 @@ import java.util.List;
 import gro.gibberish.drizzle.R;
 import gro.gibberish.drizzle.data.ApiProvider;
 import gro.gibberish.drizzle.data.FileHandler;
-import gro.gibberish.drizzle.data.LocationsStringHelper;
+import gro.gibberish.drizzle.util.LocationsStringHelper;
 import gro.gibberish.drizzle.models.LocationModel;
 import gro.gibberish.drizzle.models.MultipleLocationModel;
 import rx.Observable;

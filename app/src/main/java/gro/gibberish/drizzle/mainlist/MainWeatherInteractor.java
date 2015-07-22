@@ -1,5 +1,5 @@
 package gro.gibberish.drizzle.mainlist;
 
-public interface MainWeatherRetriever {
+public interface MainWeatherInteractor {
     void retrieveWeather();
 }

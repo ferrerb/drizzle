@@ -2,6 +2,8 @@ package gro.gibberish.drizzle.data;
 
 import org.junit.Test;
 
+import gro.gibberish.drizzle.util.NumberFormatting;
+
 import static org.junit.Assert.*;
 
 public class NumberFormattingTest {

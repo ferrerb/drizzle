@@ -1,4 +1,4 @@
-package gro.gibberish.drizzle.data;
+package gro.gibberish.drizzle.util;
 
 import java.util.ArrayList;
 import java.util.Arrays;

@@ -1,6 +1,5 @@
 package gro.gibberish.drizzle.ui;
 
-import android.content.DialogInterface;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,7 +9,7 @@ import android.widget.TextView;
 import java.util.List;
 
 import gro.gibberish.drizzle.R;
-import gro.gibberish.drizzle.data.NumberFormatting;
+import gro.gibberish.drizzle.util.NumberFormatting;
 import gro.gibberish.drizzle.models.LocationModel;
 
 public class WeatherListAdapter extends RecyclerView.Adapter<WeatherListAdapter.RowHolder> {

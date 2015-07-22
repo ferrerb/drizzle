@@ -1,7 +1,5 @@
 package gro.gibberish.drizzle.mainlist;
 
-import java.util.List;
-
 import gro.gibberish.drizzle.EventBusRx;
 import gro.gibberish.drizzle.events.LocationListEvent;
 import rx.Subscription;
@@ -9,13 +7,13 @@ import rx.Subscription;
 public class MainPresenterImpl implements MainPresenter {
     private EventBusRx eventBus;
     private MainView mainView;
-    private MainWeatherRetriever mainWeatherRetriever;
+    private MainWeatherInteractor mainWeatherInteractor;
 
     public static MainPresenterImpl newInstance(MainView mainView) {
         MainPresenterImpl newInstance = new MainPresenterImpl();
         newInstance.eventBus = EventBusRx.INSTANCE;
         newInstance.mainView = mainView;
-        newInstance.mainWeatherRetriever = MainWeatherRetrieverImpl.newInstance();
+        newInstance.mainWeatherInteractor = MainWeatherInteractorImpl.newInstance();
         return newInstance;
     }
 
@@ -28,7 +26,7 @@ public class MainPresenterImpl implements MainPresenter {
                         Throwable::getStackTrace,
                         () -> {}
                 );
-        mainWeatherRetriever.retrieveWeather();
+        mainWeatherInteractor.retrieveWeather();
     }
 
     @Override

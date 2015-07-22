@@ -2,21 +2,18 @@ package gro.gibberish.drizzle.ui;
 
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateFormat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import gro.gibberish.drizzle.R;
-import gro.gibberish.drizzle.data.NumberFormatting;
+import gro.gibberish.drizzle.util.NumberFormatting;
 import gro.gibberish.drizzle.models.LocationForecastModel;
-import gro.gibberish.drizzle.models.LocationModel;
 import gro.gibberish.drizzle.models.WeatherList;
 
 /**

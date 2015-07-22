@@ -1,4 +1,4 @@
-package gro.gibberish.drizzle.data;
+package gro.gibberish.drizzle.util;
 
 public final class NumberFormatting {
     private NumberFormatting() {}

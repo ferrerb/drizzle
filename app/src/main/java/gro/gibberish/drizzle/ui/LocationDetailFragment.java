@@ -21,12 +21,10 @@ import android.widget.TextView;
 import gro.gibberish.drizzle.R;
 import gro.gibberish.drizzle.data.ApiProvider;
 import gro.gibberish.drizzle.data.FileHandler;
-import gro.gibberish.drizzle.data.LocationsStringHelper;
-import gro.gibberish.drizzle.data.NumberFormatting;
+import gro.gibberish.drizzle.util.LocationsStringHelper;
+import gro.gibberish.drizzle.util.NumberFormatting;
 import gro.gibberish.drizzle.models.LocationForecastModel;
 import gro.gibberish.drizzle.models.LocationModel;
-import rx.Observer;
-import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 
 public class LocationDetailFragment extends Fragment {
