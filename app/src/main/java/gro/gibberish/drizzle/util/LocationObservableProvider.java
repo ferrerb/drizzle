@@ -1,4 +1,4 @@
-package gro.gibberish.drizzle.data;
+package gro.gibberish.drizzle.util;
 
 import android.content.Context;
 import android.location.Criteria;

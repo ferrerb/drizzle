@@ -24,6 +24,7 @@ public class MainWeatherInteractorImpl implements MainWeatherInteractor {
 
     private MainWeatherInteractorImpl() {}
 
+    // TODO make interface/implementation of a sharedpreferences thing, impl having sharedprefernces
     @Override
     public void retrieveWeather() {
         final int oneHourInMilliSeconds = 3600000;

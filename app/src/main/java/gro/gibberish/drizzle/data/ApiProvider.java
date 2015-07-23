@@ -14,9 +14,9 @@ public final class ApiProvider {
             .setEndpoint(SERVICE_ENDPOINT)
             .build();
     
-    private static final OpenWeatherApi WEATHER_SERVICE = REST_ADAPTER.create(OpenWeatherApi.class);
+    private static final OpenWeatherService WEATHER_SERVICE = REST_ADAPTER.create(OpenWeatherService.class);
 
-    public static OpenWeatherApi getWeatherService() {
+    public static OpenWeatherService getWeatherService() {
         return WEATHER_SERVICE;
     }
 
