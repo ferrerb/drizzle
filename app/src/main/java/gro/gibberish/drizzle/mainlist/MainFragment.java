@@ -43,6 +43,7 @@ public class MainFragment extends Fragment implements MainView{
                              Bundle savedInstanceState) {
 
         View result = inflater.inflate(R.layout.fragment_main, container, false);
+        recyclerView = (RecyclerView) result.findViewById(R.id.recycler_list);
         return result;
     }
 

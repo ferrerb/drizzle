@@ -5,6 +5,7 @@ import java.util.List;
 import gro.gibberish.drizzle.EventBusRx;
 import gro.gibberish.drizzle.data.ApiProvider;
 import gro.gibberish.drizzle.data.FileHandler;
+import gro.gibberish.drizzle.data.SharedPreferencesProvider;
 import gro.gibberish.drizzle.util.LocationsStringHelper;
 import gro.gibberish.drizzle.events.LocationListEvent;
 import gro.gibberish.drizzle.models.LocationModel;
@@ -15,6 +16,7 @@ import rx.schedulers.Schedulers;
 public class MainWeatherInteractorImpl implements MainWeatherInteractor {
     EventBusRx eventBus;
     String commaSeparatedLocations;
+    SharedPreferencesProvider sharedPreferencesProvider;
 
     public static MainWeatherInteractorImpl newInstance() {
         MainWeatherInteractorImpl newInstance = new MainWeatherInteractorImpl();
@@ -28,7 +30,7 @@ public class MainWeatherInteractorImpl implements MainWeatherInteractor {
     @Override
     public void retrieveWeather() {
         final int oneHourInMilliSeconds = 3600000;
-        long lastRefresh = sharedPreferences.getLong(SP_LAST_REFRESH, 0L);
+        long lastRefresh = sharedPreferencesProvider.getLastLocationListRefreshTime();
         boolean needsRefresh = (System.currentTimeMillis() - lastRefresh) > oneHourInMilliSeconds;
         if (needsRefresh) {
             getWeatherFromInternet();
@@ -46,7 +48,7 @@ public class MainWeatherInteractorImpl implements MainWeatherInteractor {
                 .subscribe(
                         weatherData -> eventBus.post(new LocationListEvent(weatherData)),
                         Throwable::printStackTrace,
-                        () -> sharedPreferences.edit().putLong(SP_LAST_REFRESH, System.currentTimeMillis()).apply()
+                        () -> sharedPreferencesProvider.setLastLocationListRefreshTime(System.currentTimeMillis())
                 );
     }
 
