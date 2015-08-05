@@ -8,13 +8,13 @@ import java.util.List;
 import dagger.ObjectGraph;
 
 public class RootApp extends Application {
-    private ObjectGraph objectGraph;
+    private ObjectGraph applicationGraph;
 
     @Override
     public void onCreate() {
         super.onCreate();
 
-        objectGraph = ObjectGraph.create(getModules().toArray());
+        applicationGraph = ObjectGraph.create(getModules().toArray());
     }
 
     protected List<Object> getModules() {
@@ -22,6 +22,14 @@ public class RootApp extends Application {
     }
 
     public void inject(Object object) {
-        objectGraph.inject(object);
+        applicationGraph.inject(object);
+    }
+
+    public ObjectGraph getApplicationGraph() {
+        return applicationGraph;
+    }
+
+    public ObjectGraph createScopedGraph(Object... module) {
+        return applicationGraph.plus(module);
     }
 }

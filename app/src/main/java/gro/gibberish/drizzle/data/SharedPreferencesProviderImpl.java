@@ -2,14 +2,15 @@ package gro.gibberish.drizzle.data;
 
 import android.content.SharedPreferences;
 
+import javax.inject.Inject;
+
 public class SharedPreferencesProviderImpl implements SharedPreferencesProvider {
     private static final String SP_LAST_REFRESH = "SP_LAST_REFRESH";
     private static final String LOCATIONS = "locations";
     private static final String FORECAST_FILE_APPENDED = "cast";
-    private SharedPreferences sharedPreferences;
+    @Inject SharedPreferences sharedPreferences;
 
-    public SharedPreferencesProviderImpl(SharedPreferences sharedPreferences) {
-        this.sharedPreferences = sharedPreferences;
+    public SharedPreferencesProviderImpl() {
     }
 
     @Override

@@ -2,6 +2,8 @@ package gro.gibberish.drizzle.mainlist;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import gro.gibberish.drizzle.EventBusRx;
 import gro.gibberish.drizzle.data.ApiProvider;
 import gro.gibberish.drizzle.data.FileHandler;
@@ -14,14 +16,12 @@ import rx.Observable;
 import rx.schedulers.Schedulers;
 
 public class MainWeatherInteractorImpl implements MainWeatherInteractor {
-    EventBusRx eventBus;
+    @Inject EventBusRx eventBus;
+    @Inject SharedPreferencesProvider sharedPreferencesProvider;
     String commaSeparatedLocations;
-    SharedPreferencesProvider sharedPreferencesProvider;
 
     public static MainWeatherInteractorImpl newInstance() {
-        MainWeatherInteractorImpl newInstance = new MainWeatherInteractorImpl();
-        newInstance.eventBus = EventBusRx.INSTANCE;
-        return newInstance;
+        return new MainWeatherInteractorImpl();
     }
 
     private MainWeatherInteractorImpl() {}

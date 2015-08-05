@@ -2,21 +2,19 @@ package gro.gibberish.drizzle.mainlist;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import gro.gibberish.drizzle.EventBusRx;
 import gro.gibberish.drizzle.events.LocationListEvent;
 import rx.Subscription;
 
 public class MainPresenterImpl implements MainPresenter {
-    private EventBusRx eventBus;
-    private MainView mainView;
-    private MainWeatherInteractor mainWeatherInteractor;
+    @Inject EventBusRx eventBus;
+    @Inject MainView mainView;
+    @Inject MainWeatherInteractor mainWeatherInteractor;
 
-    public static MainPresenterImpl newInstance(MainView mainView) {
-        MainPresenterImpl newInstance = new MainPresenterImpl();
-        newInstance.eventBus = EventBusRx.INSTANCE;
-        newInstance.mainView = mainView;
-        newInstance.mainWeatherInteractor = MainWeatherInteractorImpl.newInstance();
-        return newInstance;
+    public MainPresenterImpl() {
+
     }
 
     @Override
