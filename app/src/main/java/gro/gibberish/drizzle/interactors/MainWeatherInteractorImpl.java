@@ -1,4 +1,4 @@
-package gro.gibberish.drizzle.mainlist;
+package gro.gibberish.drizzle.interactors;
 
 import java.util.List;
 
@@ -20,11 +20,7 @@ public class MainWeatherInteractorImpl implements MainWeatherInteractor {
     @Inject SharedPreferencesProvider sharedPreferencesProvider;
     String commaSeparatedLocations;
 
-    public static MainWeatherInteractorImpl newInstance() {
-        return new MainWeatherInteractorImpl();
-    }
-
-    private MainWeatherInteractorImpl() {}
+    public MainWeatherInteractorImpl() {}
 
     // TODO make interface/implementation of a sharedpreferences thing, impl having sharedprefernces
     @Override

@@ -6,13 +6,15 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import gro.gibberish.drizzle.interactors.InteractorsModule;
 
 @Module(
         injects ={
                 RootApp.class
         },
         includes = {
-                EventBusRxModule.class
+                EventBusRxModule.class,
+                InteractorsModule.class
         },
         library=true
 )

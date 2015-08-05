@@ -6,15 +6,16 @@ import javax.inject.Inject;
 
 import gro.gibberish.drizzle.EventBusRx;
 import gro.gibberish.drizzle.events.LocationListEvent;
+import gro.gibberish.drizzle.interactors.MainWeatherInteractor;
 import rx.Subscription;
 
 public class MainPresenterImpl implements MainPresenter {
     @Inject EventBusRx eventBus;
-    @Inject MainView mainView;
     @Inject MainWeatherInteractor mainWeatherInteractor;
+    private MainView mainView;
 
-    public MainPresenterImpl() {
-
+    public MainPresenterImpl(MainView mainView) {
+        this.mainView = mainView;
     }
 
     @Override

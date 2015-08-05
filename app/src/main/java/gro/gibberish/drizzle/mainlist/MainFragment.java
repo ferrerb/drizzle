@@ -8,14 +8,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.Arrays;
 import java.util.List;
 
 import javax.inject.Inject;
 
 import gro.gibberish.drizzle.R;
+import gro.gibberish.drizzle.common.BaseFragment;
 import gro.gibberish.drizzle.models.LocationModel;
 
-public class MainFragment extends Fragment implements MainView{
+public class MainFragment extends BaseFragment implements MainView{
     @Inject MainPresenter mainPresenter;
     RecyclerView recyclerView;
 
@@ -48,6 +50,11 @@ public class MainFragment extends Fragment implements MainView{
     public void onResume() {
         super.onResume();
         mainPresenter.onResume();
+    }
+
+    @Override
+    protected List<Object> getModules() {
+        return Arrays.<Object>asList(new MainModule(this));
     }
 
     @Override

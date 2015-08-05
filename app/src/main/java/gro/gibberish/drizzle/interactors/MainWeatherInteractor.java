@@ -1,4 +1,4 @@
-package gro.gibberish.drizzle.mainlist;
+package gro.gibberish.drizzle.interactors;
 
 public interface MainWeatherInteractor {
     void retrieveWeather();
