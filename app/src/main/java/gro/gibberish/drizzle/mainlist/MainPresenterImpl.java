@@ -12,11 +12,9 @@ import rx.Subscription;
 public class MainPresenterImpl implements MainPresenter {
     @Inject EventBusRx eventBus;
     @Inject MainWeatherInteractor mainWeatherInteractor;
-    private MainView mainView;
+    @Inject MainView mainView;
 
-    public MainPresenterImpl(MainView mainView) {
-        this.mainView = mainView;
-    }
+    public MainPresenterImpl() {}
 
     @Override
     public void onResume() {

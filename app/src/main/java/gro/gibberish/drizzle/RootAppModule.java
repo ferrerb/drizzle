@@ -6,6 +6,7 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import gro.gibberish.drizzle.data.DataModule;
 import gro.gibberish.drizzle.interactors.InteractorsModule;
 
 @Module(
@@ -14,7 +15,8 @@ import gro.gibberish.drizzle.interactors.InteractorsModule;
         },
         includes = {
                 EventBusRxModule.class,
-                InteractorsModule.class
+                InteractorsModule.class,
+                DataModule.class
         },
         library=true
 )

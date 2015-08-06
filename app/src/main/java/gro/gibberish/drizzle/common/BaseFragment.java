@@ -8,24 +8,13 @@ import java.util.List;
 import dagger.ObjectGraph;
 import gro.gibberish.drizzle.RootApp;
 
-public abstract class BaseFragment extends Fragment {
+public class BaseFragment extends Fragment {
     private ObjectGraph activityGraph;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
 
-        RootApp rootApp = (RootApp) getActivity().getApplicationContext();
-        activityGraph = rootApp.createScopedGraph(getModules().toArray());
-        activityGraph.inject(this);
+        ((BaseActivity) getActivity()).inject(this);
     }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-
-        activityGraph = null;
-    }
-
-    protected abstract List<Object> getModules();
 }

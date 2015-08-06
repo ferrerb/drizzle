@@ -12,7 +12,7 @@ import gro.gibberish.drizzle.R;
 import gro.gibberish.drizzle.common.BaseActivity;
 import gro.gibberish.drizzle.ui.LocationListFragment;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

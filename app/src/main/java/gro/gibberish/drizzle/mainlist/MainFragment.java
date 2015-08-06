@@ -53,11 +53,6 @@ public class MainFragment extends BaseFragment implements MainView{
     }
 
     @Override
-    protected List<Object> getModules() {
-        return Arrays.<Object>asList(new MainModule(this));
-    }
-
-    @Override
     public void showProgressBar() {
         // Show empty RecyclerView progress thing
     }

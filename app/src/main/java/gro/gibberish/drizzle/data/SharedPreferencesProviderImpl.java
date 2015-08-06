@@ -14,12 +14,12 @@ public class SharedPreferencesProviderImpl implements SharedPreferencesProvider 
     }
 
     @Override
-    public void setLocationsString(String commaSeparatedLocations) {
+    public void setAllLocationsString(String commaSeparatedLocations) {
         sharedPreferences.edit().putString(LOCATIONS, commaSeparatedLocations).apply();
     }
 
     @Override
-    public String getLocationsString() {
+    public String getAllLocationsString() {
         return sharedPreferences.getString(LOCATIONS, "");
     }
 

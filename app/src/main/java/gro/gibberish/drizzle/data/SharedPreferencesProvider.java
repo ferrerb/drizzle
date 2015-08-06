@@ -1,9 +1,9 @@
 package gro.gibberish.drizzle.data;
 
 public interface SharedPreferencesProvider {
-    void setLocationsString(String commaSeparatedLocations);
+    void setAllLocationsString(String commaSeparatedLocations);
 
-    String getLocationsString();
+    String getAllLocationsString();
 
     void setLastLocationListRefreshTime(long lastRefreshTime);
 

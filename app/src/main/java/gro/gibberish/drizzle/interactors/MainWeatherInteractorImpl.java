@@ -1,10 +1,13 @@
 package gro.gibberish.drizzle.interactors;
 
+import android.content.Context;
+
 import java.util.List;
 
 import javax.inject.Inject;
 
 import gro.gibberish.drizzle.EventBusRx;
+import gro.gibberish.drizzle.R;
 import gro.gibberish.drizzle.data.ApiProvider;
 import gro.gibberish.drizzle.data.FileHandler;
 import gro.gibberish.drizzle.data.SharedPreferencesProvider;
@@ -18,6 +21,7 @@ import rx.schedulers.Schedulers;
 public class MainWeatherInteractorImpl implements MainWeatherInteractor {
     @Inject EventBusRx eventBus;
     @Inject SharedPreferencesProvider sharedPreferencesProvider;
+    @Inject Context activityContext;
     String commaSeparatedLocations;
 
     public MainWeatherInteractorImpl() {}
@@ -25,6 +29,7 @@ public class MainWeatherInteractorImpl implements MainWeatherInteractor {
     // TODO make interface/implementation of a sharedpreferences thing, impl having sharedprefernces
     @Override
     public void retrieveWeather() {
+        commaSeparatedLocations = sharedPreferencesProvider.getAllLocationsString();
         final int oneHourInMilliSeconds = 3600000;
         long lastRefresh = sharedPreferencesProvider.getLastLocationListRefreshTime();
         boolean needsRefresh = (System.currentTimeMillis() - lastRefresh) > oneHourInMilliSeconds;
@@ -36,6 +41,7 @@ public class MainWeatherInteractorImpl implements MainWeatherInteractor {
     }
 
     private void getWeatherFromInternet() {
+        String apiKey = activityContext.getResources().getString(R.string.api_key);
         ApiProvider.getWeatherService().getAllLocationsWeather(commaSeparatedLocations, "imperial", apiKey)
                 .retry(3)
                 .doOnNext(weatherData -> saveLocationWeatherToSeparateFiles(weatherData.getLocationList()))
@@ -51,9 +57,9 @@ public class MainWeatherInteractorImpl implements MainWeatherInteractor {
     private void getWeatherFromFile() {
         Observable.from(LocationsStringHelper.createListFromCommaSeparatedString(commaSeparatedLocations))
                 .flatMap(s -> FileHandler.getSerializedObjectFromFile(
-                        LocationModel.class, getActivity().getCacheDir(), s))
+                        LocationModel.class, activityContext.getCacheDir(), s))
                 .toList()
-                .doOnError(getWeatherFromInternet())
+                .doOnError(e-> getWeatherFromInternet())
                 .subscribeOn(Schedulers.io())
                 .subscribe(
                         weatherList -> eventBus.post(new LocationListEvent(weatherList)),
@@ -66,7 +72,7 @@ public class MainWeatherInteractorImpl implements MainWeatherInteractor {
         for ( LocationModel loc : data ) {
             FileHandler.saveSerializableObjectToFile(
                     loc,
-                    getActivity().getCacheDir(),
+                    activityContext.getCacheDir(),
                     Long.toString(loc.getId()))
                     .subscribe();
         }
