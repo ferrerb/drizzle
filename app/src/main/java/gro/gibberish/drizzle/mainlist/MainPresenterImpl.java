@@ -10,11 +10,15 @@ import gro.gibberish.drizzle.interactors.MainWeatherInteractor;
 import rx.Subscription;
 
 public class MainPresenterImpl implements MainPresenter {
-    @Inject EventBusRx eventBus;
-    @Inject MainWeatherInteractor mainWeatherInteractor;
+    private EventBusRx eventBus;
+    private MainWeatherInteractor mainWeatherInteractor;
     private MainView mainView;
 
-    public MainPresenterImpl() {}
+    @Inject
+    public MainPresenterImpl(EventBusRx eventBus, MainWeatherInteractor mainWeatherInteractor) {
+        this.eventBus = eventBus;
+        this.mainWeatherInteractor = mainWeatherInteractor;
+    }
 
     @Override
     public void onResume() {

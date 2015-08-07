@@ -1,6 +1,6 @@
 package gro.gibberish.drizzle.data;
 
-public interface SharedPreferencesProvider {
+public interface SharedPrefs {
     void setAllLocationsString(String commaSeparatedLocations);
 
     String getAllLocationsString();

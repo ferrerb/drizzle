@@ -37,7 +37,6 @@ public class MainFragment extends BaseFragment implements MainView{
         if (getArguments() != null) {
             //
         }
-        mainPresenter.init(this);
     }
 
     @Override
@@ -52,6 +51,7 @@ public class MainFragment extends BaseFragment implements MainView{
     @Override
     public void onResume() {
         super.onResume();
+        mainPresenter.init(this);
         mainPresenter.onResume();
     }
 

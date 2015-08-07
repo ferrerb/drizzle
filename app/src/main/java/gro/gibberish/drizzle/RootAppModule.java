@@ -16,10 +16,9 @@ import gro.gibberish.drizzle.interactors.InteractorsModule;
         },
         includes = {
                 EventBusRxModule.class,
-                InteractorsModule.class,
                 DataModule.class
         },
-        library=true
+        library=false
 )
 
 public class RootAppModule {

@@ -4,13 +4,15 @@ import android.content.SharedPreferences;
 
 import javax.inject.Inject;
 
-public class SharedPreferencesProviderImpl implements SharedPreferencesProvider {
+public class SharedPrefsImpl implements SharedPrefs {
     private static final String SP_LAST_REFRESH = "SP_LAST_REFRESH";
     private static final String LOCATIONS = "locations";
     private static final String FORECAST_FILE_APPENDED = "cast";
-    @Inject SharedPreferences sharedPreferences;
+    private SharedPreferences sharedPreferences;
 
-    public SharedPreferencesProviderImpl() {
+    @Inject
+    public SharedPrefsImpl(SharedPreferences sharedPreferences) {
+        this.sharedPreferences = sharedPreferences;
     }
 
     @Override

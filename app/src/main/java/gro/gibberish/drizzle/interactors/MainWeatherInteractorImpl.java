@@ -11,7 +11,7 @@ import gro.gibberish.drizzle.EventBusRx;
 import gro.gibberish.drizzle.R;
 import gro.gibberish.drizzle.data.ApiProvider;
 import gro.gibberish.drizzle.data.FileHandler;
-import gro.gibberish.drizzle.data.SharedPreferencesProvider;
+import gro.gibberish.drizzle.data.SharedPrefs;
 import gro.gibberish.drizzle.util.LocationsStringHelper;
 import gro.gibberish.drizzle.events.LocationListEvent;
 import gro.gibberish.drizzle.models.LocationModel;
@@ -21,24 +21,25 @@ import rx.schedulers.Schedulers;
 
 public class MainWeatherInteractorImpl implements MainWeatherInteractor {
     private EventBusRx eventBus;
-    private SharedPreferencesProvider sharedPreferencesProvider;
+    private SharedPrefs sharedPrefs;
     private Context activityContext;
     private String commaSeparatedLocations;
 
     @Inject
     public MainWeatherInteractorImpl(
-            EventBusRx eventBus, SharedPreferencesProvider sharedPreferencesProvider,
+            EventBusRx eventBus, SharedPrefs sharedPrefs,
             @Named("activity") Context activityContext) {
         this.eventBus = eventBus;
-        this.sharedPreferencesProvider = sharedPreferencesProvider;
+        this.sharedPrefs = sharedPrefs;
         this.activityContext = activityContext;
     }
 
     @Override
     public void retrieveWeather() {
-        commaSeparatedLocations = sharedPreferencesProvider.getAllLocationsString();
+        //commaSeparatedLocations = sharedPrefs.getAllLocationsString();
+        commaSeparatedLocations = "1851632,2172797";
         final int oneHourInMilliSeconds = 3600000;
-        long lastRefresh = sharedPreferencesProvider.getLastLocationListRefreshTime();
+        long lastRefresh = sharedPrefs.getLastLocationListRefreshTime();
         boolean needsRefresh = (System.currentTimeMillis() - lastRefresh) > oneHourInMilliSeconds;
         if (needsRefresh) {
             getWeatherFromInternet();
@@ -57,7 +58,7 @@ public class MainWeatherInteractorImpl implements MainWeatherInteractor {
                 .subscribe(
                         weatherData -> eventBus.post(new LocationListEvent(weatherData)),
                         Throwable::printStackTrace,
-                        () -> sharedPreferencesProvider.setLastLocationListRefreshTime(System.currentTimeMillis())
+                        () -> sharedPrefs.setLastLocationListRefreshTime(System.currentTimeMillis())
                 );
     }
 
