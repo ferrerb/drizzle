@@ -5,6 +5,7 @@ import android.content.Context;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import gro.gibberish.drizzle.EventBusRx;
 import gro.gibberish.drizzle.R;
@@ -19,14 +20,20 @@ import rx.Observable;
 import rx.schedulers.Schedulers;
 
 public class MainWeatherInteractorImpl implements MainWeatherInteractor {
-    @Inject EventBusRx eventBus;
-    @Inject SharedPreferencesProvider sharedPreferencesProvider;
-    @Inject Context activityContext;
-    String commaSeparatedLocations;
+    private EventBusRx eventBus;
+    private SharedPreferencesProvider sharedPreferencesProvider;
+    private Context activityContext;
+    private String commaSeparatedLocations;
 
-    public MainWeatherInteractorImpl() {}
+    @Inject
+    public MainWeatherInteractorImpl(
+            EventBusRx eventBus, SharedPreferencesProvider sharedPreferencesProvider,
+            @Named("activity") Context activityContext) {
+        this.eventBus = eventBus;
+        this.sharedPreferencesProvider = sharedPreferencesProvider;
+        this.activityContext = activityContext;
+    }
 
-    // TODO make interface/implementation of a sharedpreferences thing, impl having sharedprefernces
     @Override
     public void retrieveWeather() {
         commaSeparatedLocations = sharedPreferencesProvider.getAllLocationsString();

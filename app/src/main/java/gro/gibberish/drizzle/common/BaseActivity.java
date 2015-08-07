@@ -19,7 +19,7 @@ public class BaseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         //TODO Use this to create the activitygraph(ie to get activity context), and inject the fragment/mainview as from basefragment
-        RootApp rootApp = (RootApp) getApplicationContext();
+        RootApp rootApp = (RootApp) getApplication();
         activityGraph = rootApp.createScopedGraph(getModules().toArray());
         activityGraph.inject(this);
     }
@@ -37,5 +37,9 @@ public class BaseActivity extends AppCompatActivity {
 
     public void inject(Object object) {
         activityGraph.inject(object);
+    }
+
+    public ObjectGraph getActivityGraph() {
+        return activityGraph;
     }
 }

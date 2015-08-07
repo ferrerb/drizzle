@@ -9,6 +9,6 @@ import dagger.Provides;
 public class InteractorsModule {
     @Provides
     public MainWeatherInteractor provideMainWeatherInteractor() {
-        return new MainWeatherInteractorImpl();
+        return new MainWeatherInteractorImpl(null, null, null);
     }
 }

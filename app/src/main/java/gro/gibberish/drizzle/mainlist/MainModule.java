@@ -3,6 +3,7 @@ package gro.gibberish.drizzle.mainlist;
 import android.app.Activity;
 import android.content.Context;
 
+import javax.inject.Named;
 import javax.inject.Singleton;
 
 import dagger.Module;
@@ -13,6 +14,7 @@ import gro.gibberish.drizzle.interactors.MainWeatherInteractorImpl;
 
 @Module(
         injects={
+                MainActivity.class,
                 MainFragment.class,
                 MainPresenterImpl.class,
                 MainWeatherInteractorImpl.class
@@ -35,6 +37,7 @@ public class MainModule {
 
     @Provides
     @Singleton
+    @Named("activity")
     Context provideActivityContext() {
         return activity;
     }

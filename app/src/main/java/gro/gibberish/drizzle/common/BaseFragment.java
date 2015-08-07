@@ -9,8 +9,6 @@ import dagger.ObjectGraph;
 import gro.gibberish.drizzle.RootApp;
 
 public class BaseFragment extends Fragment {
-    private ObjectGraph activityGraph;
-
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);

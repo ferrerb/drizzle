@@ -12,7 +12,7 @@ import rx.Subscription;
 public class MainPresenterImpl implements MainPresenter {
     @Inject EventBusRx eventBus;
     @Inject MainWeatherInteractor mainWeatherInteractor;
-    @Inject MainView mainView;
+    private MainView mainView;
 
     public MainPresenterImpl() {}
 
@@ -35,5 +35,10 @@ public class MainPresenterImpl implements MainPresenter {
     @Override
     public void onListClick(String id) {
         // launch detail activity
+    }
+
+    @Override
+    public void init(MainView mainView) {
+        this.mainView = mainView;
     }
 }

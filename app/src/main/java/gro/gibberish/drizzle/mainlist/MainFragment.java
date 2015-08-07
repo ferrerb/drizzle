@@ -13,6 +13,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import dagger.Module;
+import dagger.Provides;
 import gro.gibberish.drizzle.R;
 import gro.gibberish.drizzle.common.BaseFragment;
 import gro.gibberish.drizzle.models.LocationModel;
@@ -35,6 +37,7 @@ public class MainFragment extends BaseFragment implements MainView{
         if (getArguments() != null) {
             //
         }
+        mainPresenter.init(this);
     }
 
     @Override
