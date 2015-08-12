@@ -23,8 +23,9 @@ public class MainPresenterImpl implements MainPresenter {
     @Override
     public void onResume() {
         Subscription retrieveWeatherSubscription = eventBus.get()
-                // TODO Dont do filter and oftype, obviously. Avoid using 'event' classes maybe?
+                // TODO Avoid using 'event' classes maybe?
                 // TODO ^^ could this even work if checking for List<>? if generics type erasure hmm
+                // TODO unsubscribe in some onpause() method
                 .ofType(LocationListEvent.class)
                 .subscribe(
                         event -> mainView.fillRecyclerView(event.getData()),

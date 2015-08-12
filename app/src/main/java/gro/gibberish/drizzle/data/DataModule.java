@@ -11,6 +11,9 @@ import dagger.Module;
 import dagger.Provides;
 
 @Module(
+        includes={
+                ApiModule.class
+        },
         library=true,
         complete=false
 )

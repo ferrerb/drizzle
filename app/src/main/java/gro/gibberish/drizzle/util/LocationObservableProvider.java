@@ -26,6 +26,7 @@ public final class LocationObservableProvider {
     public static Observable<Location> retrieveGpsCoordsSingleUpdate(Context ctxt) {
         mLocationManager = (LocationManager) ctxt.getSystemService(Context.LOCATION_SERVICE);
         // TODO also this is ugly. do i need to make the anonymous class here?
+        // TODO make this not static
 
         Observable<Location> mObservable = Observable.create(new Observable.OnSubscribe<Location>() {
             @Override

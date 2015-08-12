@@ -1,6 +1,7 @@
 package gro.gibberish.drizzle;
 
 import android.content.Context;
+import android.location.LocationManager;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -33,5 +34,11 @@ public class RootAppModule {
     @Named("appContext")
     public Context provideApplicationContext() {
         return rootApp;
+    }
+
+    @Provides
+    @Singleton
+    public LocationManager provideLocationManager() {
+        return (LocationManager) rootApp.getSystemService(Context.LOCATION_SERVICE);
     }
 }
