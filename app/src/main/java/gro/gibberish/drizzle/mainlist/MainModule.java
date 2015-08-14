@@ -27,7 +27,7 @@ import gro.gibberish.drizzle.interactors.MainWeatherInteractorImpl;
         includes={
                 InteractorsModule.class,
                 //EventBusRxModule.class,
-                //DataModule.class
+                DataModule.class
         },
         addsTo=RootAppModule.class
 )

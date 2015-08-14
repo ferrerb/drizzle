@@ -11,6 +11,7 @@ import gro.gibberish.drizzle.EventBusRx;
 import gro.gibberish.drizzle.R;
 import gro.gibberish.drizzle.data.ApiProvider;
 import gro.gibberish.drizzle.data.FileHandler;
+import gro.gibberish.drizzle.data.OpenWeatherService;
 import gro.gibberish.drizzle.data.SharedPrefs;
 import gro.gibberish.drizzle.util.LocationsStringHelper;
 import gro.gibberish.drizzle.events.LocationListEvent;
@@ -22,16 +23,21 @@ import rx.schedulers.Schedulers;
 public class MainWeatherInteractorImpl implements MainWeatherInteractor {
     private EventBusRx eventBus;
     private SharedPrefs sharedPrefs;
-    private Context activityContext;
+    private FileHandler fileHandler;
+    private OpenWeatherService openWeatherService;
+    @Inject @Named("api_key") String apiKey;
+
     private String commaSeparatedLocations;
 
     @Inject
     public MainWeatherInteractorImpl(
             EventBusRx eventBus, SharedPrefs sharedPrefs,
-            @Named("activity") Context activityContext) {
+            FileHandler fileHandler, OpenWeatherService openWeatherService) {
         this.eventBus = eventBus;
         this.sharedPrefs = sharedPrefs;
-        this.activityContext = activityContext;
+        // TODO push this context to filehandler instead of here, ie make filehandler not static etc
+        this.fileHandler = fileHandler;
+        this.openWeatherService = openWeatherService;
     }
 
     @Override
@@ -49,8 +55,8 @@ public class MainWeatherInteractorImpl implements MainWeatherInteractor {
     }
 
     private void getWeatherFromInternet() {
-        String apiKey = activityContext.getResources().getString(R.string.api_key);
-        ApiProvider.getWeatherService().getAllLocationsWeather(commaSeparatedLocations, "imperial", apiKey)
+        // TODO PRovide the apikey from the rootappmodule?
+        openWeatherService.getAllLocationsWeather(commaSeparatedLocations, "imperial", apiKey)
                 .retry(3)
                 .doOnNext(weatherData -> saveLocationWeatherToSeparateFiles(weatherData.getLocationList()))
                 .map(MultipleLocationModel::getLocationList)
@@ -64,8 +70,8 @@ public class MainWeatherInteractorImpl implements MainWeatherInteractor {
 
     private void getWeatherFromFile() {
         Observable.from(LocationsStringHelper.createListFromCommaSeparatedString(commaSeparatedLocations))
-                .flatMap(s -> FileHandler.getSerializedObjectFromFile(
-                        LocationModel.class, activityContext.getCacheDir(), s))
+                .flatMap(s -> fileHandler.getSerializedObjectFromFile(
+                        LocationModel.class, s))
                 .toList()
                 .doOnError(e-> getWeatherFromInternet())
                 .subscribeOn(Schedulers.io())
@@ -78,9 +84,8 @@ public class MainWeatherInteractorImpl implements MainWeatherInteractor {
 
     private void saveLocationWeatherToSeparateFiles(List<LocationModel> data) {
         for ( LocationModel loc : data ) {
-            FileHandler.saveSerializableObjectToFile(
+            fileHandler.saveSerializableObjectToFile(
                     loc,
-                    activityContext.getCacheDir(),
                     Long.toString(loc.getId()))
                     .subscribe();
         }

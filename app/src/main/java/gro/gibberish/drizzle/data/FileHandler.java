@@ -1,5 +1,7 @@
 package gro.gibberish.drizzle.data;
 
+import android.content.Context;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -9,18 +11,28 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import rx.Observable;
 import rx.Subscriber;
 import rx.exceptions.OnErrorThrowable;
 import rx.schedulers.Schedulers;
 
 public class FileHandler {
-    private FileHandler() {}
+    private Context context;
+
+    @Inject
+    public FileHandler(@Named("activity") Context context) {
+        this.context = context;
+    }
 
     // Suppresses a warning about casting a deserialized object to its original type
     @SuppressWarnings("unchecked")
-    public static <T> Observable<T> getSerializedObjectFromFile(
-            Class<T> typeToBeDeserialized, File path, String fileName) {
+    public <T> Observable<T> getSerializedObjectFromFile(
+            Class<T> typeToBeDeserialized, String fileName) {
+        File path = context.getCacheDir();
+
         return Observable.create(new Observable.OnSubscribe<T>() {
             @Override
             public void call(Subscriber<? super T> subscriber) {
@@ -42,8 +54,10 @@ public class FileHandler {
         }).subscribeOn(Schedulers.io());
     }
 
-    public static <T extends Serializable> Observable<Void> saveSerializableObjectToFile(
-            T objectToBeSerialized, File path, String fileName) {
+    public <T extends Serializable> Observable<Void> saveSerializableObjectToFile(
+            T objectToBeSerialized, String fileName) {
+        File path = context.getCacheDir();
+
         return Observable.create(new Observable.OnSubscribe<Void>() {
             @Override
             public void call(Subscriber<? super Void> subscriber) {
@@ -64,7 +78,9 @@ public class FileHandler {
         }).subscribeOn(Schedulers.io());
     }
 
-    public static Observable<Boolean> deleteFile(File path, String fileName) {
+    public Observable<Boolean> deleteFile(String fileName) {
+        File path = context.getCacheDir();
+
         return Observable.create(new Observable.OnSubscribe<Boolean>() {
             @Override
             public void call(Subscriber<? super Boolean> subscriber) {

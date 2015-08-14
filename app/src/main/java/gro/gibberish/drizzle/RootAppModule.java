@@ -16,8 +16,7 @@ import gro.gibberish.drizzle.interactors.InteractorsModule;
                 RootApp.class
         },
         includes = {
-                EventBusRxModule.class,
-                DataModule.class
+                EventBusRxModule.class
         },
         library=false
 )
@@ -40,5 +39,12 @@ public class RootAppModule {
     @Singleton
     public LocationManager provideLocationManager() {
         return (LocationManager) rootApp.getSystemService(Context.LOCATION_SERVICE);
+    }
+
+    @Provides
+    @Singleton
+    @Named("api_key")
+    public String provideApiKey() {
+        return rootApp.getResources().getString(R.string.api_key);
     }
 }

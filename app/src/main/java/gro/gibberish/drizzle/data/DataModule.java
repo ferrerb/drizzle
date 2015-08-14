@@ -20,7 +20,14 @@ import dagger.Provides;
 public class DataModule {
     @Provides
     @Singleton
-    public SharedPrefs provideSharedPrefs(@Named("appContext") Context context) {
+    SharedPrefs provideSharedPrefs(@Named("activity") Context context) {
         return new SharedPrefsImpl(PreferenceManager.getDefaultSharedPreferences(context));
     }
+
+    @Provides
+    @Singleton
+    FileHandler provideFileHandler(@Named("activity") Context context) {
+        return new FileHandler(context);
+    }
+
 }

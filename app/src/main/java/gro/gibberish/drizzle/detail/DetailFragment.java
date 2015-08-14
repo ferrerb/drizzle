@@ -1,4 +1,6 @@
 package gro.gibberish.drizzle.detail;
 
-public class DetailFragment {
+import gro.gibberish.drizzle.common.BaseFragment;
+
+public class DetailFragment extends BaseFragment {
 }
