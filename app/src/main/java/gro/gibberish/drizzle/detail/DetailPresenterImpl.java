@@ -7,6 +7,7 @@ import gro.gibberish.drizzle.events.CurrentLocationForecastEvent;
 import gro.gibberish.drizzle.events.CurrentLocationWeatherEvent;
 import gro.gibberish.drizzle.events.RxBusEvent;
 import gro.gibberish.drizzle.interactors.DetailWeatherInteractor;
+import gro.gibberish.drizzle.util.LocationsStringHelper;
 import rx.Subscription;
 
 public class DetailPresenterImpl implements DetailPresenter {
@@ -28,6 +29,7 @@ public class DetailPresenterImpl implements DetailPresenter {
 
     @Override
     public void onResume() {
+        // TODO subscribe to eventbus to get locationId
         Subscription retrieveWeatherSubscription = eventBus.get()
                 // TODO Avoid using 'event' classes maybe?
                 // TODO unsubscribe in some onpause() method
@@ -51,6 +53,9 @@ public class DetailPresenterImpl implements DetailPresenter {
 
     @Override
     public void onDeleteLocation(String locationToDelete) {
-        // ???
+        // TODO Where should this actually happen?
+//        String allLocations = sharedPreferences.getString("locations", "");
+//        String locationsAfterDelete = LocationsStringHelper.deleteLocationFromString(currentLocation, allLocations);
+//        sharedPreferences.edit().putString("locations", locationsAfterDelete).apply();
     }
 }
