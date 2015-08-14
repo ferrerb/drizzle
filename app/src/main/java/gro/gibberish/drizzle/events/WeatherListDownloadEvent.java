@@ -4,7 +4,7 @@ import java.util.List;
 
 import gro.gibberish.drizzle.models.LocationModel;
 
-public class WeatherListDownloadEvent {
+public class WeatherListDownloadEvent implements RxBusEvent {
     private List<LocationModel> locationList;
 
     public WeatherListDownloadEvent(List<LocationModel> locationList) {

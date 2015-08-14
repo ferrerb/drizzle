@@ -3,7 +3,11 @@ package gro.gibberish.drizzle.detail;
 import javax.inject.Inject;
 
 import gro.gibberish.drizzle.EventBusRx;
+import gro.gibberish.drizzle.events.CurrentLocationForecastEvent;
+import gro.gibberish.drizzle.events.CurrentLocationWeatherEvent;
+import gro.gibberish.drizzle.events.RxBusEvent;
 import gro.gibberish.drizzle.interactors.DetailWeatherInteractor;
+import rx.Subscription;
 
 public class DetailPresenterImpl implements DetailPresenter {
     private EventBusRx eventBus;
@@ -16,14 +20,33 @@ public class DetailPresenterImpl implements DetailPresenter {
         this.detailWeatherInteractor = detailWeatherInteractor;
     }
 
-    @Override
-    public void onResume() {
-        // get some weather
-    }
 
     @Override
     public void init(DetailView detailView) {
         this.detailView = detailView;
+    }
+
+    @Override
+    public void onResume() {
+        Subscription retrieveWeatherSubscription = eventBus.get()
+                // TODO Avoid using 'event' classes maybe?
+                // TODO unsubscribe in some onpause() method
+                .ofType(RxBusEvent.class)
+                .subscribe(
+                        this::updateViewBasedOnEvent,
+                        Throwable::getStackTrace,
+                        () -> {}
+                );
+        detailWeatherInteractor.retrieveWeather();
+    }
+
+    // TODO do not like.
+    private <T extends RxBusEvent> void updateViewBasedOnEvent(T event) {
+        if (event.getClass() == CurrentLocationForecastEvent.class) {
+            detailView.showForecast(((CurrentLocationForecastEvent) event).getData());
+        } else if (event.getClass() == CurrentLocationWeatherEvent.class) {
+            detailView.showCurrentWeather(((CurrentLocationWeatherEvent) event).getData());
+        }
     }
 
     @Override

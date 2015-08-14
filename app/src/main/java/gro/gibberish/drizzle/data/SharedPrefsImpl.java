@@ -42,6 +42,6 @@ public class SharedPrefsImpl implements SharedPrefs {
 
     @Override
     public long getLastRefreshTimeLocationForecast(String locationId) {
-        return sharedPreferences.getLong(locationId, 0L);
+        return sharedPreferences.getLong(locationId + FORECAST_FILE_APPENDED, 0L);
     }
 }

@@ -22,7 +22,6 @@ public class MainPresenterImpl implements MainPresenter {
     public void onResume() {
         Subscription retrieveWeatherSubscription = eventBus.get()
                 // TODO Avoid using 'event' classes maybe?
-                // TODO ^^ could this even work if checking for List<>? if generics type erasure hmm
                 // TODO unsubscribe in some onpause() method
                 .ofType(WeatherListDownloadEvent.class)
                 .subscribe(

@@ -21,6 +21,7 @@ import gro.gibberish.drizzle.util.NumberFormatting;
 
 public class DetailFragment extends BaseFragment implements DetailView {
     @Inject DetailPresenter detailPresenter;
+    private String currentLocationId;
     private View result;
     private RecyclerView forecastList;
     private ActionBar actionBar;

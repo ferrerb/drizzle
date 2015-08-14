@@ -87,4 +87,9 @@ public class MainWeatherInteractorImpl implements MainWeatherInteractor {
         }
     }
 
+    @Override
+    public void onPause() {
+        // TODO unsubscribe
+    }
+
 }

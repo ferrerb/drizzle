@@ -1,7 +1,7 @@
 package gro.gibberish.drizzle.interactors;
 
 public interface DetailWeatherInteractor {
-    void retrieveCurrentWeather();
+    void retrieveWeather();
 
-    void retrieveForecastWeather();
+    void onPause();
 }
