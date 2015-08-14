@@ -14,6 +14,7 @@ import gro.gibberish.drizzle.models.LocationModel;
 
 public class WeatherListAdapter extends RecyclerView.Adapter<WeatherListAdapter.RowHolder> {
     List<LocationModel> mLocationList;
+    // TODO use eventbus instead of callback
     OnItemTouchListener mOnItemTouchListener;
 
     public WeatherListAdapter(List<LocationModel> locationList, OnItemTouchListener listener) {

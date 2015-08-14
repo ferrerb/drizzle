@@ -1,7 +1,10 @@
 package gro.gibberish.drizzle.detail;
 
-public interface DetailView {
-    void showCurrentWeather();
+import gro.gibberish.drizzle.models.LocationForecastModel;
+import gro.gibberish.drizzle.models.LocationModel;
 
-    void showForecast();
+public interface DetailView {
+    void showCurrentWeather(LocationModel data);
+
+    void showForecast(LocationForecastModel data);
 }

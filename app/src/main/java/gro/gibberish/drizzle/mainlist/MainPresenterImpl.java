@@ -1,11 +1,9 @@
 package gro.gibberish.drizzle.mainlist;
 
-import java.util.List;
-
 import javax.inject.Inject;
 
 import gro.gibberish.drizzle.EventBusRx;
-import gro.gibberish.drizzle.events.LocationListEvent;
+import gro.gibberish.drizzle.events.WeatherListDownloadEvent;
 import gro.gibberish.drizzle.interactors.MainWeatherInteractor;
 import rx.Subscription;
 
@@ -26,7 +24,7 @@ public class MainPresenterImpl implements MainPresenter {
                 // TODO Avoid using 'event' classes maybe?
                 // TODO ^^ could this even work if checking for List<>? if generics type erasure hmm
                 // TODO unsubscribe in some onpause() method
-                .ofType(LocationListEvent.class)
+                .ofType(WeatherListDownloadEvent.class)
                 .subscribe(
                         event -> mainView.fillRecyclerView(event.getData()),
                         Throwable::getStackTrace,

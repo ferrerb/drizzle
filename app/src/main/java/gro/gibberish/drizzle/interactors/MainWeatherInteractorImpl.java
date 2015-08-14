@@ -1,20 +1,16 @@
 package gro.gibberish.drizzle.interactors;
 
-import android.content.Context;
-
 import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import gro.gibberish.drizzle.EventBusRx;
-import gro.gibberish.drizzle.R;
-import gro.gibberish.drizzle.data.ApiProvider;
 import gro.gibberish.drizzle.data.FileHandler;
 import gro.gibberish.drizzle.data.OpenWeatherService;
 import gro.gibberish.drizzle.data.SharedPrefs;
 import gro.gibberish.drizzle.util.LocationsStringHelper;
-import gro.gibberish.drizzle.events.LocationListEvent;
+import gro.gibberish.drizzle.events.WeatherListDownloadEvent;
 import gro.gibberish.drizzle.models.LocationModel;
 import gro.gibberish.drizzle.models.MultipleLocationModel;
 import rx.Observable;
@@ -35,7 +31,6 @@ public class MainWeatherInteractorImpl implements MainWeatherInteractor {
             FileHandler fileHandler, OpenWeatherService openWeatherService) {
         this.eventBus = eventBus;
         this.sharedPrefs = sharedPrefs;
-        // TODO push this context to filehandler instead of here, ie make filehandler not static etc
         this.fileHandler = fileHandler;
         this.openWeatherService = openWeatherService;
     }
@@ -62,7 +57,7 @@ public class MainWeatherInteractorImpl implements MainWeatherInteractor {
                 .map(MultipleLocationModel::getLocationList)
                 .subscribeOn(Schedulers.io())
                 .subscribe(
-                        weatherData -> eventBus.post(new LocationListEvent(weatherData)),
+                        weatherData -> eventBus.post(new WeatherListDownloadEvent(weatherData)),
                         Throwable::printStackTrace,
                         () -> sharedPrefs.setLastLocationListRefreshTime(System.currentTimeMillis())
                 );
@@ -76,9 +71,10 @@ public class MainWeatherInteractorImpl implements MainWeatherInteractor {
                 .doOnError(e-> getWeatherFromInternet())
                 .subscribeOn(Schedulers.io())
                 .subscribe(
-                        weatherList -> eventBus.post(new LocationListEvent(weatherList)),
+                        weatherList -> eventBus.post(new WeatherListDownloadEvent(weatherList)),
                         Throwable::printStackTrace,
-                        () -> {}
+                        () -> {
+                        }
                 );
     }
 

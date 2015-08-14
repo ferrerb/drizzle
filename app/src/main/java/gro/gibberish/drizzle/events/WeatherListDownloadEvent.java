@@ -4,10 +4,10 @@ import java.util.List;
 
 import gro.gibberish.drizzle.models.LocationModel;
 
-public class LocationListEvent {
+public class WeatherListDownloadEvent {
     private List<LocationModel> locationList;
 
-    public LocationListEvent(List<LocationModel> locationList) {
+    public WeatherListDownloadEvent(List<LocationModel> locationList) {
         this.locationList = locationList;
     }
 
