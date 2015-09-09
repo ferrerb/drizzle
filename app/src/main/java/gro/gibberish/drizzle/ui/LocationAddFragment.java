@@ -12,7 +12,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import gro.gibberish.drizzle.R;
-import gro.gibberish.drizzle.util.LocationObservableProvider;
+import gro.gibberish.drizzle.data.LocationObservableProvider;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;

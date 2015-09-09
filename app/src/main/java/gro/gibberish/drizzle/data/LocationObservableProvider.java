@@ -1,4 +1,4 @@
-package gro.gibberish.drizzle.util;
+package gro.gibberish.drizzle.data;
 
 import android.content.Context;
 import android.location.Criteria;
@@ -8,31 +8,27 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Looper;
 
-import java.util.List;
+import javax.inject.Inject;
 
 import rx.Observable;
-import rx.Scheduler;
 import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 
-public final class LocationObservableProvider {
-    private static LocationManager mLocationManager;
-    private static LocationListener mLocationListener;
+public class LocationObservableProvider {
+    private LocationManager locationManager;
+    private LocationListener locationListener;
 
-    private LocationObservableProvider() {
+    @Inject
+    public LocationObservableProvider(LocationManager locationManager) {
+        this.locationManager = locationManager;
     }
 
-    public static Observable<Location> retrieveGpsCoordsSingleUpdate(Context ctxt) {
-        mLocationManager = (LocationManager) ctxt.getSystemService(Context.LOCATION_SERVICE);
+    public Observable<Location> retrieveGpsCoordsSingleUpdate() {
         // TODO also this is ugly. do i need to make the anonymous class here?
-        // TODO make this not static
-
         Observable<Location> mObservable = Observable.create(new Observable.OnSubscribe<Location>() {
             @Override
             public void call(Subscriber<? super Location> subscriber) {
 
-                mLocationListener = new LocationListener() {
+                locationListener = new LocationListener() {
                     @Override
                     public void onStatusChanged(String s, int i, Bundle bundle) {}
 
@@ -53,13 +49,13 @@ public final class LocationObservableProvider {
 
                 Criteria c = new Criteria();
                 c.setAccuracy(Criteria.ACCURACY_COARSE);
-                String provider = mLocationManager.getBestProvider(c, true);
-                mLocationManager.requestSingleUpdate(
-                        provider, mLocationListener, Looper.myLooper());
+                String provider = locationManager.getBestProvider(c, true);
+                locationManager.requestSingleUpdate(
+                        provider, locationListener, Looper.myLooper());
                 Looper.loop();
             }
         })
-         .doOnUnsubscribe(() -> mLocationManager.removeUpdates(mLocationListener));
+         .doOnUnsubscribe(() -> locationManager.removeUpdates(locationListener));
 
         return mObservable;
     }

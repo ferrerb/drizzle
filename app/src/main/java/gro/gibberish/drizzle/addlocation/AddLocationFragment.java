@@ -1,4 +1,6 @@
 package gro.gibberish.drizzle.addlocation;
 
-public class AddLocationFragment {
+import gro.gibberish.drizzle.common.BaseDialogFragment;
+
+public class AddLocationFragment extends BaseDialogFragment implements AddLocationView {
 }

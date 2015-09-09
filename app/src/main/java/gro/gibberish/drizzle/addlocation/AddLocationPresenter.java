@@ -1,4 +1,7 @@
 package gro.gibberish.drizzle.addlocation;
 
-public class AddLocationPresenter {
+public interface AddLocationPresenter {
+    void findLocationWithZip(int zipCode);
+
+    void findLocationWithGps();
 }
