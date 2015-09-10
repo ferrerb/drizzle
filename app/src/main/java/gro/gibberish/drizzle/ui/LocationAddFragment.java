@@ -12,7 +12,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import gro.gibberish.drizzle.R;
-import gro.gibberish.drizzle.data.LocationObservableProvider;
+import gro.gibberish.drizzle.data.GpsLocationObservable;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -94,7 +94,7 @@ public class LocationAddFragment extends DialogFragment implements DialogInterfa
     private void getLocation() {
         setRetainInstance(true);
         // TODO Could use the find API to search by name, or with zip,
-        locationServiceSubscription = LocationObservableProvider.retrieveGpsCoordsSingleUpdate(getActivity())
+        locationServiceSubscription = GpsLocationObservable.retrieveGpsCoordsSingleUpdate(getActivity())
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(

@@ -1,7 +1,7 @@
 package gro.gibberish.drizzle.data;
 
 import android.content.Context;
-import android.content.SharedPreferences;
+import android.location.LocationManager;
 import android.preference.PreferenceManager;
 
 import javax.inject.Named;
@@ -28,6 +28,12 @@ public class DataModule {
     @Singleton
     FileHandler provideFileHandler(@Named("activity") Context context) {
         return new FileHandler(context);
+    }
+
+    @Provides
+    @Singleton
+    GpsLocationObservable provideGpsLocationObservable(LocationManager locationManager) {
+        return new GpsLocationObservable(locationManager);
     }
 
 }

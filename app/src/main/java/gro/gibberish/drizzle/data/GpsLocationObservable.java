@@ -13,13 +13,25 @@ import javax.inject.Inject;
 import rx.Observable;
 import rx.Subscriber;
 
-public class LocationObservableProvider {
+public class GpsLocationObservable {
     private LocationManager locationManager;
     private LocationListener locationListener;
 
     @Inject
-    public LocationObservableProvider(LocationManager locationManager) {
+    public GpsLocationObservable(LocationManager locationManager) {
         this.locationManager = locationManager;
+    }
+
+    public void checkForLocationServices() {
+        boolean locationServicesEnabled =
+                locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER) ||
+                locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        if (locationServicesEnabled) {
+            // TODO Do things!
+        } else {
+            // TODO ask to turn on location services!
+
+        }
     }
 
     public Observable<Location> retrieveGpsCoordsSingleUpdate() {

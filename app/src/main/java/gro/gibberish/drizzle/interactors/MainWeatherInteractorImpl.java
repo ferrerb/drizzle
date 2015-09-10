@@ -50,7 +50,6 @@ public class MainWeatherInteractorImpl implements MainWeatherInteractor {
     }
 
     private void getWeatherFromInternet() {
-        // TODO PRovide the apikey from the rootappmodule?
         openWeatherService.getAllLocationsWeather(commaSeparatedLocations, "imperial", apiKey)
                 .retry(3)
                 .doOnNext(weatherData -> saveLocationWeatherToSeparateFiles(weatherData.getLocationList()))
