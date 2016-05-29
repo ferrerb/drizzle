@@ -29,6 +29,7 @@ public class AddLocationPresenterImpl implements AddLocationPresenter {
     public void findLocationWithGps() {
         //  TODO Decide where to send this information, should this be in the Mainlist presenter?
         // TODO Or, have this also query the Weather API to get the location ID
+        // TODO Subscribe to eventbus in the basefragment/activity??
         Subscription eventBusSubscrption = eventBus.get()
                 .ofType(GpsLocationEvent.class)
                 .subscribe(

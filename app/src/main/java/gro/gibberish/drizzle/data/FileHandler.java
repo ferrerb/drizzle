@@ -20,6 +20,7 @@ import rx.exceptions.OnErrorThrowable;
 import rx.schedulers.Schedulers;
 
 public class FileHandler {
+    // TODO Consider passing in the file path, then don't need any Android imports here
     private Context context;
 
     @Inject
