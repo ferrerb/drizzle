@@ -1,6 +1,6 @@
 package gro.gibberish.drizzle.data;
 
-import retrofit.RestAdapter;
+import retrofit2.Retrofit;
 
 /**
  * Holds a static instance of the rest adapter for accessing the OpenWeather API
@@ -8,13 +8,13 @@ import retrofit.RestAdapter;
 public final class ApiProvider {
     private ApiProvider() {}
 
-    private static final String SERVICE_ENDPOINT ="http://api.openweathermap.org/data/2.5";
+    private static final String BASE_URL ="http://api.openweathermap.org/data/2.5";
 
-    private static final RestAdapter REST_ADAPTER = new RestAdapter.Builder()
-            .setEndpoint(SERVICE_ENDPOINT)
+    private static final Retrofit RETROFIT = new Retrofit.Builder()
+            .baseUrl(BASE_URL)
             .build();
     
-    private static final OpenWeatherService WEATHER_SERVICE = REST_ADAPTER.create(OpenWeatherService.class);
+    private static final OpenWeatherService WEATHER_SERVICE = RETROFIT.create(OpenWeatherService.class);
 
     public static OpenWeatherService getWeatherService() {
         return WEATHER_SERVICE;

@@ -1,6 +1,5 @@
 package gro.gibberish.drizzle.common;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
@@ -9,7 +8,7 @@ import java.util.List;
 
 import dagger.ObjectGraph;
 import gro.gibberish.drizzle.RootApp;
-import gro.gibberish.drizzle.mainlist.MainModule;
+import gro.gibberish.drizzle.location_list.MainModule;
 
 public class BaseActivity extends AppCompatActivity {
     private ObjectGraph activityGraph;

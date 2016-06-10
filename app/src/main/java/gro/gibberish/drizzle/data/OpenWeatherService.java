@@ -1,10 +1,10 @@
 package gro.gibberish.drizzle.data;
 
-import gro.gibberish.drizzle.models.LocationForecastModel;
-import gro.gibberish.drizzle.models.LocationModel;
-import gro.gibberish.drizzle.models.MultipleLocationModel;
-import retrofit.http.GET;
-import retrofit.http.Query;
+import gro.gibberish.drizzle.weather_beans.LocationForecastModel;
+import gro.gibberish.drizzle.weather_beans.LocationModel;
+import gro.gibberish.drizzle.weather_beans.MultipleLocationModel;
+import retrofit2.http.GET;
+import retrofit2.http.Query;
 import rx.Observable;
 
 /**

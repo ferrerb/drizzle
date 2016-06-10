@@ -13,7 +13,7 @@
         android:theme="@style/AppTheme" >
 
         <activity
-            android:name=".mainlist.MainActivity"
+            android:name=".location_list.MainActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -22,8 +22,8 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".detail.DetailActivity"
-            android:parentActivityName=".mainlist.MainActivity">
+            android:name=".location_detail.DetailActivity"
+            android:parentActivityName=".location_list.MainActivity">
         </activity>
     </application>
 

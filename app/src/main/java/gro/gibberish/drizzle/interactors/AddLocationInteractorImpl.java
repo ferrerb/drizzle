@@ -9,7 +9,7 @@ import javax.inject.Inject;
 
 import gro.gibberish.drizzle.EventBusRx;
 import gro.gibberish.drizzle.data.GpsLocationObservable;
-import gro.gibberish.drizzle.events.GpsLocationEvent;
+import gro.gibberish.drizzle.rxbus_events.GpsLocationEvent;
 import rx.Subscription;
 
 public class AddLocationInteractorImpl implements AddLocationInteractor {

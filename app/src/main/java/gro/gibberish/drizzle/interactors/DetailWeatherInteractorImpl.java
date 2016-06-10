@@ -7,10 +7,10 @@ import gro.gibberish.drizzle.EventBusRx;
 import gro.gibberish.drizzle.data.FileHandler;
 import gro.gibberish.drizzle.data.OpenWeatherService;
 import gro.gibberish.drizzle.data.SharedPrefs;
-import gro.gibberish.drizzle.events.CurrentLocationWeatherEvent;
-import gro.gibberish.drizzle.events.CurrentLocationForecastEvent;
-import gro.gibberish.drizzle.models.LocationForecastModel;
-import gro.gibberish.drizzle.models.LocationModel;
+import gro.gibberish.drizzle.rxbus_events.CurrentLocationWeatherEvent;
+import gro.gibberish.drizzle.rxbus_events.CurrentLocationForecastEvent;
+import gro.gibberish.drizzle.weather_beans.LocationForecastModel;
+import gro.gibberish.drizzle.weather_beans.LocationModel;
 
 public class DetailWeatherInteractorImpl implements DetailWeatherInteractor {
     private static final String DAY_COUNT = "5";

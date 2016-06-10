@@ -10,9 +10,9 @@ import gro.gibberish.drizzle.data.FileHandler;
 import gro.gibberish.drizzle.data.OpenWeatherService;
 import gro.gibberish.drizzle.data.SharedPrefs;
 import gro.gibberish.drizzle.util.LocationsStringHelper;
-import gro.gibberish.drizzle.events.WeatherListDownloadEvent;
-import gro.gibberish.drizzle.models.LocationModel;
-import gro.gibberish.drizzle.models.MultipleLocationModel;
+import gro.gibberish.drizzle.rxbus_events.WeatherListDownloadEvent;
+import gro.gibberish.drizzle.weather_beans.LocationModel;
+import gro.gibberish.drizzle.weather_beans.MultipleLocationModel;
 import rx.Observable;
 import rx.schedulers.Schedulers;
 
