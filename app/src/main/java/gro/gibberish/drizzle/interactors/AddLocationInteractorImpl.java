@@ -8,7 +8,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import gro.gibberish.drizzle.EventBusRx;
-import gro.gibberish.drizzle.data.GpsLocationObservable;
+import gro.gibberish.drizzle.data_external.GpsLocationObservable;
 import gro.gibberish.drizzle.rxbus_events.GpsLocationEvent;
 import rx.Subscription;
 

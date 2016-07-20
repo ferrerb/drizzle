@@ -14,8 +14,8 @@ import javax.inject.Inject;
 
 import gro.gibberish.drizzle.R;
 import gro.gibberish.drizzle.common.BaseFragment;
-import gro.gibberish.drizzle.weather_beans.LocationForecastModel;
-import gro.gibberish.drizzle.weather_beans.LocationModel;
+import gro.gibberish.drizzle.weather_beans_owm.LocationForecastModel;
+import gro.gibberish.drizzle.weather_beans_owm.LocationModel;
 import gro.gibberish.drizzle.ui.WeatherForecastAdapter;
 import gro.gibberish.drizzle.util.NumberFormatting;
 

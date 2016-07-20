@@ -1,15 +1,11 @@
 package gro.gibberish.drizzle.interactors;
 
-import android.content.Context;
-
-import javax.inject.Named;
-
 import dagger.Module;
 import dagger.Provides;
 import gro.gibberish.drizzle.EventBusRx;
-import gro.gibberish.drizzle.data.FileHandler;
-import gro.gibberish.drizzle.data.OpenWeatherService;
-import gro.gibberish.drizzle.data.SharedPrefs;
+import gro.gibberish.drizzle.data_external.FileHandler;
+import gro.gibberish.drizzle.data_external.OpenWeatherService;
+import gro.gibberish.drizzle.data_external.SharedPrefs;
 
 @Module(
         library=true,

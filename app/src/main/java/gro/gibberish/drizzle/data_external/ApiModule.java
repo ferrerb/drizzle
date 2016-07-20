@@ -1,4 +1,4 @@
-package gro.gibberish.drizzle.data;
+package gro.gibberish.drizzle.data_external;
 
 import javax.inject.Singleton;
 

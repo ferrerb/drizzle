@@ -1,6 +1,7 @@
-package gro.gibberish.drizzle.data;
+package gro.gibberish.drizzle.data_external;
 
 import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * Holds a static instance of the rest adapter for accessing the OpenWeather API
@@ -12,6 +13,7 @@ public final class ApiProvider {
 
     private static final Retrofit RETROFIT = new Retrofit.Builder()
             .baseUrl(BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create())
             .build();
     
     private static final OpenWeatherService WEATHER_SERVICE = RETROFIT.create(OpenWeatherService.class);

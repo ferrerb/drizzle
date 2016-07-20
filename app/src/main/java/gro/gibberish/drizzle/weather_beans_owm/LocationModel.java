@@ -1,4 +1,4 @@
-package gro.gibberish.drizzle.weather_beans;
+package gro.gibberish.drizzle.weather_beans_owm;
 
 import java.io.Serializable;
 import java.util.ArrayList;

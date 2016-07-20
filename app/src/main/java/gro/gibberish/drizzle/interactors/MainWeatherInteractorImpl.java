@@ -6,13 +6,13 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import gro.gibberish.drizzle.EventBusRx;
-import gro.gibberish.drizzle.data.FileHandler;
-import gro.gibberish.drizzle.data.OpenWeatherService;
-import gro.gibberish.drizzle.data.SharedPrefs;
+import gro.gibberish.drizzle.data_external.FileHandler;
+import gro.gibberish.drizzle.data_external.OpenWeatherService;
+import gro.gibberish.drizzle.data_external.SharedPrefs;
 import gro.gibberish.drizzle.util.LocationsStringHelper;
 import gro.gibberish.drizzle.rxbus_events.WeatherListDownloadEvent;
-import gro.gibberish.drizzle.weather_beans.LocationModel;
-import gro.gibberish.drizzle.weather_beans.MultipleLocationModel;
+import gro.gibberish.drizzle.weather_beans_owm.LocationModel;
+import gro.gibberish.drizzle.weather_beans_owm.MultipleLocationModel;
 import rx.Observable;
 import rx.schedulers.Schedulers;
 

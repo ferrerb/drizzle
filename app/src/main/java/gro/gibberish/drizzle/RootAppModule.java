@@ -8,8 +8,6 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
-import gro.gibberish.drizzle.data.DataModule;
-import gro.gibberish.drizzle.interactors.InteractorsModule;
 
 @Module(
         injects ={

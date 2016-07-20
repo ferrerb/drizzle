@@ -1,6 +1,5 @@
-package gro.gibberish.drizzle.data;
+package gro.gibberish.drizzle.data_external;
 
-import android.content.Context;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;

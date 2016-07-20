@@ -16,7 +16,7 @@ import javax.inject.Inject;
 
 import gro.gibberish.drizzle.R;
 import gro.gibberish.drizzle.common.BaseFragment;
-import gro.gibberish.drizzle.weather_beans.LocationModel;
+import gro.gibberish.drizzle.weather_beans_owm.LocationModel;
 import gro.gibberish.drizzle.ui.OnItemTouchListener;
 import gro.gibberish.drizzle.ui.WeatherListAdapter;
 

@@ -10,7 +10,7 @@ import java.util.List;
 
 import gro.gibberish.drizzle.R;
 import gro.gibberish.drizzle.util.NumberFormatting;
-import gro.gibberish.drizzle.weather_beans.LocationModel;
+import gro.gibberish.drizzle.weather_beans_owm.LocationModel;
 
 public class WeatherListAdapter extends RecyclerView.Adapter<WeatherListAdapter.RowHolder> {
     List<LocationModel> mLocationList;

@@ -4,13 +4,13 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import gro.gibberish.drizzle.EventBusRx;
-import gro.gibberish.drizzle.data.FileHandler;
-import gro.gibberish.drizzle.data.OpenWeatherService;
-import gro.gibberish.drizzle.data.SharedPrefs;
+import gro.gibberish.drizzle.data_external.FileHandler;
+import gro.gibberish.drizzle.data_external.OpenWeatherService;
+import gro.gibberish.drizzle.data_external.SharedPrefs;
 import gro.gibberish.drizzle.rxbus_events.CurrentLocationWeatherEvent;
 import gro.gibberish.drizzle.rxbus_events.CurrentLocationForecastEvent;
-import gro.gibberish.drizzle.weather_beans.LocationForecastModel;
-import gro.gibberish.drizzle.weather_beans.LocationModel;
+import gro.gibberish.drizzle.weather_beans_owm.LocationForecastModel;
+import gro.gibberish.drizzle.weather_beans_owm.LocationModel;
 
 public class DetailWeatherInteractorImpl implements DetailWeatherInteractor {
     private static final String DAY_COUNT = "5";
