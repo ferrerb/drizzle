@@ -1,9 +1,9 @@
-package gro.gibberish.drizzle.common;
+package gro.gibberish.drizzle.android.common;
 
-import android.app.DialogFragment;
+import android.app.Fragment;
 import android.os.Bundle;
 
-public class BaseDialogFragment extends DialogFragment {
+public class BaseFragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);

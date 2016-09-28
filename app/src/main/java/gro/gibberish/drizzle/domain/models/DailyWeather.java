@@ -1,4 +1,4 @@
-package gro.gibberish.drizzle.weather_models;
+package gro.gibberish.drizzle.domain.models;
 
 /**
  * Internal model for the current weather in a location
@@ -10,8 +10,8 @@ public class DailyWeather {
     private String country;
     private short zipCode;
 
-    private int currentTemperature;
-    private int HighTemperature;
-    private int lowTemperature;
-    private int humidity;
+    private float currentTemperature;
+    private float HighTemperature;
+    private float lowTemperature;
+    private float currentHumidity;
 }

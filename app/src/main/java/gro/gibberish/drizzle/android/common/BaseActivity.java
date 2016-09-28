@@ -1,4 +1,4 @@
-package gro.gibberish.drizzle.common;
+package gro.gibberish.drizzle.android.common;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;

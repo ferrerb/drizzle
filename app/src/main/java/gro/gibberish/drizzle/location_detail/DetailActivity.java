@@ -4,7 +4,7 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 
 import gro.gibberish.drizzle.R;
-import gro.gibberish.drizzle.common.BaseActivity;
+import gro.gibberish.drizzle.android.common.BaseActivity;
 
 public class DetailActivity extends BaseActivity {
 

@@ -11,7 +11,7 @@ import android.widget.EditText;
 import javax.inject.Inject;
 
 import gro.gibberish.drizzle.R;
-import gro.gibberish.drizzle.common.BaseDialogFragment;
+import gro.gibberish.drizzle.android.common.BaseDialogFragment;
 // TODO maybe use bottomsheetdialog
 public class AddLocationFragment extends BaseDialogFragment implements
         AddLocationView, DialogInterface.OnClickListener {

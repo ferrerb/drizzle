@@ -4,26 +4,17 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
-import retrofit.RestAdapter;
+import retrofit2.Retrofit;
 
 @Module(
         library=true,
         complete=false
 )
 public class ApiModule {
-    private static final String SERVICE_ENDPOINT ="http://api.openweathermap.org/data/2.5";
 
     @Provides
     @Singleton
-    RestAdapter provideRestAdapter() {
-        return new RestAdapter.Builder()
-                .setEndpoint(SERVICE_ENDPOINT)
-                .build();
-    }
-
-    @Provides
-    @Singleton
-    OpenWeatherService provideOpenWeatherService(RestAdapter restAdapter) {
+    OpenWeatherService provideOpenWeatherService(Retrofit restAdapter) {
         return restAdapter.create(OpenWeatherService.class);
     }
 }

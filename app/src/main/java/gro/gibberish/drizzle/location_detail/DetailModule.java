@@ -8,7 +8,7 @@ import javax.inject.Singleton;
 import dagger.Module;
 import dagger.Provides;
 import gro.gibberish.drizzle.RootAppModule;
-import gro.gibberish.drizzle.common.BaseActivity;
+import gro.gibberish.drizzle.android.common.BaseActivity;
 import gro.gibberish.drizzle.interactors.InteractorsModule;
 
 @Module(

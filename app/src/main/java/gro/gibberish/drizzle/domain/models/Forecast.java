@@ -1,4 +1,4 @@
-package gro.gibberish.drizzle.weather_models;
+package gro.gibberish.drizzle.domain.models;
 
 import java.util.Map;
 
