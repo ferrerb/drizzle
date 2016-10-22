@@ -14,6 +14,7 @@ public enum EventBusRx {
     private final Subject<Object, Object> stickySubject =
             ReplaySubject.create().toSerialized();
 
+    // Probably don't need this
     public static EventBusRx getInstance() {
         return INSTANCE;
     }

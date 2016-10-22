@@ -13,8 +13,8 @@ import java.util.List;
 
 import gro.gibberish.drizzle.R;
 import gro.gibberish.drizzle.util.NumberFormatting;
-import gro.gibberish.drizzle.weather_beans_owm.LocationForecastModel;
-import gro.gibberish.drizzle.weather_beans_owm.WeatherList;
+import gro.gibberish.drizzle.data_external.weather_beans_owm.LocationForecastModel;
+import gro.gibberish.drizzle.data_external.weather_beans_owm.WeatherList;
 
 /**
  * Change this
