@@ -1,4 +1,4 @@
-package gro.gibberish.drizzle.data_external.weather_beans_owm;
+package gro.gibberish.drizzle.data_external.model_net;
 
 /**
  * Converts weather data from OWM to internal models

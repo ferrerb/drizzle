@@ -1,8 +1,8 @@
-package gro.gibberish.drizzle.data_external;
+package gro.gibberish.drizzle.data_external.rest_service;
 
-import gro.gibberish.drizzle.data_external.weather_beans_owm.LocationForecastModel;
-import gro.gibberish.drizzle.data_external.weather_beans_owm.LocationModel;
-import gro.gibberish.drizzle.data_external.weather_beans_owm.MultipleLocationModel;
+import gro.gibberish.drizzle.data_external.model_net.LocationForecastModel;
+import gro.gibberish.drizzle.data_external.model_net.LocationModel;
+import gro.gibberish.drizzle.data_external.model_net.MultipleLocationModel;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
 import rx.Observable;

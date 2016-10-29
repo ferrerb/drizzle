@@ -18,11 +18,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import gro.gibberish.drizzle.R;
-import gro.gibberish.drizzle.data_external.ApiProvider;
-import gro.gibberish.drizzle.data_external.FileHandler;
+import gro.gibberish.drizzle.data_external.rest_service.ApiProvider;
+import gro.gibberish.drizzle.data_external.storage.FileHandler;
 import gro.gibberish.drizzle.util.LocationsStringHelper;
-import gro.gibberish.drizzle.data_external.weather_beans_owm.LocationModel;
-import gro.gibberish.drizzle.data_external.weather_beans_owm.MultipleLocationModel;
+import gro.gibberish.drizzle.data_external.model_net.LocationModel;
+import gro.gibberish.drizzle.data_external.model_net.MultipleLocationModel;
 import rx.Observable;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;

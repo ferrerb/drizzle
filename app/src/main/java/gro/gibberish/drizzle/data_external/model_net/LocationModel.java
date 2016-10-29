@@ -1,4 +1,4 @@
-package gro.gibberish.drizzle.data_external.weather_beans_owm;
+package gro.gibberish.drizzle.data_external.model_net;
 
 import java.io.Serializable;
 import java.util.ArrayList;

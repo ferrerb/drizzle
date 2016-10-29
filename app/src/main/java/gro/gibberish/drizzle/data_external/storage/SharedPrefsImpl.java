@@ -1,4 +1,4 @@
-package gro.gibberish.drizzle.data_external;
+package gro.gibberish.drizzle.data_external.storage;
 
 import android.content.SharedPreferences;
 

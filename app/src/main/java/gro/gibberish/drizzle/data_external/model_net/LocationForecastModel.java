@@ -1,4 +1,4 @@
-package gro.gibberish.drizzle.data_external.weather_beans_owm;
+package gro.gibberish.drizzle.data_external.model_net;
 
 import com.google.gson.annotations.SerializedName;
 

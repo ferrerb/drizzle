@@ -1,4 +1,4 @@
-package gro.gibberish.drizzle.data_external;
+package gro.gibberish.drizzle.data_external.rest_service;
 
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;

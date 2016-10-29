@@ -1,6 +1,6 @@
 package gro.gibberish.drizzle.rxbus_events;
 
-import gro.gibberish.drizzle.data_external.weather_beans_owm.LocationForecastModel;
+import gro.gibberish.drizzle.data_external.model_net.LocationForecastModel;
 
 public class CurrentLocationForecastEvent implements RxBusEvent {
     private LocationForecastModel locationForecastModel;

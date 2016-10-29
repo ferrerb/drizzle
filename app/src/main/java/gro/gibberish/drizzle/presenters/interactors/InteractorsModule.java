@@ -3,9 +3,9 @@ package gro.gibberish.drizzle.presenters.interactors;
 import dagger.Module;
 import dagger.Provides;
 import gro.gibberish.drizzle.EventBusRx;
-import gro.gibberish.drizzle.data_external.FileHandler;
-import gro.gibberish.drizzle.data_external.OpenWeatherService;
-import gro.gibberish.drizzle.data_external.SharedPrefs;
+import gro.gibberish.drizzle.data_external.storage.FileHandler;
+import gro.gibberish.drizzle.data_external.rest_service.OpenWeatherService;
+import gro.gibberish.drizzle.data_external.storage.SharedPrefs;
 
 @Module(
         library=true,

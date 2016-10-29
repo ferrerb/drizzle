@@ -1,4 +1,4 @@
-package gro.gibberish.drizzle.data_external;
+package gro.gibberish.drizzle.data_external.storage;
 
 public interface SharedPrefs {
     void setAllLocationsString(String commaSeparatedLocations);

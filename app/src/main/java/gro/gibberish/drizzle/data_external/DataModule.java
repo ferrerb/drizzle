@@ -9,6 +9,9 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import gro.gibberish.drizzle.data_external.storage.FileHandler;
+import gro.gibberish.drizzle.data_external.storage.SharedPrefs;
+import gro.gibberish.drizzle.data_external.storage.SharedPrefsImpl;
 
 @Module(
         includes={

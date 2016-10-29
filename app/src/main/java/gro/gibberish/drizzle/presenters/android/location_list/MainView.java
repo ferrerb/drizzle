@@ -2,7 +2,7 @@ package gro.gibberish.drizzle.presenters.android.location_list;
 
 import java.util.List;
 
-import gro.gibberish.drizzle.data_external.weather_beans_owm.LocationModel;
+import gro.gibberish.drizzle.data_external.model_net.LocationModel;
 
 public interface MainView {
     void showProgressBar();
