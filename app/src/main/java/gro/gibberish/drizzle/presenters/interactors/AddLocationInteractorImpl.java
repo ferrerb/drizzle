@@ -26,7 +26,7 @@ public class AddLocationInteractorImpl implements AddLocationInteractor {
     public void retrieveGpsLocation() {
         // TODO chain observable from gpslocation
         Subscription locationSubscription = gpsLocationObservable.retrieveGpsCoordsSingleUpdate()
-                .map(location -> getGpsCoordsFromLocationObject(location))
+                .map(this::getGpsCoordsFromLocationObject)
                 .subscribe(
                         listOfCoordinates -> eventBus.post(new GpsLocationEvent(listOfCoordinates)),
                         Throwable::printStackTrace,
