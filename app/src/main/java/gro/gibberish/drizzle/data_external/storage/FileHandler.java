@@ -45,6 +45,7 @@ public class FileHandler {
 
                     data = (T) in.readObject();
                     in.close();
+                    fis.close();
 
                     subscriber.onNext(data);
                     subscriber.onCompleted();
@@ -69,6 +70,7 @@ public class FileHandler {
 
                     out.writeObject(objectToBeSerialized);
                     out.close();
+                    fos.close();
                 } catch (FileNotFoundException e) {
                     throw OnErrorThrowable.from(e);
                 } catch (IOException e) {
